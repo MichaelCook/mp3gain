@@ -2567,7 +2567,7 @@ int main(int argc, char **argv) {
 									goAhead = queryUserForClipping(argv[mainloop],intGainChange);
 							}
 							if (goAhead) {
-                                                            if (!QuietMode)
+                                if (!QuietMode)
 								fprintf(stdout,"Applying mp3 gain change of %d to %s...\n",intGainChange,argv[mainloop]);
 								if (skipTag) {
 									changeGain(argv[mainloop] AACGAIN_ARG(aacInfo[mainloop]), intGainChange, intGainChange);
@@ -2641,3 +2641,9 @@ int main(int argc, char **argv) {
 }
 
 #endif /* asWIN32DLL */
+
+/*
+Local Variables:
+tab-width: 4
+End:
+*/
