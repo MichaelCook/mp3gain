@@ -1897,7 +1897,7 @@ int main(int argc, char **argv) {
 		    else
 			    intAlbumGainChange = (int)(dblGainChange) + (dblGainChange < 0 ? -1 : 1);
 		  }
-            if (!databaseFormat) {
+            if (!QuietMode && !databaseFormat) {
 		        fprintf(stdout,"%s\n",argv[mainloop]);
                 if (curTag->haveTrackGain) {
                     fprintf(stdout,"Recommended \"Track\" dB change: %f\n",curTag->trackGain);
@@ -2403,6 +2403,7 @@ int main(int argc, char **argv) {
                                 } else if (!ignoreClipWarning) {
                                     if (maxsample * (Float_t)(pow(2.0,(double)(intGainChange)/4.0)) > 32767.0) {
                                         if (queryUserForClipping(argv[mainloop],intGainChange)) {
+                                            if (!QuietMode)
     									    fprintf(stdout,"Applying mp3 gain change of %d to %s...\n",intGainChange,argv[mainloop]);
                                         } else {
                                             goAhead = 0;
@@ -2410,6 +2411,7 @@ int main(int argc, char **argv) {
                                     }
                                 }
                                 if (goAhead) {
+                                    if (!QuietMode)
 									fprintf(stdout,"Applying mp3 gain change of %d to %s...\n",intGainChange,argv[mainloop]);
                                     if (skipTag) {
 	                                    changeGain(argv[mainloop] AACGAIN_ARG(aacH), intGainChange, intGainChange);
@@ -2565,6 +2567,7 @@ int main(int argc, char **argv) {
 									goAhead = queryUserForClipping(argv[mainloop],intGainChange);
 							}
 							if (goAhead) {
+                                                            if (!QuietMode)
 								fprintf(stdout,"Applying mp3 gain change of %d to %s...\n",intGainChange,argv[mainloop]);
 								if (skipTag) {
 									changeGain(argv[mainloop] AACGAIN_ARG(aacInfo[mainloop]), intGainChange, intGainChange);
