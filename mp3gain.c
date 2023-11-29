@@ -2045,7 +2045,7 @@ int main(int argc, char **argv) {
               fprintf(stdout,"%s\tNA\tNA\tNA\tNA\tNA\n", argv[mainloop]);
       }
 	  else {
-		  if (!databaseFormat)
+		  if (!databaseFormat && !QuietMode)
 		    fprintf(stdout,"%s\n",argv[mainloop]);
 		  		  
 		  if (tagInfo[mainloop].recalc > 0) {
