@@ -11,8 +11,6 @@
 #include "mpglibDBL_encoder.h"
 #include "mpglibDBL_decode_i386.h"
 
-#define MPEG1
-
 unsigned char *maxGain;
 unsigned char *minGain;
 
@@ -371,7 +369,6 @@ void init_layer3(int down_sample_sblimit)
 /*
  * read additional side information
  */
-#ifdef MPEG1
 static int III_get_side_info_1(struct III_sideinfo *si, int stereo,
                                int ms_stereo, long sfreq, int single)
 {
@@ -478,7 +475,6 @@ static int III_get_side_info_1(struct III_sideinfo *si, int stereo,
     }
     return 1;
 }
-#endif
 
 /*
  * Side Info for MPEG 2.0 / LSF
@@ -597,7 +593,6 @@ static int III_get_side_info_2(struct III_sideinfo *si, int stereo,
 /*
  * read scalefactors
  */
-#ifdef MPEG1
 static int III_get_scale_factors_1(int *scf, struct gr_info_s *gr_infos)
 {
     static const unsigned char slen[2][16] =
@@ -713,7 +708,6 @@ static int III_get_scale_factors_1(int *scf, struct gr_info_s *gr_infos)
     }
     return numbits;
 }
-#endif
 
 static int III_get_scale_factors_2(int *scf, struct gr_info_s *gr_infos, int i_stereo)
 {
@@ -1881,14 +1875,10 @@ int do_layer3_sideinfo(struct frame *fr)
     else
     {
         granules = 2;
-#ifdef MPEG1
         if (!(III_get_side_info_1(&sideinfo, stereo, ms_stereo, sfreq, single)))
         {
             return -32767;
         }
-#else
-        fprintf(stderr, "Not supported\n");
-#endif
     }
 
     databits = 0;
@@ -1968,11 +1958,7 @@ int do_layer3(PMPSTR mp, int *pcm_point)
             }
             else
             {
-#ifdef MPEG1
                 part2bits = III_get_scale_factors_1(scalefacs[0], gr_infos);
-#else
-                fprintf(stderr, "Not supported\n");
-#endif
             }
 
             if (III_dequantize_sample(hybridIn[0], scalefacs[0], gr_infos, sfreq, part2bits))
@@ -1990,11 +1976,7 @@ int do_layer3(PMPSTR mp, int *pcm_point)
             }
             else
             {
-#ifdef MPEG1
                 part2bits = III_get_scale_factors_1(scalefacs[1], gr_infos);
-#else
-                fprintf(stderr, "Not supported\n");
-#endif
             }
 
             if (III_dequantize_sample(hybridIn[1], scalefacs[1], gr_infos, sfreq, part2bits))
