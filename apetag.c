@@ -194,7 +194,6 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
 {
     unsigned long               vsize;
     unsigned long               isize;
-    unsigned long               flags;
     unsigned long                           remaining;
     char                       *buff;
     char                       *p;
@@ -274,7 +273,7 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
         }
         vsize = Read_LE_Uint32(p);
         p += 4;
-        flags = Read_LE_Uint32(p);
+        Read_LE_Uint32(p);      /* flags */
         p += 4;
 
         remaining = (unsigned long)(end - p);
