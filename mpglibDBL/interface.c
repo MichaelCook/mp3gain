@@ -14,14 +14,6 @@
 #include "layer3.h"
 #include "VbrTag.h"
 
-#ifdef USE_LAYER_1
-	#include "layer1.h"
-#endif
-
-#ifdef USE_LAYER_2
-	#include "layer2.h"
-#endif
-
 #ifdef WITH_DMALLOC
 #include <dmalloc.h>
 #endif
