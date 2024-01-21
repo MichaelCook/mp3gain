@@ -1,0 +1,20 @@
+add-braces
+align-pointer=name
+attach-return-type
+break-after-logical
+break-closing-brackets # break-closing-braces in astyle 3.1
+break-one-line-headers
+convert-tabs
+formatted
+indent-col1-comments
+indent-preproc-define
+indent=spaces=4
+lineend=linux
+max-code-length=120
+min-conditional-indent=0
+pad-comma
+pad-header
+pad-oper
+style=allman
+suffix=none
+unpad-paren

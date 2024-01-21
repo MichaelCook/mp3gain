@@ -16,4 +16,5 @@ test: mp3gain
 	./test
 
 mp3gain: $(SOURCES)
+	astyle --options=.astylerc $(SOURCES)
 	gcc -Wall -O3 -s -o mp3gain $(SOURCES) -lm
