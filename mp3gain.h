@@ -59,7 +59,7 @@ typedef enum {
 
 void passError(MMRESULT lerrnum, int numStrings, ...);
 
-	/* Get/Set file datetime stamp */
+        /* Get/Set file datetime stamp */
 void fileTime(char *filename, timeAction action);
 
 #endif

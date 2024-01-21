@@ -10,7 +10,7 @@ struct MP3GainTagInfo {
     int haveAlbumPeak;
     int haveUndo;
     int haveMinMaxGain;
-	int haveAlbumMinMaxGain;
+        int haveAlbumMinMaxGain;
     double trackGain;
     double trackPeak;
     double albumGain;
@@ -26,21 +26,21 @@ struct MP3GainTagInfo {
      */
     unsigned char minGain;
     unsigned char maxGain;
-	unsigned char albumMinGain;
-	unsigned char albumMaxGain;
+        unsigned char albumMinGain;
+        unsigned char albumMaxGain;
     /* minGain and maxGain are the current minimum and maximum values of
        the "global gain" fields in the frames of the mp3 file
      */
-	int dirty; /* flag if data changes after loaded from file */
+        int dirty; /* flag if data changes after loaded from file */
   int recalc; /* Used to signal if recalculation is required */
 };
 
 struct APEFieldStruct {
-	unsigned long vsize;
-	unsigned long isize;
-	unsigned long flags;
-	char *name;
-	char *value;
+        unsigned long vsize;
+        unsigned long isize;
+        unsigned long flags;
+        char *name;
+        char *value;
 };
 
 struct APETagFooterStruct {
@@ -53,22 +53,22 @@ struct APETagFooterStruct {
 };
 
 struct APETagStruct {
-	unsigned long originalTagSize;
-	int haveHeader;
-	struct APETagFooterStruct header;
-	struct APETagFooterStruct footer;
-	unsigned char *otherFields; /* i.e. other than MP3Gain */
+        unsigned long originalTagSize;
+        int haveHeader;
+        struct APETagFooterStruct header;
+        struct APETagFooterStruct footer;
+        unsigned char *otherFields; /* i.e. other than MP3Gain */
     unsigned long otherFieldsSize;
 };
 
 struct FileTagsStruct {
-	long tagOffset;
-	struct APETagStruct *apeTag;
+        long tagOffset;
+        struct APETagStruct *apeTag;
     unsigned char *lyrics3tag;
-	unsigned long lyrics3TagSize;
+        unsigned long lyrics3TagSize;
     unsigned char *id31tag;
 };
-	
+        
 int ReadMP3GainAPETag (char *filename, struct MP3GainTagInfo *info, struct FileTagsStruct *fileTags);
 
 int WriteMP3GainAPETag (char *filename, struct MP3GainTagInfo *info, struct FileTagsStruct *fileTags, int saveTimeStamp);

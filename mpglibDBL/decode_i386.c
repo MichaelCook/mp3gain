@@ -29,9 +29,9 @@ char *strchr (), *strrchr ();
 #endif
 
 #if defined(__riscos__) && defined(FPA10)
-#include	"ymath.h"
+#include        "ymath.h"
 #else
-#include	<math.h>
+#include        <math.h>
 #endif
 
 #include "decode_i386.h"
@@ -82,7 +82,7 @@ int synth_1to1(PMPSTR mp, real *bandPtr,int channel,int *pnt)
     buf = mp->synth_buffs[0];
   }
   else {
-	dsamp = rSamp;
+        dsamp = rSamp;
     buf = mp->synth_buffs[1];
   }
 
@@ -123,12 +123,12 @@ if (maxAmpOnly) {
       sum += window[0xE] * b0[0xE];
       sum -= window[0xF] * b0[0xF];
 
-	  if (sum > mSamp) {
-		  mSamp = sum;
-	  }
-	  else if ((-sum) > mSamp) {
-		  mSamp = (-sum);
-	  }
+          if (sum > mSamp) {
+                  mSamp = sum;
+          }
+          else if ((-sum) > mSamp) {
+                  mSamp = (-sum);
+          }
     }
 
     {
@@ -142,12 +142,12 @@ if (maxAmpOnly) {
       sum += window[0xC] * b0[0xC];
       sum += window[0xE] * b0[0xE];
 
-	  if (sum > mSamp) {
-		  mSamp = sum;
-	  }
-	  else if ((-sum) > mSamp) {
-		  mSamp = (-sum);
-	  }
+          if (sum > mSamp) {
+                  mSamp = sum;
+          }
+          else if ((-sum) > mSamp) {
+                  mSamp = (-sum);
+          }
       b0-=0x10,window-=0x20;
     }
     window += bo1<<1;
@@ -172,12 +172,12 @@ if (maxAmpOnly) {
       sum -= window[-0xF] * b0[0xE];
       sum -= window[-0x0] * b0[0xF];
 
-	  if (sum > mSamp) {
-		  mSamp = sum;
-	  }
-	  else if ((-sum) > mSamp) {
-		  mSamp = (-sum);
-	  }
+          if (sum > mSamp) {
+                  mSamp = sum;
+          }
+          else if ((-sum) > mSamp) {
+                  mSamp = (-sum);
+          }
     }
   }
 }
@@ -208,14 +208,14 @@ else {
       sum += window[0xE] * b0[0xE];
       sum -= window[0xF] * b0[0xF];
 
-	  *dsamp++ = (Float_t)sum;
-	  procSamp++;
-	  if (sum > mSamp) {
-		  mSamp = sum;
-	  }
-	  else if ((-sum) > mSamp) {
-		  mSamp = (-sum);
-	  }
+          *dsamp++ = (Float_t)sum;
+          procSamp++;
+          if (sum > mSamp) {
+                  mSamp = sum;
+          }
+          else if ((-sum) > mSamp) {
+                  mSamp = (-sum);
+          }
     }
 
     {
@@ -228,14 +228,14 @@ else {
       sum += window[0xA] * b0[0xA];
       sum += window[0xC] * b0[0xC];
       sum += window[0xE] * b0[0xE];
-	  *dsamp++ = (Float_t)sum;
-	  procSamp++;
-	  if (sum > mSamp) {
-		  mSamp = sum;
-	  }
-	  else if ((-sum) > mSamp) {
-		  mSamp = (-sum);
-	  }
+          *dsamp++ = (Float_t)sum;
+          procSamp++;
+          if (sum > mSamp) {
+                  mSamp = sum;
+          }
+          else if ((-sum) > mSamp) {
+                  mSamp = (-sum);
+          }
       b0-=0x10,window-=0x20;
     }
     window += bo1<<1;
@@ -260,21 +260,21 @@ else {
       sum -= window[-0xF] * b0[0xE];
       sum -= window[-0x0] * b0[0xF];
 
-	  *dsamp++ = (Float_t)sum;
-	  procSamp++;
-	  if (sum > mSamp) {
-		  mSamp = sum;
-	  }
-	  else if ((-sum) > mSamp) {
-		  mSamp = (-sum);
-	  }
+          *dsamp++ = (Float_t)sum;
+          procSamp++;
+          if (sum > mSamp) {
+                  mSamp = sum;
+          }
+          else if ((-sum) > mSamp) {
+                  mSamp = (-sum);
+          }
     }
   }
 }
   *pnt += 128;
 
   if ((Float_t)mSamp > *maxSamp)
-	  *maxSamp = mSamp;
+          *maxSamp = mSamp;
 
   if (!channel) lSamp = dsamp;
   else rSamp = dsamp;
