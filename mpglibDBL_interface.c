@@ -1,11 +1,6 @@
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
 #include "mpglibDBL_common.h"
 #include "mpglibDBL_interface.h"
 #include "mpglibDBL_tabinit.h"

@@ -5,10 +5,6 @@
  * All rights reserved. See also 'README'
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 #include <stdlib.h>
 #include "mpglibDBL_common.h"
 #include "mpglibDBL_huffman.h"

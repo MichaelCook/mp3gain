@@ -6,10 +6,6 @@
  * even for Intel processors.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "mpglibDBL_dct64_i386.h"
 #include "mpglibDBL_tabinit.h"
 

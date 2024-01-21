@@ -36,10 +36,6 @@
 #define INIT_GAIN_ANALYSIS_ERROR      0
 #define INIT_GAIN_ANALYSIS_OK         1
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef double  Float_t;         // Type used for filtering
 
 int     InitGainAnalysis ( long samplefreq );
@@ -47,7 +43,3 @@ int     AnalyzeSamples   ( const Float_t* left_samples, const Float_t* right_sam
 int             ResetSampleFrequency ( long samplefreq );
 Float_t   GetTitleGain     ( void );
 Float_t   GetAlbumGain     ( void );
-
-#ifdef __cplusplus
-}
-#endif
