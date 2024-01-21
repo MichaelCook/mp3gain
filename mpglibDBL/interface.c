@@ -317,12 +317,9 @@ int GetVbrTag(VBRTAGDATA *pTagData,  unsigned char *buf)
 
     if (head_flags & TOC_FLAG)
     {
-        if (pTagData->toc != NULL)
+        for (i = 0; i < NUMTOCENTRIES; i++)
         {
-            for (i = 0; i < NUMTOCENTRIES; i++)
-            {
-                pTagData->toc[i] = buf[i];
-            }
+            pTagData->toc[i] = buf[i];
         }
         buf += NUMTOCENTRIES;
     }
