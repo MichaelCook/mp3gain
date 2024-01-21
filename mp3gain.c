@@ -1213,7 +1213,7 @@ void changeGainAndTag(char *filename AACGAIN_ARG(AACGainHandle aacH), int leftga
 static 
 int queryUserForClipping(char * argv_mainloop,int intGainChange)
 {
-	char ch;
+	int ch;
 
 	fprintf(stderr,"\nWARNING: %s may clip with mp3 gain change %d\n",argv_mainloop,intGainChange);
 	ch = 0;
@@ -1223,6 +1223,9 @@ int queryUserForClipping(char * argv_mainloop,int intGainChange)
 		fprintf(stderr,"Make change? [y/n]:");
 		fflush(stderr);
 		ch = getchar();
+        if (ch == EOF) {
+            ch = 'N';
+        }
 		ch = toupper(ch);
 	}
 	if (ch == 'N')
