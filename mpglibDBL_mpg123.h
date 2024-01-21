@@ -40,16 +40,6 @@ struct frame {
     int original;
     int emphasis;
     int framesize; /* computed framesize */
-
-        /* AF: ADDED FOR LAYER1/LAYER2 */
-#if defined(USE_LAYER_2) || defined(USE_LAYER_1)
-    int II_sblimit;
-    struct al_table2 *alloc;
-        int down_sample_sblimit;
-        int     down_sample;
-
-#endif
-
 };
 
 struct gr_info_s {

@@ -36,46 +36,6 @@ unsigned char *wordpointer;
 unsigned char *pcm_sample;
 int pcm_point = 0;
 
-#if defined( USE_LAYER_1 ) || defined ( USE_LAYER_2 )
-real muls[27][64];
-#endif
-
-#if 0
-static void get_II_stuff(struct frame *fr)
-{
-    static const int translate [3] [2] [16] =   /* char ? */
-    {
-        {   { 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
-            { 0, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 }
-        },
-        {   { 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-        },
-        {   { 0, 3, 3, 3, 3, 3, 3, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
-            { 0, 3, 3, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 }
-        }
-    };
-
-    int table, sblim;
-    static const struct al_table2 *tables[5] =
-    { alloc_0, alloc_1, alloc_2, alloc_3, alloc_4 };
-    static int sblims[5] = { 27, 30, 8, 12, 30 };
-
-    if (fr->lsf)
-    {
-        table = 4;
-    }
-    else
-    {
-        table = translate[fr->sampling_frequency][2 - fr->stereo][fr->bitrate_index];
-    }
-    sblim = sblims[table];
-
-    fr->alloc = tables[table];
-    fr->II_sblimit = sblim;
-}
-#endif
-
 #define HDRCMPMASK 0xfffffd00
 
 int head_check(unsigned long head, int check_layer)
@@ -104,14 +64,7 @@ int head_check(unsigned long head, int check_layer)
 
     if (3 !=  nLayer)
     {
-#if defined (USE_LAYER_1) || defined (USE_LAYER_2)
-        if (4 == nLayer)
-        {
-            return false;
-        }
-#else
         return false;
-#endif
     }
 
     if (check_layer > 0)
@@ -190,43 +143,7 @@ int decode_header(struct frame *fr, unsigned long newhead)
 
     switch (fr->lay)
     {
-#ifdef USE_LAYER_1
-    case 1:
-        fr->framesize  = (long) tabsel_123[fr->lsf][0][fr->bitrate_index] * 12000;
-        fr->framesize /= freqs[fr->sampling_frequency];
-        fr->framesize  = ((fr->framesize + fr->padding) << 2) - 4;
-        fr->down_sample = 0;
-        fr->down_sample_sblimit = SBLIMIT >> (fr->down_sample);
-        break;
-#endif
-#ifdef USE_LAYER_2
-    case 2:
-        fr->framesize = (long) tabsel_123[fr->lsf][1][fr->bitrate_index] * 144000;
-        fr->framesize /= freqs[fr->sampling_frequency];
-        fr->framesize += fr->padding - 4;
-        fr->down_sample = 0;
-        fr->down_sample_sblimit = SBLIMIT >> (fr->down_sample);
-        break;
-#endif
     case 3:
-#if 0
-        fr->do_layer = do_layer3;
-        if (fr->lsf)
-        {
-            ssize = (fr->stereo == 1) ? 9 : 17;
-        }
-        else
-        {
-            ssize = (fr->stereo == 1) ? 17 : 32;
-        }
-#endif
-
-#if 0
-        if (fr->error_protection)
-        {
-            ssize += 2;
-        }
-#endif
         if (fr->bitrate_index == 0)
         {
             fr->framesize = 0;

@@ -39,10 +39,6 @@ bool InitMP3(PMPSTR mp)
 
     init_layer3(SBLIMIT);
 
-#ifdef USE_LAYER_2
-    init_layer2();
-#endif
-
     return !0;
 }
 
@@ -701,26 +697,6 @@ int decodeMP3(PMPSTR mp, unsigned char *in, int isize, int *done)
         iret = MP3_OK;
         switch (mp->fr.lay)
         {
-#ifdef USE_LAYER_1
-        case 1:
-            if (mp->fr.error_protection)
-            {
-                getbits(16);
-            }
-
-            do_layer1(mp, (unsigned char *) out, done);
-            break;
-#endif
-#ifdef USE_LAYER_2
-        case 2:
-            if (mp->fr.error_protection)
-            {
-                getbits(16);
-            }
-
-            do_layer2(mp, (unsigned char *) out, done);
-            break;
-#endif
         case 3:
             if (do_layer3(mp, done))
             {

@@ -26,10 +26,6 @@ extern const long freqs[9];
 extern unsigned char *wordpointer;
 extern int bitindex;
 
-#if defined( USE_LAYER_1 ) || defined ( USE_LAYER_2 )
-  extern real muls[27][64];
-#endif
-
 int  head_check(unsigned long head,int check_layer);
 int  decode_header(struct frame *fr,unsigned long newhead);
 void print_header(struct frame *fr);
