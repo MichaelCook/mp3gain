@@ -229,6 +229,11 @@ int decode_header(struct frame *fr,unsigned long newhead)
         fprintf(stderr,"Sorry, layer %d not supported\n",fr->lay); 
         return (0);
     }
+    if (fr->framesize > MAXFRAMESIZE) {
+      fprintf(stderr,"Frame size too big: %d\n", fr->framesize+4-fr->padding);
+      return (0);
+    }
+
     /*    print_header(fr); */
 
     return 1;
