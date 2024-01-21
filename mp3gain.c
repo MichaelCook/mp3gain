@@ -579,13 +579,10 @@ void fileTime(char *filename, timeAction action)
 
 unsigned long reportPercentWritten(unsigned long percent, unsigned long bytes)
 {
-    int ok = 1;
-
-    fprintf(stderr, "                                                \r %2lu%% of %lu bytes written\r"
-            , percent, bytes);
-    fflush(stderr);
-
-    return ok;
+    fprintf(stderr, "                                                \r"
+            " %2lu%% of %lu bytes written\r",
+            percent, bytes);
+    return 1;
 }
 
 int numFiles, totFiles;
@@ -599,9 +596,9 @@ unsigned long reportPercentAnalyzed(unsigned long percent, unsigned long bytes)
         sprintf(fileDivFiles, "[%d/%d]", numFiles, totFiles);
     }
 
-    fprintf(stderr, "                                           \r%s %2lu%% of %lu bytes analyzed\r"
-            , fileDivFiles, percent, bytes);
-    fflush(stderr);
+    fprintf(stderr, "                                           \r"
+            "%s %2lu%% of %lu bytes analyzed\r",
+            fileDivFiles, percent, bytes);
     return 1;
 }
 
@@ -741,7 +738,6 @@ int changeGain(char *filename, int leftgainchange, int rightgainchange)
 
     if (UsingTemp)
     {
-        fflush(stderr);
         fflush(stdout);
         outlength = (long)strlen(filename);
         outfilename = (char *)malloc(outlength + 5);
@@ -1051,7 +1047,6 @@ int changeGain(char *filename, int leftgainchange, int rightgainchange)
         {
             fprintf(stderr, "                                                   \r");
         }
-        fflush(stderr);
         fflush(stdout);
         if (UsingTemp)
         {
@@ -1242,11 +1237,9 @@ int queryUserForClipping(char *argv_mainloop, int intGainChange)
     fprintf(stderr, "\nWARNING: %s may clip with mp3 gain change %d\n", argv_mainloop, intGainChange);
     ch = 0;
     fflush(stdout);
-    fflush(stderr);
     while ((ch != 'Y') && (ch != 'N'))
     {
         fprintf(stderr, "Make change? [y/n]:");
-        fflush(stderr);
         ch = getchar();
         if (ch == EOF)
         {
@@ -2156,7 +2149,6 @@ int main(int argc, char **argv)
             if ((inf == NULL) && (tagInfo[mainloop].recalc > 0))
             {
                 fprintf(stderr, "Can't open %s for reading\n", argv[mainloop]);
-                fflush(stderr);
                 gSuccess = 0;
             }
             else
@@ -2206,7 +2198,6 @@ int main(int argc, char **argv)
                         if (!BadLayer)
                         {
                             fprintf(stderr, "Can't find any valid MP3 frames in file %s\n", argv[mainloop]);
-                            fflush(stderr);
                             gSuccess = 0;
                         }
                     }
@@ -2246,7 +2237,6 @@ int main(int argc, char **argv)
                                 if (bitridx == 0)
                                 {
                                     fprintf(stderr, "%s is free format (not currently supported)\n", curfilename);
-                                    fflush(stderr);
                                     ok = 0;
                                 }
                                 else
@@ -2299,7 +2289,6 @@ int main(int argc, char **argv)
                                 if (bitridx == 0)
                                 {
                                     fprintf(stderr, "%s is free format (not currently supported)\n", curfilename);
-                                    fflush(stderr);
                                     ok = 0;
                                 }
                                 else
@@ -2386,7 +2375,6 @@ int main(int argc, char **argv)
                         if (dBchange == GAIN_NOT_ENOUGH_SAMPLES)
                         {
                             fprintf(stderr, "Not enough samples in %s to do analysis\n", argv[mainloop]);
-                            fflush(stderr);
                             gSuccess = 0;
                             numFiles--;
                         }
@@ -2539,7 +2527,6 @@ int main(int argc, char **argv)
                 }
 
                 ExitMP3(&mp);
-                fflush(stderr);
                 fflush(stdout);
                 if (inf)
                 {
@@ -2580,7 +2567,6 @@ int main(int argc, char **argv)
         if (dBchange == GAIN_NOT_ENOUGH_SAMPLES)
         {
             fprintf(stderr, "Not enough samples in mp3 files to do analysis\n");
-            fflush(stderr);
         }
         else
         {
