@@ -146,7 +146,11 @@ static int ReadMP3Lyrics3v2Tag(FILE *fp, unsigned char **tagbuff, unsigned long 
     }
     *tagbuff = (unsigned char *)malloc(taglen);
     fseek(fp, *tag_offset, SEEK_SET);
-    fread(*tagbuff, 1, taglen, fp);
+    size_t r = fread(*tagbuff, 1, taglen, fp);
+    if (r != taglen)
+    {
+        abort();
+    }
     *tagSize = taglen;
     return 1;
 }
@@ -393,7 +397,11 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
         *tag_offset -= sizeof(T);
 
         fseek(fp, *tag_offset, SEEK_SET);
-        fread(&((*apeTag)->header), 1, sizeof(T), fp);
+        size_t r = fread(&((*apeTag)->header), 1, sizeof(T), fp);
+        if (r != sizeof(T))
+        {
+            abort();
+        }
         (*apeTag)->haveHeader = !0;
         (*apeTag)->originalTagSize += sizeof(T);
     }
