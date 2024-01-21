@@ -33,7 +33,6 @@
  *  Additional tweaks by Artur Polaczynski, Mark Armbrust, and others
  */
 
-
 /*
  *  General warning: I coded this in several stages over the course of several
  *  months. During that time, I changed my mind about my coding style and
@@ -164,8 +163,6 @@ void flushWriteBuff()
     writebuffercnt = 0;
 };
 
-
-
 static
 void addWriteBuff(unsigned long pos, unsigned char *vals)
 {
@@ -180,7 +177,6 @@ void addWriteBuff(unsigned long pos, unsigned char *vals)
     writebuffercnt++;
 
 };
-
 
 /* fill the mp3 buffer */
 static
@@ -237,7 +233,6 @@ unsigned long fillBuffer(long savelastbytes)
     return i;
 }
 
-
 static const unsigned char maskLeft8bits[8] =
 {
     0x00, 0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE
@@ -264,8 +259,6 @@ void set8Bits(unsigned short val)
     }
 }
 
-
-
 static
 void skipBits(int nbits)
 {
@@ -273,11 +266,7 @@ void skipBits(int nbits)
     bitidx += nbits;
     wrdpntr += (bitidx >> 3);
     bitidx &= 7;
-
-    return;
 }
-
-
 
 static
 unsigned char peek8Bits()
@@ -292,8 +281,6 @@ unsigned char peek8Bits()
     return (rval & 0xFF);
 
 }
-
-
 
 static
 unsigned long skipID3v2()
@@ -502,8 +489,6 @@ unsigned long frameSearch(int startup)
     return ok;
 }
 
-
-
 static
 int crcUpdate(int value, int crc)
 {
@@ -522,8 +507,6 @@ int crcUpdate(int value, int crc)
     return crc;
 }
 
-
-
 static
 void crcWriteHeader(int headerlength, char *header)
 {
@@ -540,7 +523,6 @@ void crcWriteHeader(int headerlength, char *header)
     header[4] = crc >> 8;
     header[5] = crc & 255;
 }
-
 
 static
 long getSizeOfFile(char *filename)
@@ -559,7 +541,6 @@ long getSizeOfFile(char *filename)
     return size;
 }
 
-
 int deleteFile(char *filename)
 {
     return remove(filename);
@@ -570,12 +551,7 @@ int moveFile(char *currentfilename, char *newfilename)
     return rename(currentfilename, newfilename);
 }
 
-
-
 /* Get File size and datetime stamp */
-
-
-
 
 void fileTime(char *filename, timeAction action)
 {
@@ -751,7 +727,6 @@ int changeGain(char *filename, int leftgainchange, int rightgainchange)
     {
         return 0;
     }
-
 
     gainchange[0] = leftgainchange;
     gainchange[1] = rightgainchange;
@@ -1164,7 +1139,6 @@ void WriteMP3GainTag(char *filename, struct MP3GainTagInfo *info,
     }
 }
 
-
 void changeGainAndTag(char *filename, int leftgainchange, int rightgainchange,
                       struct MP3GainTagInfo *tag, struct FileTagsStruct *fileTag)
 {
@@ -1332,8 +1306,6 @@ void wrapExplanation()
 
 }
 
-
-
 static
 void errUsage(char *progname)
 {
@@ -1344,8 +1316,6 @@ void errUsage(char *progname)
     fprintf(stderr, "  --use %c? or %ch for a full list of options\n", SWITCH_CHAR, SWITCH_CHAR);
     exit(1);
 }
-
-
 
 static
 void fullUsage(char *progname)
@@ -1398,7 +1368,6 @@ void fullUsage(char *progname)
     exit(0);
 }
 
-
 void dumpTaginfo(struct MP3GainTagInfo *info)
 {
     fprintf(stderr, "haveAlbumGain       %d  albumGain %f\n", info->haveAlbumGain, info->albumGain);
@@ -1409,7 +1378,6 @@ void dumpTaginfo(struct MP3GainTagInfo *info)
     fprintf(stderr, "haveTrackPeak       %d  trackPeak %f\n", info->haveTrackPeak, info->trackPeak);
     fprintf(stderr, "haveMinMaxGain      %d  min %d  max %d\n", info->haveMinMaxGain, info->minGain, info->maxGain);
 }
-
 
 int main(int argc, char **argv)
 {
@@ -2376,7 +2344,6 @@ int main(int argc, char **argv)
                                         }
                                     }
 
-
                                     if (!analysisError)
                                     {
                                         wrdpntr = curframe + bytesinframe;
@@ -2697,7 +2664,6 @@ int main(int argc, char **argv)
                 intGainChange = (int)(dblGainChange) + (dblGainChange < 0 ? -1 : 1);
             }
             intGainChange += mp3GainMod;
-
 
             if (databaseFormat)
             {
