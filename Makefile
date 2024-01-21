@@ -16,4 +16,4 @@ test: mp3gain
 	./test
 
 mp3gain: $(SOURCES)
-	gcc -Wall -O3 -DHAVE_MEMCPY -s -o mp3gain $(SOURCES) -lm
+	gcc -Wall -O3 -s -o mp3gain $(SOURCES) -lm

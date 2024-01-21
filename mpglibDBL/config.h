@@ -54,10 +54,6 @@
 
 /* #define HAVE_STRCHR */
 
-#ifndef HAVE_MEMCPY
-#define HAVE_MEMCPY
-#endif
-
 #if defined(_MSC_VER)
 	typedef __int8  int8_t;
 	typedef __int16 int16_t;
