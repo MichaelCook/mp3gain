@@ -4,9 +4,9 @@
 # Mike Oliphant (oliphant@gtk.org)
 #
 
-CC?= gcc
+CC = gcc
 
-CFLAGS+= -Wall -DHAVE_MEMCPY
+CFLAGS+= -Wall -O3 -DHAVE_MEMCPY
 
 # all known MS Windows OS define the ComSpec environment variable
 ifdef ComSpec
