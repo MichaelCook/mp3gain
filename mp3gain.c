@@ -2674,18 +2674,19 @@ int main(int argc, char **argv)
             }
             else
             {
-                /*MAA*/                 if (autoClip)
+                /*MAA*/
+                if (autoClip)
                 {
-                    /*MAA*/                         int intMaxNoClipGain = (int)(floor(-4.0 * log10(maxmaxsample) / log10(2.0)));
-                    /*MAA*/                         if (intGainChange > intMaxNoClipGain)
+                    int intMaxNoClipGain = (int)(floor(-4.0 * log10(maxmaxsample) / log10(2.0)));
+                    if (intGainChange > intMaxNoClipGain)
                     {
-                        /*MAA*/                                 fprintf(stdout,
+                        fprintf(stdout,
                                 "Applying auto-clipped mp3 gain change of %d to album\n(Original suggested gain was %d)\n", intMaxNoClipGain,
                                 intGainChange);
-                        /*MAA*/                                 intGainChange = intMaxNoClipGain;
-                        /*MAA*/
+                        intGainChange = intMaxNoClipGain;
+
                     }
-                    /*MAA*/
+
                 }
                 for (mainloop = fileStart; mainloop < argc; mainloop++)
                 {
@@ -2761,10 +2762,7 @@ int main(int argc, char **argv)
     }
 
     free(tagInfo);
-    /* now stored in tagInfo--- free(maxsample); */
     free(fileok);
-    /* now stored in tagInfo--- free(maxgain); */
-    /* now stored in tagInfo--- free(mingain); */
     for (mainloop = fileStart; mainloop < argc; mainloop++)
     {
         if (fileTags[mainloop].apeTag)
@@ -2786,14 +2784,9 @@ int main(int argc, char **argv)
     }
     free(fileTags);
 
-    fclose(stdout);
-    fclose(stderr);
-    if (gSuccess)
+    if (!gSuccess)
     {
-        return 0;
+        return EXIT_FAILURE;
     }
-    else
-    {
-        return 1;
-    }
+    return EXIT_SUCCESS;
 }
