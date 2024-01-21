@@ -143,6 +143,7 @@ int undoChanges = 0;
 int skipTag = 0;
 int deleteTag = 0;
 int forceRecalculateTag = 0;
+int forceUpdateTag = 0;
 int checkTagOnly = 0;
 static int useId3 = 0;
 
@@ -1671,6 +1672,10 @@ int main(int argc, char **argv) {
                         case 'S':
                             skipTag = !0;
                             break;
+                        case 'u':
+                        case 'U':
+                            forceUpdateTag = !0;
+                            break;
                         case 'r':
                         case 'R':
                             forceRecalculateTag = !0;
@@ -1757,7 +1762,7 @@ int main(int argc, char **argv) {
       fileTags[mainloop].apeTag = NULL;
 	  fileTags[mainloop].lyrics3tag = NULL;
 	  fileTags[mainloop].id31tag = NULL;
-	  tagInfo[mainloop].dirty = 0;
+	  tagInfo[mainloop].dirty = forceUpdateTag;
 	  tagInfo[mainloop].haveAlbumGain = 0;
 	  tagInfo[mainloop].haveAlbumPeak = 0;
 	  tagInfo[mainloop].haveTrackGain = 0;
