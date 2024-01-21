@@ -1666,8 +1666,6 @@ int main(int argc, char **argv)
             case 'v':
             case 'V':
                 showVersion(argv[0]);
-                fclose(stdout);
-                fclose(stderr);
                 exit(0);
 
             case 'w':
