@@ -49,21 +49,11 @@
 #include <math.h>
 #include "apetag.h"
 #include "id3tag.h"
-
-/* time stamp preservation when using temp file */
 #include <sys/stat.h>
 #include <utime.h>
 #include <errno.h>
-#define SWITCH_CHAR '-'
-
 #include <fcntl.h>
 #include <string.h>
-
-/* I tweaked the mpglib library just a bit to spit out the raw
- * decoded double values, instead of rounding them to 16-bit integers.
- * Hence the "mpglibDBL" directory
- */
-
 #include "mpglibDBL_interface.h"
 #include "gain_analysis.h"
 #include "mp3gain.h"
@@ -1292,7 +1282,7 @@ void wrapExplanation()
     fprintf(stderr, "3) If a frame's global gain field is already 0, it is not changed, even if\n");
     fprintf(stderr, "   the gain change is a positive number\n");
     fprintf(stderr, "\n");
-    fprintf(stderr, "To use the original \"wrapping\" behavior, use the \"%cw\" switch.\n", SWITCH_CHAR);
+    fprintf(stderr, "To use the original \"wrapping\" behavior, use -w");
     exit(0);
 
 }
@@ -1304,7 +1294,7 @@ void errUsage(char *progname)
     fprintf(stderr, "copyright(c) 2001-2009 by Glen Sawyer\n");
     fprintf(stderr, "uses mpglib, which can be found at http://www.mpg123.de\n");
     fprintf(stderr, "Usage: %s [options] <infile> [<infile 2> ...]\n", progname);
-    fprintf(stderr, "  --use %c? or %ch for a full list of options\n", SWITCH_CHAR, SWITCH_CHAR);
+    fprintf(stderr, "  --use -? or -h for a full list of options\n");
     exit(1);
 }
 
@@ -1316,46 +1306,43 @@ void fullUsage(char *progname)
     fprintf(stderr, "uses mpglib, which can be found at http://www.mpg123.de\n");
     fprintf(stderr, "Usage: %s [options] <infile> [<infile 2> ...]\n", progname);
     fprintf(stderr, "options:\n");
-    fprintf(stderr, "\t%cv - show version number\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cg <i>  - apply gain i without doing any analysis\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cl 0 <i> - apply gain i to channel 0 (left channel)\n", SWITCH_CHAR);
+    fprintf(stderr, "\t-v - show version number\n");
+    fprintf(stderr, "\t-g <i>  - apply gain i without doing any analysis\n");
+    fprintf(stderr, "\t-l 0 <i> - apply gain i to channel 0 (left channel)\n");
     fprintf(stderr, "\t          without doing any analysis (ONLY works for STEREO files,\n");
     fprintf(stderr, "\t          not Joint Stereo)\n");
-    fprintf(stderr, "\t%cl 1 <i> - apply gain i to channel 1 (right channel)\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%ce - skip Album analysis, even if multiple files listed\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cr - apply Track gain automatically (all files set to equal loudness)\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%ck - automatically lower Track/Album gain to not clip audio\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%ca - apply Album gain automatically (files are all from the same\n", SWITCH_CHAR);
+    fprintf(stderr, "\t-l 1 <i> - apply gain i to channel 1 (right channel)\n");
+    fprintf(stderr, "\t-e - skip Album analysis, even if multiple files listed\n");
+    fprintf(stderr, "\t-r - apply Track gain automatically (all files set to equal loudness)\n");
+    fprintf(stderr, "\t-k - automatically lower Track/Album gain to not clip audio\n");
+    fprintf(stderr, "\t-a - apply Album gain automatically (files are all from the same\n");
     fprintf(stderr, "\t              album: a single gain change is applied to all files, so\n");
     fprintf(stderr, "\t              their loudness relative to each other remains unchanged,\n");
     fprintf(stderr, "\t              but the average album loudness is normalized)\n");
-    fprintf(stderr, "\t%cm <i> - modify suggested MP3 gain by integer i\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cd <n> - modify suggested dB gain by floating-point n\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cc - ignore clipping warning when applying gain\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%co - output is a database-friendly tab-delimited list\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%ct - writes modified data to temp file, then deletes original\n", SWITCH_CHAR);
+    fprintf(stderr, "\t-m <i> - modify suggested MP3 gain by integer i\n");
+    fprintf(stderr, "\t-d <n> - modify suggested dB gain by floating-point n\n");
+    fprintf(stderr, "\t-c - ignore clipping warning when applying gain\n");
+    fprintf(stderr, "\t-o - output is a database-friendly tab-delimited list\n");
+    fprintf(stderr, "\t-t - writes modified data to temp file, then deletes original\n");
     fprintf(stderr, "\t     instead of modifying bytes in original file\n");
-    fprintf(stderr, "\t%cq - Quiet mode: no status messages\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cp - Preserve original file timestamp\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cx - Only find max. amplitude of file\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cf - Assume input file is an MPEG 2 Layer III file\n", SWITCH_CHAR);
+    fprintf(stderr, "\t-q - Quiet mode: no status messages\n");
+    fprintf(stderr, "\t-p - Preserve original file timestamp\n");
+    fprintf(stderr, "\t-x - Only find max. amplitude of file\n");
+    fprintf(stderr, "\t-f - Assume input file is an MPEG 2 Layer III file\n");
     fprintf(stderr, "\t     (i.e. don't check for mis-named Layer I or Layer II files)\n");
-    fprintf(stderr, "\t%c? or %ch - show this message\n", SWITCH_CHAR, SWITCH_CHAR);
-    fprintf(stderr, "\t%cs c - only check stored tag info (no other processing)\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cs d - delete stored tag info (no other processing)\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cs s - skip (ignore) stored tag info (do not read or write tags)\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cs r - force re-calculation (do not read tag info)\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cs i - use ID3v2 tag for MP3 gain info\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cs a - use APE tag for MP3 gain info (default)\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cu - undo changes made (based on stored tag info)\n", SWITCH_CHAR);
-    fprintf(stderr, "\t%cw - \"wrap\" gain change if gain+change > 255 or gain+change < 0\n", SWITCH_CHAR);
-    fprintf(stderr, "\t      (use \"%c? wrap\" switch for a complete explanation)\n", SWITCH_CHAR);
-    fprintf(stderr, "If you specify %cr and %ca, only the second one will work\n", SWITCH_CHAR, SWITCH_CHAR);
-    fprintf(stderr,
-            "If you do not specify %cc, the program will stop and ask before\n     applying gain change to a file that might clip\n",
-            SWITCH_CHAR);
-    fclose(stdout);
-    fclose(stderr);
+    fprintf(stderr, "\t-? or -h - show this message\n");
+    fprintf(stderr, "\t-s c - only check stored tag info (no other processing)\n");
+    fprintf(stderr, "\t-s d - delete stored tag info (no other processing)\n");
+    fprintf(stderr, "\t-s s - skip (ignore) stored tag info (do not read or write tags)\n");
+    fprintf(stderr, "\t-s r - force re-calculation (do not read tag info)\n");
+    fprintf(stderr, "\t-s i - use ID3v2 tag for MP3 gain info\n");
+    fprintf(stderr, "\t-s a - use APE tag for MP3 gain info (default)\n");
+    fprintf(stderr, "\t-u - undo changes made (based on stored tag info)\n");
+    fprintf(stderr, "\t-w - \"wrap\" gain change if gain+change > 255 or gain+change < 0\n");
+    fprintf(stderr, "\t      (use \"-? wrap\" switch for a complete explanation)\n");
+    fprintf(stderr, "If you specify -r and -a, only the second one will work\n");
+    fprintf(stderr, "If you do not specify -c, the program will stop and ask before\n"
+            "     applying gain change to a file that might clip\n");
     exit(0);
 }
 
