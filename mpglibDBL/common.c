@@ -27,14 +27,6 @@
 #include <dmalloc.h>
 #endif
 
-#ifdef __BEOS__
-#include <bsd_mem.h>
-#endif /* __BEOS__ */
-
-// In C++ the array first must be prototyped, why ?
-
-extern const int tabsel_123 [2] [3] [16];
-
 const int tabsel_123 [2] [3] [16] =
 {
     {   {0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448,},

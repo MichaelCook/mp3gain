@@ -35,36 +35,12 @@
 
 #include <string.h>
 
-#ifdef asWIN32DLL
-
-
-#include <windows.h>
-#include <mmsystem.h>
-
-MMRESULT mp3gainerr;
-char * mp3gainerrstr;
-BOOL blnCancel;
-
-HANDLE apphandle;         //holds calling app's window handle
-int apppercentdonemsg; //holds calling apps message number for percent done
-int apperrmsg;         //holds calling apps message number for errors
-
-LRESULT sendpercentdone( int pdone, long filesize );
-
-
-#else /*asWIN32DLL*/
-
-
 #include <stdio.h>
 #define MMSYSERR_NOERROR  0
 #define MMSYSERR_ERROR    01
 #define WAVERR_BADFORMAT  32
 
 typedef unsigned int MMRESULT;
-
-
-#endif /*asWIN32DLL*/
-
 
 #define MP3GAIN_NOERROR                                  MMSYSERR_NOERROR
 #define MP3GAIN_UNSPECIFED_ERROR         MMSYSERR_ERROR
@@ -74,4 +50,4 @@ typedef unsigned int MMRESULT;
 void DoUnkError( char * localerrstr);
 void DoError( char * localerrstr, MMRESULT localerrnum );
 
-#endif
+#endif // RG_ERROR_H

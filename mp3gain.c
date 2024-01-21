@@ -54,31 +54,11 @@
 #include "aacgain.h"
 #endif
 
-#ifndef WIN32
-#undef asWIN32DLL
-#ifdef __FreeBSD__
-#include <sys/types.h>
-#endif /* __FreeBSD__ */
-#include <utime.h>
-#endif /* WIN32 */
-
-#ifdef WIN32
-#include <io.h>
-#define SWITCH_CHAR '/'
-#else
 /* time stamp preservation when using temp file */
-# include <sys/stat.h>
-# include <utime.h>
-# include <errno.h>
-# if defined(__BEOS__)
-#  include <fs_attr.h>
-# endif
+#include <sys/stat.h>
+#include <utime.h>
+#include <errno.h>
 #define SWITCH_CHAR '-'
-#endif /* WIN32 */
-
-#ifdef __BEOS__
-#include <bsd_mem.h>
-#endif /* __BEOS__ */
 
 #include <fcntl.h>
 #include <string.h>
@@ -88,14 +68,12 @@
  * Hence the "mpglibDBL" directory
  */
 
-#ifndef asWIN32DLL
 #include "mpglibDBL/interface.h"
 
 #include "gain_analysis.h"
-#endif
 
-#include "mp3gain.h"  /*jzitt*/
-#include "rg_error.h" /*jzitt*/
+#include "mp3gain.h"
+#include "rg_error.h"
 
 #define HEADERSIZE 4
 
@@ -611,54 +589,16 @@ int moveFile(char *currentfilename, char *newfilename)
 void fileTime(char *filename, timeAction action)
 {
     static        int  timeSaved = 0;
-#ifdef WIN32
-    HANDLE outfh;
-    static FILETIME create_time, access_time, write_time;
-#else
     static struct stat savedAttributes;
-#endif
 
     if (action == storeTime)
     {
-#ifdef WIN32
-        outfh = CreateFile((LPCTSTR)filename,
-                           GENERIC_READ,
-                           FILE_SHARE_READ,
-                           NULL,
-                           OPEN_EXISTING,
-                           FILE_ATTRIBUTE_NORMAL,
-                           NULL);
-        if (outfh != INVALID_HANDLE_VALUE)
-        {
-            if (GetFileTime(outfh, &create_time, &access_time, &write_time))
-            {
-                timeSaved = !0;
-            }
-
-            CloseHandle(outfh);
-        }
-#else
         timeSaved = (stat(filename, &savedAttributes) == 0);
-#endif
     }
     else
     {
         if (timeSaved)
         {
-#ifdef WIN32
-            outfh = CreateFile((LPCTSTR)filename,
-                               GENERIC_WRITE,
-                               0,
-                               NULL,
-                               OPEN_EXISTING,
-                               FILE_ATTRIBUTE_NORMAL,
-                               NULL);
-            if (outfh != INVALID_HANDLE_VALUE)
-            {
-                SetFileTime(outfh, &create_time, &access_time, &write_time);
-                CloseHandle(outfh);
-            }
-#else
             struct utimbuf setTime;
 
             setTime.actime = savedAttributes.st_atime;
@@ -666,7 +606,6 @@ void fileTime(char *filename, timeAction action)
             timeSaved = 0;
 
             utime(filename, &setTime);
-#endif
         }
     }
 }
@@ -675,20 +614,9 @@ unsigned long reportPercentWritten(unsigned long percent, unsigned long bytes)
 {
     int ok = 1;
 
-#ifndef asWIN32DLL
     fprintf(stderr, "                                                \r %2lu%% of %lu bytes written\r"
             , percent, bytes);
     fflush(stderr);
-#else
-    /* report % back to calling app */
-    ok = sendpercentdone((int)percent, bytes);
-    //non-zero return means error bail out
-    if (ok != 0)
-    {
-        return 0;
-    }
-    ok = 1; /* allow us to continue processing file */
-#endif
 
     return ok;
 }
@@ -799,9 +727,7 @@ void scanFrameGain()
     }
 }
 
-#ifndef asWIN32DLL
 static
-#endif
 int changeGain(char *filename AACGAIN_ARG(AACGainHandle aacH), int leftgainchange, int rightgainchange)
 {
     unsigned long ok;
@@ -990,13 +916,8 @@ int changeGain(char *filename AACGAIN_ARG(AACGainHandle aacH), int leftgainchang
                 frame = 1;
             } /* if (!ok) else */
 
-#ifdef asWIN32DLL
-            while (ok && (!blnCancel))
-            {
-#else
             while (ok)
             {
-#endif
                 bitridx = (curframe[2] >> 4) & 0x0F;
                 if (singlechannel)
                 {
@@ -1176,39 +1097,9 @@ int changeGain(char *filename AACGAIN_ARG(AACGainHandle aacH), int leftgainchang
             }
         }
 
-#ifdef asWIN32DLL
-        if (blnCancel)   //need to clean up as best as possible
-        {
-            fclose(inf);
-            if (UsingTemp)
-            {
-                fclose(outf);
-                outf = NULL;
-                deleteFile(outfilename);
-                free(outfilename);
-                passError(MP3GAIN_CANCELLED, 2, "Cancelled processing of ", filename);
-            }
-            else
-            {
-                passError(MP3GAIN_CANCELLED, 3, "Cancelled processing.\n", filename, " is probably corrupted now.");
-            }
-            if (saveTime)
-            {
-                fileTime(filename, setStoredTime);
-            }
-            NowWriting = 0;
-            return;
-        }
-#endif
-
         if (!QuietMode)
         {
-#ifndef asWIN32DLL
             fprintf(stderr, "                                                   \r");
-#else
-            /* report DONE (100%) message back to calling app */
-            sendpercentdone(100, gFilesize);
-#endif
         }
         fflush(stderr);
         fflush(stdout);
@@ -1216,65 +1107,10 @@ int changeGain(char *filename AACGAIN_ARG(AACGainHandle aacH), int leftgainchang
         {
             while (fillBuffer(0));
             fflush(outf);
-#ifdef WIN32
-            outlength = _filelength(_fileno(outf));
-            inlength = _filelength(_fileno(inf));
-#else
             fseek(outf, 0, SEEK_END);
             fseek(inf, 0, SEEK_END);
             outlength = ftell(outf);
             inlength = ftell(inf);
-#endif
-#ifdef __BEOS__
-            /* some stuff to preserve attributes */
-            do
-            {
-                DIR *attrs = NULL;
-                struct dirent *de;
-                struct attr_info ai;
-                int infd, outfd;
-                void *attrdata;
-
-                infd = fileno(inf);
-                if (infd < 0)
-                {
-                    goto attrerror;
-                }
-                outfd = fileno(outf);
-                if (outfd < 0)
-                {
-                    goto attrerror;
-                }
-                attrs = fs_fopen_attr_dir(infd);
-                while ((de = fs_read_attr_dir(attrs)) != NULL)
-                {
-                    if (fs_stat_attr(infd, de->d_name, &ai) < B_OK)
-                    {
-                        goto attrerror;
-                    }
-                    if ((attrdata = malloc(ai.size)) == NULL)
-                    {
-                        goto attrerror;
-                    }
-                    fs_read_attr(infd, de->d_name, ai.type, 0, attrdata, ai.size);
-                    fs_write_attr(outfd, de->d_name, ai.type, 0, attrdata, ai.size);
-                    free(attrdata);
-                }
-                fs_close_attr_dir(attrs);
-                break;
-attrerror:
-                if (attrdata)
-                {
-                    free(attrdata);
-                }
-                if (attrs)
-                {
-                    fs_close_attr_dir(attrs);
-                }
-                fprintf(stderr, "can't preserve attributes for '%s': %s\n", filename, strerror(errno));
-            }
-            while (0);
-#endif
             fclose(outf);
             fclose(inf);
             inf = NULL;
@@ -1335,8 +1171,6 @@ attrerror:
 }
 
 
-#ifndef asWIN32DLL
-
 #ifdef AACGAIN
 void WriteAacGainTags(AACGainHandle aacH, struct MP3GainTagInfo *info)
 {
@@ -1369,7 +1203,7 @@ void WriteAacGainTags(AACGainHandle aacH, struct MP3GainTagInfo *info)
         aac_set_tag_int_2(aacH, replaygain_undo, info->undoLeft, info->undoRight);
     }
 }
-#endif
+#endif // AACGAIN
 
 
 static
@@ -1382,7 +1216,7 @@ void WriteMP3GainTag(char *filename AACGAIN_ARG(AACGainHandle aacH), struct MP3G
         WriteAacGainTags(aacH, info);
     }
     else
-#endif
+#endif // AACGAIN
         if (useId3)
         {
             /* Write ID3 tag; remove stale APE tag if it exists. */
@@ -1708,7 +1542,7 @@ void ReadAacTags(AACGainHandle gh, struct MP3GainTagInfo *info)
         info->haveUndo = !0;
     }
 }
-#endif
+#endif // AACGAIN
 
 void dumpTaginfo(struct MP3GainTagInfo *info)
 {
@@ -1722,13 +1556,8 @@ void dumpTaginfo(struct MP3GainTagInfo *info)
 }
 
 
-#ifdef WIN32
-int __cdecl main(int argc, char **argv)   /*make sure this one is standard C declaration*/
-{
-#else
 int main(int argc, char **argv)
 {
-#endif
     MPSTR mp;
     unsigned long ok;
     int mode;
@@ -1799,15 +1628,9 @@ int main(int argc, char **argv)
 
     for (i = 1; i < argc; i++)
     {
-#ifdef WIN32
-        if ((argv[i][0] == '/') || ((argv[i][0] == '-') &&
-                                    (strlen(argv[i]) == 2))) /* don't need to force single-character command parameters */
-        {
-#else
         if (((argv[i][0] == '/') || (argv[i][0] == '-')) &&
             (strlen(argv[i]) == 2))
         {
-#endif
             fileStart++;
             switch (argv[i][1])
             {
@@ -2787,31 +2610,7 @@ int main(int argc, char **argv)
                                         procSamp = 0;
                                         if ((tagInfo[mainloop].recalc & AMP_RECALC) || (tagInfo[mainloop].recalc & FULL_RECALC))
                                         {
-#ifdef WIN32
-#ifndef __GNUC__
-                                            __try
-                                            {
-                                                /* this is the Windows try/catch equivalent for C.
-                                                                   If you want this in some other system, you should be
-                                                                   able to use the C++ try/catch mechanism. I've tried to keep
-                                                                   all of the code plain C, though. This error only
-                                                                   occurs with _very_ corrupt mp3s, so I don't know if you'll
-                                                                   think it's worth the trouble */
-#endif
-#endif
-                                                decodeSuccess = decodeMP3(&mp, curframe, bytesinframe, &nprocsamp);
-#ifdef WIN32
-#ifndef __GNUC__
-                                            }
-                                            __except (1)
-                                            {
-                                                fprintf(stderr, "Error analyzing %s. This mp3 has some very corrupt data.\n", curfilename);
-                                                fclose(stdout);
-                                                fclose(stderr);
-                                                exit(1);
-                                            }
-#endif
-#endif
+                                            decodeSuccess = decodeMP3(&mp, curframe, bytesinframe, &nprocsamp);
                                         }
                                         else
                                         {
@@ -3318,11 +3117,3 @@ int main(int argc, char **argv)
         return 1;
     }
 }
-
-#endif /* asWIN32DLL */
-
-/*
-Local Variables:
-tab-width: 4
-End:
-*/

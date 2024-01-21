@@ -6,15 +6,7 @@
 #include <memory.h>
 #include <string.h>
 #include <fcntl.h>
-#ifdef WIN32
-#include <io.h>
-#else
 #include <unistd.h>
-#endif
-
-#ifndef WIN32
-#define _stricmp strcasecmp
-#endif /* WIN32 */
 
 int ReadMP3ID3v1Tag(FILE *fi, unsigned char **tagbuff, long *tag_offset)
 {
@@ -304,27 +296,27 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
         is_info = 0;
 
         {
-            if (!_stricmp(name, "REPLAYGAIN_TRACK_GAIN"))
+            if (!strcasecmp(name, "REPLAYGAIN_TRACK_GAIN"))
             {
                 info->haveTrackGain = !0;
                 info->trackGain = atof(value);
             }
-            else if (!_stricmp(name, "REPLAYGAIN_TRACK_PEAK"))
+            else if (!strcasecmp(name, "REPLAYGAIN_TRACK_PEAK"))
             {
                 info->haveTrackPeak = !0;
                 info->trackPeak = atof(value);
             }
-            else if (!_stricmp(name, "REPLAYGAIN_ALBUM_GAIN"))
+            else if (!strcasecmp(name, "REPLAYGAIN_ALBUM_GAIN"))
             {
                 info->haveAlbumGain = !0;
                 info->albumGain = atof(value);
             }
-            else if (!_stricmp(name, "REPLAYGAIN_ALBUM_PEAK"))
+            else if (!strcasecmp(name, "REPLAYGAIN_ALBUM_PEAK"))
             {
                 info->haveAlbumPeak = !0;
                 info->albumPeak = atof(value);
             }
-            else if (!_stricmp(name, "MP3GAIN_UNDO"))
+            else if (!strcasecmp(name, "MP3GAIN_UNDO"))
             {
                 /* value should be something like "+003,+003,W" */
                 info->haveUndo = !0;
@@ -346,7 +338,7 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
                     info->undoWrap = 0;
                 }
             }
-            else if (!_stricmp(name, "MP3GAIN_MINMAX"))
+            else if (!strcasecmp(name, "MP3GAIN_MINMAX"))
             {
                 /* value should be something like "001,153" */
                 info->haveMinMaxGain = !0;
@@ -359,7 +351,7 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
                 tmpString[3] = '\0';
                 info->maxGain = atoi(tmpString);
             }
-            else if (!_stricmp(name, "MP3GAIN_ALBUM_MINMAX"))
+            else if (!strcasecmp(name, "MP3GAIN_ALBUM_MINMAX"))
             {
                 /* value should be something like "001,153" */
                 info->haveAlbumMinMaxGain = !0;
@@ -425,32 +417,6 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
 
 int truncate_file(char *filename, long truncLength)
 {
-
-#ifdef WIN32
-
-    int fh, result;
-
-    /* Open a file */
-    if ((fh = _open(filename, _O_RDWR))  != -1)
-    {
-        if ((result = _chsize(fh, truncLength)) == 0)
-        {
-            _close(fh);
-            return 1;
-        }
-        else
-        {
-            _close(fh);
-            return 0;
-        }
-    }
-    else
-    {
-        return 0;
-    }
-
-#else
-
     int fd;
 
     fd = open(filename, O_RDWR);
@@ -468,8 +434,6 @@ int truncate_file(char *filename, long truncLength)
     close(fd);
 
     return 1;
-
-#endif
 }
 
 

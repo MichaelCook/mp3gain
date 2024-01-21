@@ -105,55 +105,8 @@ char *strchr (), *strrchr ();
  * lot of conversions.
  */
 
-#if ( defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__) )
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-#else
-# ifndef FLOAT
-typedef float   FLOAT;
-#  ifdef FLT_MAX
-#   define FLOAT_MAX FLT_MAX
-#  else
-#   define FLOAT_MAX 1e99 /* approx */
-#  endif
-# endif
-#endif
-
-#ifndef FLOAT8  /* NOTE: RH: 7/00:  if FLOAT8=float, it breaks resampling and VBR code */
-typedef double  FLOAT8;
-# ifdef DBL_MAX
-#  define FLOAT8_MAX DBL_MAX
-# else
-#  define FLOAT8_MAX 1e99 /* approx */
-# endif
-#else
-# ifdef FLT_MAX
-#  define FLOAT8_MAX FLT_MAX
-# else
-#  define FLOAT8_MAX 1e99 /* approx */
-# endif
-#endif
-
-/* Various integer types */
-
-#if   defined _WIN32 && !defined __CYGWIN__
-typedef unsigned char   u_char;
-#elif defined __DECALPHA__
-// do nothing
-#elif defined OS_AMIGAOS
-// do nothing
-#elif defined __DJGPP__
-typedef unsigned char   u_char;
-#elif !defined __GNUC__  ||  defined __STRICT_ANSI__
-typedef unsigned char   u_char;
-#else
-// do nothing
-#endif
-
 /* sample_t must be floating point, at least 32 bits */
-typedef FLOAT     sample_t;
+typedef float     sample_t;
 typedef sample_t  stereo_t [2];
 
 #endif
-
-/* end of machine.h */
