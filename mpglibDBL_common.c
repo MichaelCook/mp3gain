@@ -1,5 +1,3 @@
-/* $Id: common.c,v 1.4 2005/01/18 15:56:45 snelg Exp $ */
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -8,24 +6,11 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <string.h>
-
-#ifdef HAVE_FCNTL_H
 #include <fcntl.h>
-#endif
-
-#ifdef macintosh
-#include   <types.h>
-#include   <stat.h>
-#else
 #include  <sys/types.h>
 #include  <sys/stat.h>
-#endif
 
 #include "mpglibDBL_common.h"
-
-#ifdef WITH_DMALLOC
-#include <dmalloc.h>
-#endif
 
 const int tabsel_123 [2] [3] [16] =
 {

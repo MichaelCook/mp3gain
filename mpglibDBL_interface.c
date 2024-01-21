@@ -1,5 +1,3 @@
-/* $Id: interface.c,v 1.5 2005/01/18 15:56:45 snelg Exp $ */
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -13,11 +11,6 @@
 #include "mpglibDBL_tabinit.h"
 #include "mpglibDBL_layer3.h"
 #include "mpglibDBL_VbrTag.h"
-
-#ifdef WITH_DMALLOC
-#include <dmalloc.h>
-#endif
-
 
 BOOL InitMP3(PMPSTR mp)
 {

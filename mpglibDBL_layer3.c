@@ -5,8 +5,6 @@
  * All rights reserved. See also 'README'
  */
 
-/* $Id: layer3.c,v 1.3 2003/08/12 00:02:55 snelg Exp $ */
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -17,12 +15,7 @@
 #include "mpglibDBL_encoder.h"
 #include "mpglibDBL_decode_i386.h"
 
-#ifdef WITH_DMALLOC
-#include <dmalloc.h>
-#endif
-
 #define MPEG1
-
 
 unsigned char *maxGain;
 unsigned char *minGain;

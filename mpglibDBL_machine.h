@@ -23,43 +23,15 @@
 #define LAME_MACHINE_H
 
 #include <stdio.h>
-
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-# include <string.h>
-#else
-/*# ifndef HAVE_STRCHR
-#  define strchr index
-#  define strrchr rindex
-# endif
-char *strchr (), *strrchr ();
-*/
-#endif
-
-#if  defined(__riscos__)  &&  defined(FPA10)
-# include "ymath.h"
-#else
-# include <math.h>
-#endif
-
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 #include <ctype.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
-#endif
-#ifdef HAVE_FCNTL_H
-# include <fcntl.h>
-#endif
-
-#if defined(macintosh)
-# include <types.h>
-# include <stat.h>
-#else
-# include <sys/types.h>
-# include <sys/stat.h>
-#endif
-
-/* 
+/*
  * 3 different types of pow() functions:
  *   - table lookup
  *   - pow()

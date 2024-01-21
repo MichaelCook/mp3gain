@@ -1,5 +1,3 @@
-/* $Id: tabinit.c,v 1.2 2003/08/12 00:02:55 snelg Exp $ */
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -7,10 +5,6 @@
 #include <stdlib.h>
 #include "mpglibDBL_tabinit.h"
 #include "mpglibDBL_mpg123.h"
-
-#ifdef WITH_DMALLOC
-#include <dmalloc.h>
-#endif
 
 real decwin[512 + 32];
 static real cos64[16], cos32[8], cos16[4], cos8[2], cos4[1];

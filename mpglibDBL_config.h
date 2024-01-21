@@ -25,15 +25,6 @@
 /* The number of bytes in a unsigned short.  */
 #define SIZEOF_UNSIGNED_SHORT 2
 
-/* Define if you have the ANSI C header files.  */
-#define STDC_HEADERS
-
-/* Define if you have the <errno.h> header file.  */
-#define HAVE_ERRNO_H
-
-/* Define if you have the <fcntl.h> header file.  */
-#define HAVE_FCNTL_H
-
 /* Define if you have the <limits.h> header file.  */
 #define HAVE_LIMITS_H
 

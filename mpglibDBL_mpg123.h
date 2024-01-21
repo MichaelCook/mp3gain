@@ -1,27 +1,10 @@
 #ifndef MPG123_H_INCLUDED
 #define MPG123_H_INCLUDED
 
-#include        <stdio.h>
-
-#ifdef STDC_HEADERS
-# include <string.h>
-#else
-/*# ifndef HAVE_STRCHR
-#  define strchr index
-#  define strrchr rindex
-# endif
-char *strchr (), *strrchr ();
-*/
-#endif
-
-#include        <signal.h>
-
-
-#if defined(__riscos__) && defined(FPA10)
-#include        "ymath.h"
-#else
-#include        <math.h>
-#endif
+#include <stdio.h>
+#include <string.h>
+#include <signal.h>
+#include <math.h>
 
 #ifndef M_PI
 #define M_PI       3.14159265358979323846

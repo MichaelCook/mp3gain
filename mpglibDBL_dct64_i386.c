@@ -6,18 +6,12 @@
  * even for Intel processors.
  */
 
-/* $Id: dct64_i386.c,v 1.2 2003/08/12 00:02:55 snelg Exp $ */
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
 #include "mpglibDBL_dct64_i386.h"
 #include "mpglibDBL_tabinit.h"
-
-#ifdef WITH_DMALLOC
-#include <dmalloc.h>
-#endif
 
 static void dct64_1(real *out0, real *out1, real *b1, real *b2, real *samples)
 {

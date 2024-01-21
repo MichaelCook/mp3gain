@@ -10,38 +10,17 @@
  * even for Intel processors.
  */
 
-/* $Id: decode_i386.c,v 1.3 2003/08/12 00:02:55 snelg Exp $ */
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-# include <string.h>
-#else
-/*# ifndef HAVE_STRCHR
-#  define strchr index
-#  define strrchr rindex
-# endif
-char *strchr (), *strrchr ();
-*/
-#endif
-
-#if defined(__riscos__) && defined(FPA10)
-#include        "ymath.h"
-#else
-#include        <math.h>
-#endif
-
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 #include "mpglibDBL_decode_i386.h"
 #include "mpglibDBL_dct64_i386.h"
 #include "mpglibDBL_tabinit.h"
 #include "mpglibDBL_interface.h"
-
-#ifdef WITH_DMALLOC
-#include <dmalloc.h>
-#endif
 
 Float_t *lSamp;
 Float_t *rSamp;
