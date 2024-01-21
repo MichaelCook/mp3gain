@@ -291,7 +291,7 @@ static struct ID3v2FrameStruct *id3_make_frame(const char *frameid, const char *
 
     frame = malloc(sizeof(struct ID3v2FrameStruct));
     frame->next = NULL;
-    strncpy(frame->frameid, frameid, 4);
+    memcpy(frame->frameid, frameid, sizeof(frame->frameid));
     frame->flags = 0;
     frame->len = k;
     frame->hskip = 0;
