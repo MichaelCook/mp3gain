@@ -309,27 +309,6 @@ int GetVbrTag(VBRTAGDATA *pTagData,  unsigned char *buf)
     pTagData->headersize =
         ((h_id + 1) * 72000 * h_bitrate) / pTagData->samprate;
 
-#ifdef DEBUG_VBRTAG
-    DEBUGF("\n\n********************* VBR TAG INFO *****************\n");
-    DEBUGF("tag         :%s\n", VBRTag);
-    DEBUGF("head_flags  :%d\n", head_flags);
-    DEBUGF("bytes       :%d\n", pTagData->bytes);
-    DEBUGF("frames      :%d\n", pTagData->frames);
-    DEBUGF("VBR Scale   :%d\n", pTagData->vbr_scale);
-    DEBUGF("toc:\n");
-    if (pTagData->toc != NULL)
-    {
-        for (i = 0; i < NUMTOCENTRIES; i++)
-        {
-            if ((i % 10) == 0)
-            {
-                DEBUGF("\n");
-            }
-            DEBUGF(" %3d", (int)(pTagData->toc[i]));
-        }
-    }
-    DEBUGF("\n***************** END OF VBR TAG INFO ***************\n");
-#endif
     return 1;       /* success */
 }
 
