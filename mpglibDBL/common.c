@@ -125,8 +125,8 @@ int head_check(unsigned long head,int check_layer)
       if (nLayer != check_layer) return FALSE;
   }
 
-  if( ((head>>12)&0xf) == 0xf) {
-    /* bits 16,17,18,19 = 1111  invalid bitrate */
+  if( ((head>>12)&0xf) == 0xf || ((head>>12)&0xf) == 0) {
+    /* bits 16,17,18,19 = 1111 or 0000 invalid bitrate */
     return FALSE;
   }
   if( ((head>>10)&0x3) == 0x3 ) {
