@@ -21,8 +21,8 @@
 
 #ifndef LAME_VRBTAG_H
 #define LAME_VRBTAG_H
-#include "lame.h"
-#include "config.h"
+#include "mpglibDBL_lame.h"
+#include "mpglibDBL_config.h"
 
 /* -----------------------------------------------------------
  * A Vbr header may be present in the ancillary

@@ -12,8 +12,8 @@
 #include <config.h>
 #endif
 
-#include "dct64_i386.h"
-#include "tabinit.h"
+#include "mpglibDBL_dct64_i386.h"
+#include "mpglibDBL_tabinit.h"
 
 #ifdef WITH_DMALLOC
 #include <dmalloc.h>

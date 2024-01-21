@@ -1,4 +1,4 @@
-#include "encoder.h"
+#include "mpglibDBL_encoder.h"
 
 struct buf {
         unsigned char *pnt;

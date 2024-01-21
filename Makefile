@@ -4,12 +4,12 @@ SOURCES = \
  id3tag.c \
  gain_analysis.c \
  rg_error.c \
- mpglibDBL/common.c \
- mpglibDBL/dct64_i386.c \
- mpglibDBL/decode_i386.c \
- mpglibDBL/interface.c \
- mpglibDBL/layer3.c \
- mpglibDBL/tabinit.c \
+ mpglibDBL_common.c \
+ mpglibDBL_dct64_i386.c \
+ mpglibDBL_decode_i386.c \
+ mpglibDBL_interface.c \
+ mpglibDBL_layer3.c \
+ mpglibDBL_tabinit.c \
 
 .PHONY: test
 test: mp3gain

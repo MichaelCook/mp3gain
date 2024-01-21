@@ -34,11 +34,10 @@ char *strchr (), *strrchr ();
 #include        <math.h>
 #endif
 
-#include "decode_i386.h"
-#include "dct64_i386.h"
-#include "tabinit.h"
-
-#include "interface.h"
+#include "mpglibDBL_decode_i386.h"
+#include "mpglibDBL_dct64_i386.h"
+#include "mpglibDBL_tabinit.h"
+#include "mpglibDBL_interface.h"
 
 #ifdef WITH_DMALLOC
 #include <dmalloc.h>

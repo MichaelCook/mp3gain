@@ -64,7 +64,7 @@
  * Hence the "mpglibDBL" directory
  */
 
-#include "mpglibDBL/interface.h"
+#include "mpglibDBL_interface.h"
 
 #include "gain_analysis.h"
 

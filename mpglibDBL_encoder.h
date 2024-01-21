@@ -123,8 +123,8 @@
 #define MPG_MD_MS_I   3
 
 
-#include "machine.h"
-#include "lame.h"
+#include "mpglibDBL_machine.h"
+#include "mpglibDBL_lame.h"
 
 int  lame_encode_mp3_frame (
         lame_global_flags*  const gfp,

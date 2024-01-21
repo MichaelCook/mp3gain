@@ -16,15 +16,35 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef MPGLIB_TABINIT_H_INCLUDED
-#define MPGLIB_TABINIT_H_INCLUDED
+#ifndef INTERFACE_H_INCLUDED
+#define INTERFACE_H_INCLUDED
 
-#include "mpg123.h"
+#include "mpglibDBL_common.h"
+#include "gain_analysis.h"
 
-extern real decwin[512+32];
-extern real *pnts[5];
-
-void make_decode_tables(long scale);
-
+#if defined(__cplusplus)
+extern "C" {
 #endif
 
+extern Float_t *lSamp;
+extern Float_t *rSamp;
+extern Float_t *maxSamp;
+extern unsigned char *maxGain;
+extern unsigned char *minGain;
+
+extern unsigned char maxAmpOnly;
+
+extern int procSamp;
+
+BOOL InitMP3(PMPSTR mp);
+int      decodeMP3(PMPSTR mp,unsigned char *inmemory,int inmemsize,int *done);
+void ExitMP3(PMPSTR mp);
+
+/* added remove_buf to support mpglib seeking */
+void remove_buf(PMPSTR mp);
+
+#if defined(__cplusplus)
+}
+#endif
+
+#endif

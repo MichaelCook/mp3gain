@@ -8,11 +8,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "common.h"
-#include "interface.h"
-#include "tabinit.h"
-#include "layer3.h"
-#include "VbrTag.h"
+#include "mpglibDBL_common.h"
+#include "mpglibDBL_interface.h"
+#include "mpglibDBL_tabinit.h"
+#include "mpglibDBL_layer3.h"
+#include "mpglibDBL_VbrTag.h"
 
 #ifdef WITH_DMALLOC
 #include <dmalloc.h>

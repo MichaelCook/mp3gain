@@ -20,8 +20,8 @@
 #ifndef COMMON_H_INCLUDED
 #define COMMON_H_INCLUDED
 
-#include "mpg123.h"
-#include "mpglib.h"
+#include "mpglibDBL_mpg123.h"
+#include "mpglibDBL_mpglib.h"
 
 extern const int  tabsel_123[2][3][16];
 extern const long freqs[9];

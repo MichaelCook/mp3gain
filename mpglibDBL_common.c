@@ -21,7 +21,7 @@
 #include  <sys/stat.h>
 #endif
 
-#include "common.h"
+#include "mpglibDBL_common.h"
 
 #ifdef WITH_DMALLOC
 #include <dmalloc.h>

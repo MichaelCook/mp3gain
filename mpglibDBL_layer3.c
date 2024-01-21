@@ -12,10 +12,10 @@
 #endif
 
 #include <stdlib.h>
-#include "common.h"
-#include "huffman.h"
-#include "encoder.h"
-#include "decode_i386.h"
+#include "mpglibDBL_common.h"
+#include "mpglibDBL_huffman.h"
+#include "mpglibDBL_encoder.h"
+#include "mpglibDBL_decode_i386.h"
 
 #ifdef WITH_DMALLOC
 #include <dmalloc.h>

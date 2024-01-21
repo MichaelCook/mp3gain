@@ -16,12 +16,12 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef MPGLIB_DCT64_I386_H_INCLUDED
-#define MPGLIB_DCT64_I386_H_INCLUDED
+#ifndef DECODE_I386_H_INCLUDED
+#define DECODE_I386_H_INCLUDED
 
-#include "common.h"
+#include "mpglibDBL_common.h"
 
-void dct64( real *a,real *b,real *c);
-
+int synth_1to1_mono(PMPSTR mp, real *bandPtr,int *pnt);
+int synth_1to1(PMPSTR mp, real *bandPtr,int channel,int *pnt);
 
 #endif

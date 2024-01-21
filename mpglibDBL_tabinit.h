@@ -16,12 +16,15 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef DECODE_I386_H_INCLUDED
-#define DECODE_I386_H_INCLUDED
+#ifndef MPGLIB_TABINIT_H_INCLUDED
+#define MPGLIB_TABINIT_H_INCLUDED
 
-#include "common.h"
+#include "mpglibDBL_mpg123.h"
 
-int synth_1to1_mono(PMPSTR mp, real *bandPtr,int *pnt);
-int synth_1to1(PMPSTR mp, real *bandPtr,int channel,int *pnt);
+extern real decwin[512+32];
+extern real *pnts[5];
+
+void make_decode_tables(long scale);
 
 #endif
+
