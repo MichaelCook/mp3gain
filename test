@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -x
+for i in example1; do
+    cp "$i.mp3" '#$i.mp3' || exit
+    ./mp3gain -r -q -c -m 7 '#$i.mp3' || exit
+    cmp '#$i.mp3' "$i-expected.mp3" || exit
+    rm '#$i.mp3'
+    : pass $i
+done
