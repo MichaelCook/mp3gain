@@ -65,9 +65,7 @@
  */
 
 #include "mpglibDBL_interface.h"
-
 #include "gain_analysis.h"
-
 #include "mp3gain.h"
 #include "rg_error.h"
 

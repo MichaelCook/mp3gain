@@ -2,6 +2,7 @@
 #include <config.h>
 #endif
 
+#include <stdbool.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -93,13 +94,13 @@ int head_check(unsigned long head, int check_layer)
     if ((head & 0xffe00000) != 0xffe00000)
     {
         /* syncword */
-        return FALSE;
+        return false;
     }
 #if 0
     if (!((head >> 17) & 3))
     {
         /* bits 13-14 = layer 3 */
-        return FALSE;
+        return false;
     }
 #endif
 
@@ -108,10 +109,10 @@ int head_check(unsigned long head, int check_layer)
 #if defined (USE_LAYER_1) || defined (USE_LAYER_2)
         if (4 == nLayer)
         {
-            return FALSE;
+            return false;
         }
 #else
-        return FALSE;
+        return false;
 #endif
     }
 
@@ -119,21 +120,21 @@ int head_check(unsigned long head, int check_layer)
     {
         if (nLayer != check_layer)
         {
-            return FALSE;
+            return false;
         }
     }
 
     if (((head >> 12) & 0xf) == 0xf || ((head >> 12) & 0xf) == 0)
     {
         /* bits 16,17,18,19 = 1111 or 0000 invalid bitrate */
-        return FALSE;
+        return false;
     }
     if (((head >> 10) & 0x3) == 0x3)
     {
         /* bits 20,21 = 11  invalid sampling freq */
-        return FALSE;
+        return false;
     }
-    return TRUE;
+    return true;
 }
 
 

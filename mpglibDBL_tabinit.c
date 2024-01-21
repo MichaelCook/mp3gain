@@ -6,9 +6,9 @@
 #include "mpglibDBL_tabinit.h"
 #include "mpglibDBL_mpg123.h"
 
-real decwin[512 + 32];
-static real cos64[16], cos32[8], cos16[4], cos8[2], cos4[1];
-real *pnts[] = { cos64, cos32, cos16, cos8, cos4 };
+double decwin[512 + 32];
+static double cos64[16], cos32[8], cos16[4], cos8[2], cos4[1];
+double *pnts[] = { cos64, cos32, cos16, cos8, cos4 };
 
 const double dewin[512] =
 {
@@ -82,7 +82,7 @@ const double dewin[512] =
 void make_decode_tables(long scaleval)
 {
     int i, j, k, kr, divv;
-    real *table, *costab;
+    double *table, *costab;
 
 
     for (i = 0; i < 5; i++)
@@ -92,7 +92,7 @@ void make_decode_tables(long scaleval)
         costab = pnts[i];
         for (k = 0; k < kr; k++)
         {
-            costab[k] = (real)(1.0 / (2.0 * cos(M_PI * ((double) k * 2.0 + 1.0) / (double) divv)));
+            costab[k] = (double)(1.0 / (2.0 * cos(M_PI * ((double) k * 2.0 + 1.0) / (double) divv)));
         }
     }
 
@@ -102,7 +102,7 @@ void make_decode_tables(long scaleval)
     {
         if (table < decwin + 512 + 16)
         {
-            table[16] = table[0] = (real)(dewin[j] * scaleval);
+            table[16] = table[0] = (double)(dewin[j] * scaleval);
         }
         if (i % 32 == 31)
         {
@@ -118,7 +118,7 @@ void make_decode_tables(long scaleval)
     {
         if (table < decwin + 512 + 16)
         {
-            table[16] = table[0] = (real)(dewin[j] * scaleval);
+            table[16] = table[0] = (double)(dewin[j] * scaleval);
         }
         if (i % 32 == 31)
         {

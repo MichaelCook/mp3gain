@@ -32,11 +32,11 @@ typedef struct mpstr_tag {
         int fsizeold_nopadding;
         struct frame fr;
         unsigned char bsspace[2][MAXFRAMESIZE+512]; /* MAXFRAMESIZE */
-        real hybrid_block[2][2][SBLIMIT*SSLIMIT];
+        double hybrid_block[2][2][SBLIMIT*SSLIMIT];
         int hybrid_blc[2];
         unsigned long header;
         int bsnum;
-        real synth_buffs[2][2][0x110];
+        double synth_buffs[2][2][0x110];
         int  synth_bo;
         int  sync_bitstream;
         

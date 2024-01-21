@@ -16,15 +16,11 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef MPGLIB_TABINIT_H_INCLUDED
-#define MPGLIB_TABINIT_H_INCLUDED
+#pragma once
 
 #include "mpglibDBL_mpg123.h"
 
-extern real decwin[512+32];
-extern real *pnts[5];
+extern double decwin[512+32];
+extern double *pnts[5];
 
 void make_decode_tables(long scale);
-
-#endif
-

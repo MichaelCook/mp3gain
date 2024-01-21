@@ -16,12 +16,9 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef DECODE_I386_H_INCLUDED
-#define DECODE_I386_H_INCLUDED
+#pragma once
 
 #include "mpglibDBL_common.h"
 
-int synth_1to1_mono(PMPSTR mp, real *bandPtr,int *pnt);
-int synth_1to1(PMPSTR mp, real *bandPtr,int channel,int *pnt);
-
-#endif
+int synth_1to1_mono(PMPSTR mp, double *bandPtr,int *pnt);
+int synth_1to1(PMPSTR mp, double *bandPtr,int channel,int *pnt);

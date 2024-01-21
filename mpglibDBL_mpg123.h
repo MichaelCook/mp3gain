@@ -1,36 +1,9 @@
-#ifndef MPG123_H_INCLUDED
-#define MPG123_H_INCLUDED
+#pragma once
 
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
 #include <math.h>
-
-#ifndef M_PI
-#define M_PI       3.14159265358979323846
-#endif
-#ifndef M_SQRT2
-#define M_SQRT2    1.41421356237309504880
-#endif
-
-#ifndef FALSE
-#define         FALSE                   0
-#endif
-#ifndef TRUE
-#define         TRUE                    1
-#endif
-
-
-#ifdef REAL_IS_FLOAT
-#  define real float
-#elif defined(REAL_IS_LONG_DOUBLE)
-#  define real long double
-#else
-#  define real double
-#endif
-
-#define         FALSE                   0
-#define         TRUE                    1
 
 #define         SBLIMIT                 32
 #define         SSLIMIT                 18
@@ -97,8 +70,8 @@ struct gr_info_s {
       unsigned preflag;
       unsigned scalefac_scale;
       unsigned count1table_select;
-      real *full_gain[3];
-      real *pow2gain;
+      double *full_gain[3];
+      double *pow2gain;
 };
 
 struct III_sideinfo
@@ -109,6 +82,3 @@ struct III_sideinfo
     struct gr_info_s gr[2];
   } ch[2];
 };
-
-
-#endif

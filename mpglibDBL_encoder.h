@@ -19,9 +19,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-
-#ifndef LAME_ENCODER_H
-#define LAME_ENCODER_H
+#pragma once
 
 /***********************************************************************
 *
@@ -132,5 +130,3 @@ int  lame_encode_mp3_frame (
         sample_t*           inbuf_r,
         unsigned char*      mp3buf, 
         int                 mp3buf_size );
-
-#endif /* LAME_ENCODER_H */

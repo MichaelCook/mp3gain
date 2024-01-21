@@ -20,8 +20,7 @@
 
 /* $Id: lame.h,v 1.2 2003/08/12 00:02:55 snelg Exp $ */
 
-#ifndef LAME_LAME_H
-#define LAME_LAME_H
+#pragma once
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -838,4 +837,3 @@ extern const int      samplerate_table [3] [ 4];
 #if defined(__cplusplus)
 }
 #endif
-#endif /* LAME_LAME_H */

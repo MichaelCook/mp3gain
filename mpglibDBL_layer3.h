@@ -16,12 +16,8 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef LAYER3_H_INCLUDED
-#define LAYER3_H_INCLUDED
+#pragma once
 
 void init_layer3(int);
 int  do_layer3_sideinfo(struct frame *fr);
 int  do_layer3( PMPSTR mp,int *pcm_point);
-
-#endif
-

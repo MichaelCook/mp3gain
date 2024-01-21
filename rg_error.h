@@ -30,8 +30,7 @@
  *  * initial release based on V1.2.3
  */
 
-#ifndef RG_ERROR_H
-#define RG_ERROR_H
+#pragma once
 
 #include <string.h>
 
@@ -49,5 +48,3 @@ typedef unsigned int MMRESULT;
 
 void DoUnkError( char * localerrstr);
 void DoError( char * localerrstr, MMRESULT localerrnum );
-
-#endif // RG_ERROR_H

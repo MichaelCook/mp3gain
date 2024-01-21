@@ -17,8 +17,7 @@
 */
 
 
-#ifndef COMMON_H_INCLUDED
-#define COMMON_H_INCLUDED
+#pragma once
 
 #include "mpglibDBL_mpg123.h"
 #include "mpglibDBL_mpglib.h"
@@ -40,5 +39,3 @@ void print_header_compact(struct frame *fr);
 unsigned int getbits(int number_of_bits);
 unsigned int getbits_fast(int number_of_bits);
 int set_pointer( PMPSTR mp, long backstep);
-
-#endif

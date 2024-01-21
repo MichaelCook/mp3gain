@@ -19,8 +19,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef LAME_VRBTAG_H
-#define LAME_VRBTAG_H
+#pragma once
 
 #include <stdint.h>
 #include "mpglibDBL_lame.h"
@@ -77,5 +76,3 @@ int PutVbrTag(lame_global_flags *gfp,FILE *fid,int nVbrScale);
 int PutLameVBR(lame_global_flags *gfp, FILE *fpStream, u_char *pbtStreamBuffer, uint32_t id3v2size,  uint16_t crc);
 void AddVbrFrame(lame_global_flags *gfp);
 void ReportLameTagProgress(lame_global_flags *gfp,int nStart);
-
-#endif

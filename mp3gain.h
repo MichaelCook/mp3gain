@@ -26,8 +26,7 @@
  *  * header needed to eliminate 'changeGain' undefined compiler warning
  */
 
-#ifndef MP3GAIN_H
-#define MP3GAIN_H
+#pragma once
 
 #define MP3GAIN_VERSION "1.5.2"
 /* jzitt: moved from mp3gain.c */
@@ -55,5 +54,3 @@ void passError(MMRESULT lerrnum, int numStrings, ...);
 
         /* Get/Set file datetime stamp */
 void fileTime(char *filename, timeAction action);
-
-#endif

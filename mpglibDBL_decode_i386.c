@@ -29,7 +29,7 @@ unsigned char maxAmpOnly;
 
 int procSamp;
 
-int synth_1to1_mono(PMPSTR mp, real *bandPtr, int *pnt)
+int synth_1to1_mono(PMPSTR mp, double *bandPtr, int *pnt)
 {
     int ret;
     int pnt1 = 0;
@@ -40,14 +40,14 @@ int synth_1to1_mono(PMPSTR mp, real *bandPtr, int *pnt)
     return ret;
 }
 
-int synth_1to1(PMPSTR mp, real *bandPtr, int channel, int *pnt)
+int synth_1to1(PMPSTR mp, double *bandPtr, int channel, int *pnt)
 {
     /*  static const int step = 2; */
     int bo;
     Float_t *dsamp;
-    real mSamp = 0;
+    double mSamp = 0;
 
-    real *b0, (*buf)[0x110];
+    double *b0, (*buf)[0x110];
     int clip = 0;
     int bo1;
 
@@ -84,11 +84,11 @@ int synth_1to1(PMPSTR mp, real *bandPtr, int channel, int *pnt)
     {
         {
             register int j;
-            real *window = decwin + 16 - bo1;
+            double *window = decwin + 16 - bo1;
 
             for (j = 16; j; j--, b0 += 0x10, window += 0x20)
             {
-                real sum;
+                double sum;
                 sum  = window[0x0] * b0[0x0];
                 sum -= window[0x1] * b0[0x1];
                 sum += window[0x2] * b0[0x2];
@@ -117,7 +117,7 @@ int synth_1to1(PMPSTR mp, real *bandPtr, int channel, int *pnt)
             }
 
             {
-                real sum;
+                double sum;
                 sum  = window[0x0] * b0[0x0];
                 sum += window[0x2] * b0[0x2];
                 sum += window[0x4] * b0[0x4];
@@ -141,7 +141,7 @@ int synth_1to1(PMPSTR mp, real *bandPtr, int channel, int *pnt)
 
             for (j = 15; j; j--, b0 -= 0x10, window -= 0x20)
             {
-                real sum;
+                double sum;
                 sum = -window[-0x1] * b0[0x0];
                 sum -= window[-0x2] * b0[0x1];
                 sum -= window[-0x3] * b0[0x2];
@@ -176,11 +176,11 @@ int synth_1to1(PMPSTR mp, real *bandPtr, int channel, int *pnt)
 
         {
             register int j;
-            real *window = decwin + 16 - bo1;
+            double *window = decwin + 16 - bo1;
 
             for (j = 16; j; j--, b0 += 0x10, window += 0x20)
             {
-                real sum;
+                double sum;
                 sum  = window[0x0] * b0[0x0];
                 sum -= window[0x1] * b0[0x1];
                 sum += window[0x2] * b0[0x2];
@@ -211,7 +211,7 @@ int synth_1to1(PMPSTR mp, real *bandPtr, int channel, int *pnt)
             }
 
             {
-                real sum;
+                double sum;
                 sum  = window[0x0] * b0[0x0];
                 sum += window[0x2] * b0[0x2];
                 sum += window[0x4] * b0[0x4];
@@ -236,7 +236,7 @@ int synth_1to1(PMPSTR mp, real *bandPtr, int channel, int *pnt)
 
             for (j = 15; j; j--, b0 -= 0x10, window -= 0x20)
             {
-                real sum;
+                double sum;
                 sum = -window[-0x1] * b0[0x0];
                 sum -= window[-0x2] * b0[0x1];
                 sum -= window[-0x3] * b0[0x2];

@@ -16,8 +16,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef INTERFACE_H_INCLUDED
-#define INTERFACE_H_INCLUDED
+#pragma once
 
 #include <stdbool.h>
 #include "mpglibDBL_common.h"
@@ -46,6 +45,4 @@ void remove_buf(PMPSTR mp);
 
 #if defined(__cplusplus)
 }
-#endif
-
 #endif

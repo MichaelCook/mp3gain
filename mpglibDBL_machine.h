@@ -19,8 +19,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef LAME_MACHINE_H
-#define LAME_MACHINE_H
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,14 +45,6 @@
 //#define IPOW20(x)  exp( -((double)(x)-210)*.1875*LOG2 )
 //#define IPOW20(x)  pow(2.0,-((double)(x)-210)*.1875)
 
-
-/* in case this is used without configure */
-#ifndef inline
-# define inline
-#endif
-/* compatibility */
-#define INLINE inline
-
 /*
  * FLOAT    for variables which require at least 32 bits
  * FLOAT8   for variables which require at least 64 bits
@@ -66,5 +57,3 @@
 /* sample_t must be floating point, at least 32 bits */
 typedef float     sample_t;
 typedef sample_t  stereo_t [2];
-
-#endif

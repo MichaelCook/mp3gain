@@ -20,16 +20,16 @@
 unsigned char *maxGain;
 unsigned char *minGain;
 
-static real ispow[8207];
-static real aa_ca[8], aa_cs[8];
-static real COS1[12][6];
-static real win[4][36];
-static real win1[4][36];
-static real gainpow2[256 + 118 + 4];
-static real COS9[9];
-static real COS6_1, COS6_2;
-static real tfcos36[9];
-static real tfcos12[3];
+static double ispow[8207];
+static double aa_ca[8], aa_cs[8];
+static double COS1[12][6];
+static double win[4][36];
+static double win1[4][36];
+static double gainpow2[256 + 118 + 4];
+static double COS9[9];
+static double COS6_1, COS6_2;
+static double tfcos36[9];
+static double tfcos12[3];
 
 struct bandInfoStruct
 {
@@ -109,8 +109,8 @@ static int *mapend[9][3];
 static unsigned int n_slen2[512]; /* MPEG 2.0 slen for 'normal' mode */
 static unsigned int i_slen2[256]; /* MPEG 2.0 slen for intensity stereo */
 
-static real tan1_1[16], tan2_1[16], tan1_2[16], tan2_2[16];
-static real pow1_1[2][16], pow2_1[2][16], pow1_2[2][16], pow2_2[2][16];
+static double tan1_1[16], tan2_1[16], tan1_2[16], tan2_2[16];
+static double pow1_1[2][16], pow2_1[2][16], pow1_2[2][16], pow2_2[2][16];
 
 static unsigned int get1bit(void)
 {
@@ -804,11 +804,11 @@ static const int pretab2 [22] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 /*
  * don't forget to apply the same changes to III_dequantize_sample_ms() !!!
  */
-static int III_dequantize_sample(real xr[SBLIMIT][SSLIMIT], int *scf,
+static int III_dequantize_sample(double xr[SBLIMIT][SSLIMIT], int *scf,
                                  struct gr_info_s *gr_infos, int sfreq, int part2bits)
 {
     int shift = 1 + gr_infos->scalefac_scale;
-    real *xrpnt = (real *) xr;
+    double *xrpnt = (double *) xr;
     int l[3], l3;
     int part2remain = gr_infos->part2_3_length - part2bits;
     int *me;
@@ -822,7 +822,7 @@ static int III_dequantize_sample(real xr[SBLIMIT][SSLIMIT], int *scf,
             *xrpnt++ = 0.0;
         }
 
-        xrpnt = (real *) xr;
+        xrpnt = (double *) xr;
     }
 
     {
@@ -864,7 +864,7 @@ static int III_dequantize_sample(real xr[SBLIMIT][SSLIMIT], int *scf,
          */
         int i, max[4];
         int step = 0, lwin = 0, cb = 0;
-        register real v = 0.0;
+        register double v = 0.0;
         register int *m, mc;
 
         if (gr_infos->mixed_block_flag)
@@ -893,7 +893,7 @@ static int III_dequantize_sample(real xr[SBLIMIT][SSLIMIT], int *scf,
                 if ((!mc))
                 {
                     mc = *m++;
-                    xrpnt = ((real *) xr) + (*m++);
+                    xrpnt = ((double *) xr) + (*m++);
                     lwin = *m++;
                     cb = *m++;
                     if (lwin == 3)
@@ -1012,7 +1012,7 @@ static int III_dequantize_sample(real xr[SBLIMIT][SSLIMIT], int *scf,
                     if (!mc)
                     {
                         mc = *m++;
-                        xrpnt = ((real *) xr) + (*m++);
+                        xrpnt = ((double *) xr) + (*m++);
                         lwin = *m++;
                         cb = *m++;
                         if (lwin == 3)
@@ -1059,7 +1059,7 @@ static int III_dequantize_sample(real xr[SBLIMIT][SSLIMIT], int *scf,
             if (!mc)
             {
                 mc = *m++;
-                xrpnt = ((real *) xr) + *m++;
+                xrpnt = ((double *) xr) + *m++;
                 if ((*m++) == 3)
                 {
                     step = 1;
@@ -1103,7 +1103,7 @@ static int III_dequantize_sample(real xr[SBLIMIT][SSLIMIT], int *scf,
         int i, max = -1;
         int cb = 0;
         register int *m = map[sfreq][2];
-        register real v = 0.0;
+        register double v = 0.0;
         register int mc = 0;
 #if 0
         me = mapend[sfreq][2];
@@ -1297,14 +1297,14 @@ static int III_dequantize_sample(real xr[SBLIMIT][SSLIMIT], int *scf,
 
 
 /*
- * III_stereo: calculate real channel values for Joint-I-Stereo-mode
+ * III_stereo: calculate double channel values for Joint-I-Stereo-mode
  */
-static void III_i_stereo(real xr_buf[2][SBLIMIT][SSLIMIT], int *scalefac,
+static void III_i_stereo(double xr_buf[2][SBLIMIT][SSLIMIT], int *scalefac,
                          struct gr_info_s *gr_infos, int sfreq, int ms_stereo, int lsf)
 {
-    real(*xr)[SBLIMIT * SSLIMIT] = (real(*)[SBLIMIT * SSLIMIT]) xr_buf;
+    double(*xr)[SBLIMIT * SSLIMIT] = (double(*)[SBLIMIT * SSLIMIT]) xr_buf;
     struct bandInfoStruct *bi = (struct bandInfoStruct *)&bandInfo[sfreq];
-    real *tabl1, *tabl2;
+    double *tabl1, *tabl2;
 
     if (lsf)
     {
@@ -1356,14 +1356,14 @@ static void III_i_stereo(real xr_buf[2][SBLIMIT][SSLIMIT], int *scalefac,
                 is_p = scalefac[sfb * 3 + lwin - gr_infos->mixed_block_flag]; /* scale: 0-15 */
                 if (is_p != 7)
                 {
-                    real t1, t2;
+                    double t1, t2;
                     sb = bi->shortDiff[sfb];
                     idx = bi->shortIdx[sfb] + lwin;
                     t1 = tabl1[is_p];
                     t2 = tabl2[is_p];
                     for (; sb > 0; sb--, idx += 3)
                     {
-                        real v = xr[0][idx];
+                        double v = xr[0][idx];
                         xr[0][idx] = v * t1;
                         xr[1][idx] = v * t2;
                     }
@@ -1383,12 +1383,12 @@ static void III_i_stereo(real xr_buf[2][SBLIMIT][SSLIMIT], int *scalefac,
 #endif
             if (is_p != 7)
             {
-                real t1, t2;
+                double t1, t2;
                 t1 = tabl1[is_p];
                 t2 = tabl2[is_p];
                 for (; sb > 0; sb--, idx += 3)
                 {
-                    real v = xr[0][idx];
+                    double v = xr[0][idx];
                     xr[0][idx] = v * t1;
                     xr[1][idx] = v * t2;
                 }
@@ -1414,12 +1414,12 @@ static void III_i_stereo(real xr_buf[2][SBLIMIT][SSLIMIT], int *scalefac,
                 int is_p = scalefac[sfb]; /* scale: 0-15 */
                 if (is_p != 7)
                 {
-                    real t1, t2;
+                    double t1, t2;
                     t1 = tabl1[is_p];
                     t2 = tabl2[is_p];
                     for (; sb > 0; sb--, idx++)
                     {
-                        real v = xr[0][idx];
+                        double v = xr[0][idx];
                         xr[0][idx] = v * t1;
                         xr[1][idx] = v * t2;
                     }
@@ -1446,12 +1446,12 @@ static void III_i_stereo(real xr_buf[2][SBLIMIT][SSLIMIT], int *scalefac,
             is_p = scalefac[sfb]; /* scale: 0-15 */
             if (is_p != 7)
             {
-                real t1, t2;
+                double t1, t2;
                 t1 = tabl1[is_p];
                 t2 = tabl2[is_p];
                 for (; sb > 0; sb--, idx++)
                 {
-                    real v = xr[0][idx];
+                    double v = xr[0][idx];
                     xr[0][idx] = v * t1;
                     xr[1][idx] = v * t2;
                 }
@@ -1466,11 +1466,11 @@ static void III_i_stereo(real xr_buf[2][SBLIMIT][SSLIMIT], int *scalefac,
         if (is_p != 7)
         {
             int sb;
-            real t1 = tabl1[is_p], t2 = tabl2[is_p];
+            double t1 = tabl1[is_p], t2 = tabl2[is_p];
 
             for (sb = bi->longDiff[21]; sb > 0; sb--, idx++)
             {
-                real v = xr[0][idx];
+                double v = xr[0][idx];
                 xr[0][idx] = v * t1;
                 xr[1][idx] = v * t2;
             }
@@ -1478,7 +1478,7 @@ static void III_i_stereo(real xr_buf[2][SBLIMIT][SSLIMIT], int *scalefac,
     } /* ... */
 }
 
-static void III_antialias(real xr[SBLIMIT][SSLIMIT], struct gr_info_s *gr_infos)
+static void III_antialias(double xr[SBLIMIT][SSLIMIT], struct gr_info_s *gr_infos)
 {
     int sblim;
 
@@ -1500,18 +1500,18 @@ static void III_antialias(real xr[SBLIMIT][SSLIMIT], struct gr_info_s *gr_infos)
 
     {
         int sb;
-        real *xr1 = (real *) xr[1];
+        double *xr1 = (double *) xr[1];
 
         for (sb = sblim; sb; sb--, xr1 += 10)
         {
             int ss;
-            real *cs = aa_cs, *ca = aa_ca;
-            real *xr2 = xr1;
+            double *cs = aa_cs, *ca = aa_ca;
+            double *xr2 = xr1;
 
             for (ss = 7; ss >= 0; ss--)
             {
                 /* upper and lower butterfly inputs */
-                register real bu = *--xr2, bd = *xr1;
+                register double bu = *--xr2, bd = *xr1;
                 *xr2   = (bu * (*cs)) - (bd * (*ca));
                 *xr1++ = (bd * (*cs++)) + (bu * (*ca++));
             }
@@ -1529,10 +1529,10 @@ static void III_antialias(real xr[SBLIMIT][SSLIMIT], struct gr_info_s *gr_infos)
      Pages 175-199
 */
 
-static void dct36(real *inbuf, real *o1, real *o2, real *wintab, real *tsbuf)
+static void dct36(double *inbuf, double *o1, double *o2, double *wintab, double *tsbuf)
 {
     {
-        register real *in = inbuf;
+        register double *in = inbuf;
 
         in[17] += in[16];
         in[16] += in[15];
@@ -1565,30 +1565,30 @@ static void dct36(real *inbuf, real *o1, real *o2, real *wintab, real *tsbuf)
         {
 
 #define MACRO0(v) { \
-        real tmp; \
+        double tmp; \
         out2[9+(v)] = (tmp = sum0 + sum1) * w[27+(v)]; \
         out2[8-(v)] = tmp * w[26-(v)];  } \
     sum0 -= sum1; \
     ts[SBLIMIT*(8-(v))] = out1[8-(v)] + sum0 * w[8-(v)]; \
     ts[SBLIMIT*(9+(v))] = out1[9+(v)] + sum0 * w[9+(v)];
 #define MACRO1(v) { \
-        real sum0,sum1; \
+        double sum0,sum1; \
         sum0 = tmp1a + tmp2a; \
         sum1 = (tmp1b + tmp2b) * tfcos36[(v)]; \
         MACRO0(v); }
 #define MACRO2(v) { \
-        real sum0,sum1; \
+        double sum0,sum1; \
         sum0 = tmp2a - tmp1a; \
         sum1 = (tmp2b - tmp1b) * tfcos36[(v)]; \
         MACRO0(v); }
 
-            register const real *c = COS9;
-            register real *out2 = o2;
-            register real *w = wintab;
-            register real *out1 = o1;
-            register real *ts = tsbuf;
+            register const double *c = COS9;
+            register double *out2 = o2;
+            register double *w = wintab;
+            register double *out1 = o1;
+            register double *ts = tsbuf;
 
-            real ta33, ta66, tb33, tb66;
+            double ta33, ta66, tb33, tb66;
 
             ta33 = in[2 * 3 + 0] * c[3];
             ta66 = in[2 * 6 + 0] * c[6];
@@ -1596,7 +1596,7 @@ static void dct36(real *inbuf, real *o1, real *o2, real *wintab, real *tsbuf)
             tb66 = in[2 * 6 + 1] * c[6];
 
             {
-                real tmp1a, tmp2a, tmp1b, tmp2b;
+                double tmp1a, tmp2a, tmp1b, tmp2b;
                 tmp1a =             in[2 * 1 + 0] * c[1] + ta33 + in[2 * 5 + 0] * c[5] + in[2 * 7 + 0] * c[7];
                 tmp1b =             in[2 * 1 + 1] * c[1] + tb33 + in[2 * 5 + 1] * c[5] + in[2 * 7 + 1] * c[7];
                 tmp2a = in[2 * 0 + 0] + in[2 * 2 + 0] * c[2] + in[2 * 4 + 0] * c[4] + ta66 + in[2 * 8 + 0] * c[8];
@@ -1607,7 +1607,7 @@ static void dct36(real *inbuf, real *o1, real *o2, real *wintab, real *tsbuf)
             }
 
             {
-                real tmp1a, tmp2a, tmp1b, tmp2b;
+                double tmp1a, tmp2a, tmp1b, tmp2b;
                 tmp1a = (in[2 * 1 + 0] - in[2 * 5 + 0] - in[2 * 7 + 0]) * c[3];
                 tmp1b = (in[2 * 1 + 1] - in[2 * 5 + 1] - in[2 * 7 + 1]) * c[3];
                 tmp2a = (in[2 * 2 + 0] - in[2 * 4 + 0] - in[2 * 8 + 0]) * c[6] - in[2 * 6 + 0] + in[2 * 0 + 0];
@@ -1618,7 +1618,7 @@ static void dct36(real *inbuf, real *o1, real *o2, real *wintab, real *tsbuf)
             }
 
             {
-                real tmp1a, tmp2a, tmp1b, tmp2b;
+                double tmp1a, tmp2a, tmp1b, tmp2b;
                 tmp1a =             in[2 * 1 + 0] * c[5] - ta33 - in[2 * 5 + 0] * c[7] + in[2 * 7 + 0] * c[1];
                 tmp1b =             in[2 * 1 + 1] * c[5] - tb33 - in[2 * 5 + 1] * c[7] + in[2 * 7 + 1] * c[1];
                 tmp2a = in[2 * 0 + 0] - in[2 * 2 + 0] * c[8] - in[2 * 4 + 0] * c[2] + ta66 + in[2 * 8 + 0] * c[4];
@@ -1629,7 +1629,7 @@ static void dct36(real *inbuf, real *o1, real *o2, real *wintab, real *tsbuf)
             }
 
             {
-                real tmp1a, tmp2a, tmp1b, tmp2b;
+                double tmp1a, tmp2a, tmp1b, tmp2b;
                 tmp1a =             in[2 * 1 + 0] * c[7] - ta33 + in[2 * 5 + 0] * c[1] - in[2 * 7 + 0] * c[5];
                 tmp1b =             in[2 * 1 + 1] * c[7] - tb33 + in[2 * 5 + 1] * c[1] - in[2 * 7 + 1] * c[5];
                 tmp2a = in[2 * 0 + 0] - in[2 * 2 + 0] * c[4] + in[2 * 4 + 0] * c[8] + ta66 - in[2 * 8 + 0] * c[2];
@@ -1640,7 +1640,7 @@ static void dct36(real *inbuf, real *o1, real *o2, real *wintab, real *tsbuf)
             }
 
             {
-                real sum0, sum1;
+                double sum0, sum1;
                 sum0 =  in[2 * 0 + 0] - in[2 * 2 + 0] + in[2 * 4 + 0] - in[2 * 6 + 0] + in[2 * 8 + 0];
                 sum1 = (in[2 * 0 + 1] - in[2 * 2 + 1] + in[2 * 4 + 1] - in[2 * 6 + 1] + in[2 * 8 + 1]) * tfcos36[4];
                 MACRO0(4);
@@ -1653,7 +1653,7 @@ static void dct36(real *inbuf, real *o1, real *o2, real *wintab, real *tsbuf)
 /*
  * new DCT12
  */
-static void dct12(real *in, real *rawout1, real *rawout2, register real *wi, register real *ts)
+static void dct12(double *in, double *rawout1, double *rawout2, register double *wi, register double *ts)
 {
 #define DCT12_PART1 \
     in5 = in[5*3];  \
@@ -1687,8 +1687,8 @@ static void dct12(real *in, real *rawout1, real *rawout2, register real *wi, reg
 
 
     {
-        real in0, in1, in2, in3, in4, in5;
-        register real *out1 = rawout1;
+        double in0, in1, in2, in3, in4, in5;
+        register double *out1 = rawout1;
         ts[SBLIMIT * 0] = out1[0];
         ts[SBLIMIT * 1] = out1[1];
         ts[SBLIMIT * 2] = out1[2];
@@ -1699,9 +1699,9 @@ static void dct12(real *in, real *rawout1, real *rawout2, register real *wi, reg
         DCT12_PART1
 
         {
-            real tmp0, tmp1 = (in0 - in4);
+            double tmp0, tmp1 = (in0 - in4);
             {
-                real tmp2 = (in1 - in5) * tfcos12[1];
+                double tmp2 = (in1 - in5) * tfcos12[1];
                 tmp0 = tmp1 + tmp2;
                 tmp1 -= tmp2;
             }
@@ -1727,15 +1727,15 @@ static void dct12(real *in, real *rawout1, real *rawout2, register real *wi, reg
     in++;
 
     {
-        real in0, in1, in2, in3, in4, in5;
-        register real *out2 = rawout2;
+        double in0, in1, in2, in3, in4, in5;
+        register double *out2 = rawout2;
 
         DCT12_PART1
 
         {
-            real tmp0, tmp1 = (in0 - in4);
+            double tmp0, tmp1 = (in0 - in4);
             {
-                real tmp2 = (in1 - in5) * tfcos12[1];
+                double tmp2 = (in1 - in5) * tfcos12[1];
                 tmp0 = tmp1 + tmp2;
                 tmp1 -= tmp2;
             }
@@ -1761,16 +1761,16 @@ static void dct12(real *in, real *rawout1, real *rawout2, register real *wi, reg
     in++;
 
     {
-        real in0, in1, in2, in3, in4, in5;
-        register real *out2 = rawout2;
+        double in0, in1, in2, in3, in4, in5;
+        register double *out2 = rawout2;
         out2[12] = out2[13] = out2[14] = out2[15] = out2[16] = out2[17] = 0.0;
 
         DCT12_PART1
 
         {
-            real tmp0, tmp1 = (in0 - in4);
+            double tmp0, tmp1 = (in0 - in4);
             {
-                real tmp2 = (in1 - in5) * tfcos12[1];
+                double tmp2 = (in1 - in5) * tfcos12[1];
                 tmp0 = tmp1 + tmp2;
                 tmp1 -= tmp2;
             }
@@ -1797,13 +1797,13 @@ static void dct12(real *in, real *rawout1, real *rawout2, register real *wi, reg
 /*
  * III_hybrid
  */
-static void III_hybrid(PMPSTR mp, real fsIn[SBLIMIT][SSLIMIT], real tsOut[SSLIMIT][SBLIMIT],
+static void III_hybrid(PMPSTR mp, double fsIn[SBLIMIT][SSLIMIT], double tsOut[SSLIMIT][SBLIMIT],
                        int ch, struct gr_info_s *gr_infos)
 {
-    real *tspnt = (real *) tsOut;
-    real(*block)[2][SBLIMIT * SSLIMIT] = mp->hybrid_block;
+    double *tspnt = (double *) tsOut;
+    double(*block)[2][SBLIMIT * SSLIMIT] = mp->hybrid_block;
     int *blc = mp->hybrid_blc;
-    real *rawout1, *rawout2;
+    double *rawout1, *rawout2;
     int bt;
     int sb = 0;
 
@@ -1973,8 +1973,8 @@ int do_layer3(PMPSTR mp, int *pcm_point)
 
     for (gr = 0; gr < granules; gr++)
     {
-        static real hybridIn[2][SBLIMIT][SSLIMIT];
-        static real hybridOut[2][SSLIMIT][SBLIMIT];
+        static double hybridIn[2][SBLIMIT][SSLIMIT];
+        static double hybridOut[2][SSLIMIT][SBLIMIT];
 
         {
             struct gr_info_s *gr_infos = &(sideinfo.ch[0].gr[gr]);
@@ -2026,11 +2026,11 @@ int do_layer3(PMPSTR mp, int *pcm_point)
                 int i;
                 for (i = 0; i < SBLIMIT * SSLIMIT; i++)
                 {
-                    real tmp0, tmp1;
-                    tmp0 = ((real *) hybridIn[0])[i];
-                    tmp1 = ((real *) hybridIn[1])[i];
-                    ((real *) hybridIn[1])[i] = tmp0 - tmp1;
-                    ((real *) hybridIn[0])[i] = tmp0 + tmp1;
+                    double tmp0, tmp1;
+                    tmp0 = ((double *) hybridIn[0])[i];
+                    tmp1 = ((double *) hybridIn[1])[i];
+                    ((double *) hybridIn[1])[i] = tmp0 - tmp1;
+                    ((double *) hybridIn[0])[i] = tmp0 + tmp1;
                 }
             }
 
@@ -2056,7 +2056,7 @@ int do_layer3(PMPSTR mp, int *pcm_point)
             case 3:
             {
                 register int i;
-                register real *in0 = (real *) hybridIn[0], *in1 = (real *) hybridIn[1];
+                register double *in0 = (double *) hybridIn[0], *in1 = (double *) hybridIn[1];
                 for (i = 0; i < (int)(SSLIMIT * gr_infos->maxb); i++, in0++)
                 {
                     *in0 = (*in0 + *in1++);    /* *0.5 done by pow-scale */
@@ -2066,7 +2066,7 @@ int do_layer3(PMPSTR mp, int *pcm_point)
             case 1:
             {
                 register int i;
-                register real *in0 = (real *) hybridIn[0], *in1 = (real *) hybridIn[1];
+                register double *in0 = (double *) hybridIn[0], *in1 = (double *) hybridIn[1];
                 for (i = 0; i < (int)(SSLIMIT * gr_infos->maxb); i++)
                 {
                     *in0++ = *in1++;

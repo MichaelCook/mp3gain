@@ -25,8 +25,7 @@
  *    http://www.replaygain.org/
  */
 
-#ifndef GAIN_ANALYSIS_H
-#define GAIN_ANALYSIS_H
+#pragma once
 
 #include <stddef.h>
 
@@ -52,5 +51,3 @@ Float_t   GetAlbumGain     ( void );
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GAIN_ANALYSIS_H */

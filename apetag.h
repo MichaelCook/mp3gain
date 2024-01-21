@@ -1,5 +1,4 @@
-#ifndef APETAG_H
-#define APETAG_H
+#pragma once
 
 #include <stdio.h>
 
@@ -74,5 +73,3 @@ int ReadMP3GainAPETag (char *filename, struct MP3GainTagInfo *info, struct FileT
 int WriteMP3GainAPETag (char *filename, struct MP3GainTagInfo *info, struct FileTagsStruct *fileTags, int saveTimeStamp);
 
 int RemoveMP3GainAPETag (char *filename, int saveTimeStamp);
-
-#endif

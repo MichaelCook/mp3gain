@@ -16,12 +16,8 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef MPGLIB_DCT64_I386_H_INCLUDED
-#define MPGLIB_DCT64_I386_H_INCLUDED
+#pragma once
 
 #include "mpglibDBL_common.h"
 
-void dct64( real *a,real *b,real *c);
-
-
-#endif
+void dct64(double *a, double *b, double *c);
