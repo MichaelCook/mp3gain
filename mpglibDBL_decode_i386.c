@@ -173,7 +173,6 @@ int synth_1to1(PMPSTR mp, double *bandPtr, int channel, int *pnt)
     else
     {
 
-
         {
             register int j;
             double *window = decwin + 16 - bo1;
@@ -285,4 +284,3 @@ int synth_1to1(PMPSTR mp, double *bandPtr, int channel, int *pnt)
 
     return clip;
 }
-

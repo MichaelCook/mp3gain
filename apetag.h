@@ -67,7 +67,7 @@ struct FileTagsStruct {
         unsigned long lyrics3TagSize;
     unsigned char *id31tag;
 };
-        
+
 int ReadMP3GainAPETag (char *filename, struct MP3GainTagInfo *info, struct FileTagsStruct *fileTags);
 
 int WriteMP3GainAPETag (char *filename, struct MP3GainTagInfo *info, struct FileTagsStruct *fileTags, int saveTimeStamp);

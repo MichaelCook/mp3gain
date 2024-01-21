@@ -41,7 +41,6 @@ int ReadMP3ID3v1Tag(FILE *fi, unsigned char **tagbuff, long *tag_offset)
     return 1;
 }
 
-
 /*
 static int Lyrics3GetNumber5 ( const unsigned char* string )
 {
@@ -52,7 +51,6 @@ static int Lyrics3GetNumber5 ( const unsigned char* string )
                    ( string[4] - '0') * 1;
 }
 */
-
 
 static int Lyrics3GetNumber6(const unsigned char *string)
 {
@@ -155,7 +153,6 @@ static int ReadMP3Lyrics3v2Tag(FILE *fp, unsigned char **tagbuff, unsigned long 
     return 1;
 }
 
-
 static unsigned long Read_LE_Uint32_unsigned(const unsigned char *p)
 {
     return ((unsigned long)p[0] <<  0) |
@@ -168,7 +165,6 @@ static unsigned long Read_LE_Uint32(const char *p)
 {
     return Read_LE_Uint32_unsigned((const unsigned char *)p);
 }
-
 
 static void Write_LE_Uint32(char *p, const unsigned long value)
 {
@@ -266,7 +262,6 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
 
     origTagCount = TagCount = Read_LE_Uint32(T.TagCount);
     otherFieldsCount = 0;
-
 
     end = buff + TagLen - sizeof(T);
     for (p = buff; p < end && TagCount--;)
@@ -441,7 +436,6 @@ int truncate_file(char *filename, long truncLength)
     return 1;
 }
 
-
 /**
  * Read gain information from an APE tag.
  *
@@ -480,7 +474,6 @@ int ReadMP3GainAPETag(char *filename, struct MP3GainTagInfo *info, struct FileTa
 
     return 1;
 };
-
 
 /**
  * (Re-)Write gain information to an APEv2 tag.
@@ -741,7 +734,6 @@ int WriteMP3GainAPETag(char *filename, struct MP3GainTagInfo *info, struct FileT
         mp3gainTagData += 8;
     }
 
-
     outputFile = fopen(filename, "r+b");
     if (outputFile == NULL)
     {
@@ -776,7 +768,6 @@ int WriteMP3GainAPETag(char *filename, struct MP3GainTagInfo *info, struct FileT
     return 1;
 };
 
-
 /**
  * Remove gain information from the APE tag.
  */
@@ -801,7 +792,6 @@ int RemoveMP3GainAPETag(char *filename, int saveTimeStamp)
     fileTags.lyrics3TagSize = 0;
 
     ReadMP3GainAPETag(filename, &info, &fileTags);
-
 
     /* if any MP3Gain tags exist, then we're going to change the tag */
     if (info.haveAlbumGain || info.haveAlbumPeak || info.haveTrackGain || info.haveTrackPeak || info.haveMinMaxGain ||

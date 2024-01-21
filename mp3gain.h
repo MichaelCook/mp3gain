@@ -1,6 +1,6 @@
 /*
  *  ReplayGainAnalysis Heder - DLL for Glen Sawyer's MP3GAIN.C source
- *  Copyright (C) 2002 John Zitterkopf (zitt@bigfoot.com) 
+ *  Copyright (C) 2002 John Zitterkopf (zitt@bigfoot.com)
  *                     (http://www.zittware.com)
  *
  *  These comments must remain intact in all copies of the source code.

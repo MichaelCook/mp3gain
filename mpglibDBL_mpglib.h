@@ -20,8 +20,8 @@ typedef struct mpstr_tag {
         int vbr_header;               /* 1 if valid Xing vbr header detected */
         int num_frames;               /* set if vbr header present */
         int header_parsed;
-        int side_parsed;  
-        int data_parsed;  
+        int side_parsed;
+        int data_parsed;
         int free_format;             /* 1 = free format frame */
         int old_free_format;        /* 1 = last frame was free format */
         int bsize;
@@ -39,13 +39,9 @@ typedef struct mpstr_tag {
         double synth_buffs[2][2][0x110];
         int  synth_bo;
         int  sync_bitstream;
-        
-} MPSTR, *PMPSTR;
 
+} MPSTR, *PMPSTR;
 
 #define MP3_ERR -1
 #define MP3_OK  0
 #define MP3_NEED_MORE 1
-
-
-

@@ -124,9 +124,6 @@ static unsigned int get1bit(void)
     return rval >> 7;
 }
 
-
-
-
 /*
  * init tables for layer-3
  */
@@ -442,7 +439,6 @@ static int III_get_side_info_1(struct III_sideinfo *si, int stereo,
                 gr_infos->table_select[0] = getbits_fast(5);
                 gr_infos->table_select[1] = getbits_fast(5);
 
-
                 /*
                  * table_select[2] not needed, because there is no region2,
                  * but to satisfy some verifications tools we set it either.
@@ -532,7 +528,6 @@ static int III_get_side_info_2(struct III_sideinfo *si, int stereo,
         }
 
         gr_infos->pow2gain = gainpow2 + 256 - qss + powdiff;
-
 
         if (ms_stereo)
         {
@@ -1295,7 +1290,6 @@ static int III_dequantize_sample(double xr[SBLIMIT][SSLIMIT], int *scf,
     return 0;
 }
 
-
 /*
  * III_stereo: calculate double channel values for Joint-I-Stereo-mode
  */
@@ -1561,7 +1555,6 @@ static void dct36(double *inbuf, double *o1, double *o2, double *wintab, double 
         in[5] += in[3];
         in[3] += in[1];
 
-
         {
 
 #define MACRO0(v) { \
@@ -1684,7 +1677,6 @@ static void dct12(double *in, double *rawout1, double *rawout2, register double 
     \
     in2 = in0 + in1;    \
     in0 -= in1;
-
 
     {
         double in0, in1, in2, in3, in4, in5;
@@ -1815,7 +1807,6 @@ static void III_hybrid(PMPSTR mp, double fsIn[SBLIMIT][SSLIMIT], double tsOut[SS
         blc[ch] = b;
     }
 
-
     if (gr_infos->mixed_block_flag)
     {
         sb = 2;
@@ -1883,7 +1874,6 @@ int do_layer3_sideinfo(struct frame *fr)
         ms_stereo = 0;
     }
 
-
     if (fr->lsf)
     {
         granules = 1;
@@ -1916,8 +1906,6 @@ int do_layer3_sideinfo(struct frame *fr)
     }
     return databits - 8 * sideinfo.main_data_begin;
 }
-
-
 
 int do_layer3(PMPSTR mp, int *pcm_point)
 {
@@ -1960,7 +1948,6 @@ int do_layer3(PMPSTR mp, int *pcm_point)
         ms_stereo = i_stereo = 0;
     }
 
-
     if (fr->lsf)
     {
         granules = 1;
@@ -1969,7 +1956,6 @@ int do_layer3(PMPSTR mp, int *pcm_point)
     {
         granules = 2;
     }
-
 
     for (gr = 0; gr < granules; gr++)
     {
@@ -1992,7 +1978,6 @@ int do_layer3(PMPSTR mp, int *pcm_point)
                 fprintf(stderr, "Not supported\n");
 #endif
             }
-
 
             if (III_dequantize_sample(hybridIn[0], scalefacs[0], gr_infos, sfreq, part2bits))
             {
@@ -2076,8 +2061,6 @@ int do_layer3(PMPSTR mp, int *pcm_point)
             }
         }
 
-
-
         for (ch = 0; ch < stereo1; ch++)
         {
             struct gr_info_s *gr_infos = &(sideinfo.ch[ch].gr[gr]);
@@ -2102,4 +2085,3 @@ int do_layer3(PMPSTR mp, int *pcm_point)
 
     return 0;
 }
-

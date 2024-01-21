@@ -1,19 +1,19 @@
 /*
  * huffman tables ... recalcualted to work with my optimzed
  * decoder scheme (MH)
- * 
- * probably we could save a few bytes of memory, because the 
+ *
+ * probably we could save a few bytes of memory, because the
  * smaller tables are often the part of a bigger table
  */
 
-struct newhuff 
+struct newhuff
 {
   const unsigned int linbits;
   const short * const table;
 };
 
-static const short tab0[] = 
-{ 
+static const short tab0[] =
+{
    0
 };
 
@@ -284,9 +284,7 @@ static const short tab_c1[] =
    0
 };
 
-
-
-static const struct newhuff ht[] = 
+static const struct newhuff ht[] =
 {
  { /* 0 */ 0 , tab0  } ,
  { /* 2 */ 0 , tab1  } ,
@@ -323,10 +321,8 @@ static const struct newhuff ht[] =
  { /* 16 */ 13, tab24 }
 };
 
-static const struct newhuff htc[] = 
+static const struct newhuff htc[] =
 {
  { /* 1 , 1 , */ 0 , tab_c0 } ,
  { /* 1 , 1 , */ 0 , tab_c1 }
 };
-
-

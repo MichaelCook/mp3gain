@@ -177,7 +177,6 @@ static const Float_t ABButter[12][2 * BUTTER_ORDER + 1] =
     {0.94597685600279, -1.88903307939452, -1.89195371200558,  0.89487434461664,  0.94597685600279 }
 };
 
-
 // When calling these filter procedures, make sure that ip[-order] and op[-order] point to real data!
 
 // If your compiler complains that "'operation on 'output' may be undefined", you can
@@ -230,7 +229,6 @@ static void filterButter(const Float_t *input, Float_t *output, size_t nSamples,
         ++input;
     }
 }
-
 
 // returns a INIT_GAIN_ANALYSIS_OK if successful, INIT_GAIN_ANALYSIS_ERROR if not
 
@@ -478,7 +476,6 @@ int AnalyzeSamples(const Float_t *left_samples, const Float_t *right_samples, si
     return GAIN_ANALYSIS_OK;
 }
 
-
 static Float_t analyzeResult(Uint32_t *Array, size_t len)
 {
     Uint32_t  elems;
@@ -507,7 +504,6 @@ static Float_t analyzeResult(Uint32_t *Array, size_t len)
     return (Float_t)((Float_t)PINK_REF - (Float_t)i / (Float_t)STEPS_per_dB);
 }
 
-
 Float_t GetTitleGain(void)
 {
     Float_t  retval;
@@ -530,7 +526,6 @@ Float_t GetTitleGain(void)
     lsum    = rsum = 0.;
     return retval;
 }
-
 
 Float_t GetAlbumGain(void)
 {

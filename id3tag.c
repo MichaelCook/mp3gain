@@ -40,7 +40,6 @@
  *      http://www.id3.org/id3v2.4.0-frames
  */
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -48,7 +47,6 @@
 #include "apetag.h"
 #include "id3tag.h"
 #include "mp3gain.h"
-
 
 #define DBG(x)
 /*#define DBG(x) (printf x)*/
@@ -65,7 +63,6 @@
 #define FRAMEFL_UNSYNC          (0x0002)
 #define FRAMEFL_DLEN            (0x0001)
 #define SYNCSAFE_INT_BAD        (0xffffffff)
-
 
 struct ID3v2TagStruct
 {
@@ -128,7 +125,6 @@ static const struct upgrade_id3v22_struct upgrade_id3v22_table[] =
     { "\0\0\0", "\0\0\0\0" }
 };
 
-
 /**
  * Decode a 4-byte unsigned integer.
  */
@@ -136,7 +132,6 @@ static __inline unsigned long id3_get_int32(const unsigned char *p)
 {
     return (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
 }
-
 
 /**
  * Decode a 4-byte unsigned synchsafe integer.
@@ -150,7 +145,6 @@ static __inline unsigned long id3_get_syncsafe_int(const unsigned char *p)
     return (p[0] << 21) | (p[1] << 14) | (p[2] << 7) | p[3];
 }
 
-
 /**
  * Write a 4-byte unsigned synchsafe integer.
  */
@@ -161,7 +155,6 @@ static __inline void id3_put_syncsafe_int(unsigned char *p, unsigned long i)
     p[2] = (i >>  7) & 0x7f;
     p[3] = i & 0x7f;
 }
-
 
 /**
  * Decode srclen bytes of unsynchronized data from src into dest.
@@ -191,7 +184,6 @@ static unsigned long id3_get_unsync_data(unsigned char *dest, const unsigned cha
     }
     return k;
 }
-
 
 /**
  * Encode srclen bytes of data from src, writing the unsynchronized version
@@ -228,7 +220,6 @@ static unsigned long id3_put_unsync_data(unsigned char *dest, const unsigned cha
     return k;
 }
 
-
 /**
  * Release memory associated with a chain of frame structures.
  */
@@ -243,7 +234,6 @@ static void id3_release_frames(struct ID3v2FrameStruct *frame)
         free(tframe);
     }
 }
-
 
 /**
  * Construct an ID3v2 frame according to specified format and parameters.
@@ -331,7 +321,6 @@ static struct ID3v2FrameStruct *id3_make_frame(const char *frameid, const char *
 
     return frame;
 }
-
 
 /**
  * Decode an RVA2 frame (only track/album gain, only master channel).
@@ -432,7 +421,6 @@ static int id3_decode_rva2_frame(const struct ID3v2FrameStruct *frame, struct MP
     return 1;
 }
 
-
 /**
  * Create an RVA2 frame, track or album gain, master channel.
  * Return a newly allocated ID3v2FrameStruct.
@@ -477,7 +465,6 @@ static struct ID3v2FrameStruct *id3_make_rva2_frame(int is_album_gain, double ga
         return id3_make_frame("RVA2", "sbbhb", ident, 0, 1, g, 0);
     }
 }
-
 
 /**
  * Decode an APEv2/Vorbis-style TXXX frame, matching
@@ -637,7 +624,6 @@ static int id3_decode_mp3gain_frame(const struct ID3v2FrameStruct *frame, struct
 
     return 0;
 }
-
 
 /**
  * Read an ID3v2 tag from the current position in the MP3 file.
@@ -977,7 +963,6 @@ badtag:
     return M3G_ERR_TAGFORMAT;
 }
 
-
 /**
  * Write an ID3v2 tag at the current position in the MP3 file.
  *
@@ -1054,7 +1039,6 @@ static int id3_write_tag(FILE *f, struct ID3v2TagStruct *tag)
     free(tagdata);
     return 1;
 }
-
 
 /**
  * Read an ID3v1 tag from the current position in the MP3 file.
@@ -1159,7 +1143,6 @@ static int id3_parse_v1_tag(FILE *f, struct ID3v2TagStruct *tag)
 
     return 1;
 }
-
 
 /**
  * Search for an ID3v2 tag at the beginning and end of the file.
@@ -1292,7 +1275,6 @@ static int id3_search_tag(FILE *f, struct ID3v2TagStruct *tag)
     return ret;
 }
 
-
 /**
  * Seek to offset in inf and copy count bytes to the current
  * position in outf. If count == -1, copy until the end of the file.
@@ -1341,7 +1323,6 @@ static int id3_copy_data(FILE *inf, FILE *outf, long offset, long count)
     return ret;
 }
 
-
 /**
  * Read gain information from an ID3v2 tag.
  */
@@ -1383,7 +1364,6 @@ int ReadMP3GainID3Tag(char *filename, struct MP3GainTagInfo *info)
 
     return ret;
 }
-
 
 /**
  * (Re-)Write gain information to an ID3v2 tag.
@@ -1635,7 +1615,6 @@ int WriteMP3GainID3Tag(char *filename, struct MP3GainTagInfo *info, int saveTime
     return ret;
 }
 
-
 /**
  * Remove gain information from the ID3v2 tag.
  * Return 1 on success, 0 if no changes are needed, or a negative error code.
@@ -1654,4 +1633,3 @@ int RemoveMP3GainID3Tag(char *filename, int saveTimeStamp)
 
     return WriteMP3GainID3Tag(filename, &info, saveTimeStamp);
 }
-

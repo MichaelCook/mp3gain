@@ -68,7 +68,6 @@ static void dct64_1(double *out0, double *out1, double *b1, double *b2, double *
         b1[0x10] = (samples[0x0F] - samples[0x10]) * costab[0xF];
     }
 
-
     {
         register double *costab = pnts[1];
 
@@ -316,4 +315,3 @@ void dct64(double *a, double *b, double *c)
     double bufs[0x40];
     dct64_1(a, b, bufs, bufs + 0x20, c);
 }
-

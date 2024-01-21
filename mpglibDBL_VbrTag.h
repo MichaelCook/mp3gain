@@ -41,7 +41,6 @@
  * e.g. half duration seek point = (toc[50]/256.0) * total_bitstream_bytes
  */
 
-
 #define FRAMES_FLAG     0x0001
 #define BYTES_FLAG      0x0002
 #define TOC_FLAG        0x0004
@@ -51,8 +50,6 @@
 
 #define FRAMES_AND_BYTES (FRAMES_FLAG | BYTES_FLAG)
 
-
- 
 /*structure to receive extracted header */
 /* toc may be NULL*/
 typedef struct

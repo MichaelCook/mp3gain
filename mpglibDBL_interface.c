@@ -122,7 +122,6 @@ static int read_buf_byte(PMPSTR mp)
 
     int pos;
 
-
     pos = mp->tail->pos;
     while (pos >= mp->tail->size)
     {
@@ -141,11 +140,8 @@ static int read_buf_byte(PMPSTR mp)
     mp->bsize--;
     mp->tail->pos++;
 
-
     return b;
 }
-
-
 
 static void read_head(PMPSTR mp)
 {
@@ -161,11 +157,6 @@ static void read_head(PMPSTR mp)
 
     mp->header = head;
 }
-
-
-
-
-
 
 void copy_mp(PMPSTR mp, int size, unsigned char *ptr)
 {
@@ -238,7 +229,6 @@ int GetVbrTag(VBRTAGDATA *pTagData,  unsigned char *buf)
     h_mode     = (buf[3] >> 6) & 3;
     h_bitrate  = ((buf[2] >> 4) & 0xf);
     h_bitrate = bitrate_table[h_id][h_bitrate];
-
 
     /*  determine offset of header */
     if (h_id)
@@ -328,7 +318,6 @@ int GetVbrTag(VBRTAGDATA *pTagData,  unsigned char *buf)
     pTagData->headersize =
         ((h_id + 1) * 72000 * h_bitrate) / pTagData->samprate;
 
-
 #ifdef DEBUG_VBRTAG
     DEBUGF("\n\n********************* VBR TAG INFO *****************\n");
     DEBUGF("tag         :%s\n", VBRTag);
@@ -352,8 +341,6 @@ int GetVbrTag(VBRTAGDATA *pTagData,  unsigned char *buf)
 #endif
     return 1;       /* success */
 }
-
-
 
 // traverse mp data structure without changing it
 // (just like sync_buffer)
@@ -414,12 +401,6 @@ int check_vbr_header(PMPSTR mp, int bytes)
     }
     return 0;
 }
-
-
-
-
-
-
 
 int sync_buffer(PMPSTR mp, int free_match)
 {
@@ -509,10 +490,6 @@ int sync_buffer(PMPSTR mp, int free_match)
     return -1;
 }
 
-
-
-
-
 int decodeMP3(PMPSTR mp, unsigned char *in, int isize, int *done)
 {
     int i, iret, bits, bytes;
@@ -524,7 +501,6 @@ int decodeMP3(PMPSTR mp, unsigned char *in, int isize, int *done)
             return MP3_ERR;
         }
     }
-
 
     /* First decode header */
     if (!mp->header_parsed)
@@ -760,7 +736,6 @@ int decodeMP3(PMPSTR mp, unsigned char *in, int isize, int *done)
         mp->data_parsed = 1;
     }
 
-
     /* remaining bits are ancillary data, or reservoir for next frame
      * If free format, scan stream looking for next frame to determine
      * mp->framesize */
@@ -819,6 +794,3 @@ int decodeMP3(PMPSTR mp, unsigned char *in, int isize, int *done)
 
     return iret;
 }
-
-
-

@@ -36,7 +36,6 @@ unsigned char *wordpointer;
 unsigned char *pcm_sample;
 int pcm_point = 0;
 
-
 #if defined( USE_LAYER_1 ) || defined ( USE_LAYER_2 )
 real muls[27][64];
 #endif
@@ -78,7 +77,6 @@ static void get_II_stuff(struct frame *fr)
 #endif
 
 #define HDRCMPMASK 0xfffffd00
-
 
 int head_check(unsigned long head, int check_layer)
 {
@@ -137,14 +135,12 @@ int head_check(unsigned long head, int check_layer)
     return true;
 }
 
-
 /*
  * the code a header and write the information
  * into the frame structure
  */
 int decode_header(struct frame *fr, unsigned long newhead)
 {
-
 
     if (newhead & (1 << 20))
     {
@@ -156,7 +152,6 @@ int decode_header(struct frame *fr, unsigned long newhead)
         fr->lsf = 1;
         fr->mpeg25 = 1;
     }
-
 
     fr->lay = 4 - ((newhead >> 17) & 3);
     if (((newhead >> 10) & 0x3) == 0x3)
@@ -258,7 +253,6 @@ int decode_header(struct frame *fr, unsigned long newhead)
     return 1;
 }
 
-
 #if 1
 void print_header(struct frame *fr)
 {
@@ -338,7 +332,6 @@ unsigned int getbits_fast(int number_of_bits)
     }
     return rval;
 }
-
 
 int set_pointer(PMPSTR mp, long backstep)
 {

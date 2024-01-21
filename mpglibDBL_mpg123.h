@@ -18,7 +18,6 @@
 /* AF: ADDED FOR LAYER1/LAYER2 */
 #define         SCALE_BLOCK             12
 
-
 /* Pre Shift fo 16 to 8 bit converter table */
 #define AUSHIFT (3)
 
