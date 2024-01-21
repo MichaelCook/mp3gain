@@ -823,7 +823,7 @@ static int III_dequantize_sample(real xr[SBLIMIT][SSLIMIT], int *scf,
     {
         int i;
 
-        for (i = (&xr[SBLIMIT][0] - xrpnt) >> 1; i > 0; i--)
+        for (i = (&xr[SBLIMIT - 1][0] - xrpnt) >> 1; i > 0; i--)
         {
             *xrpnt++ = 0.0;
             *xrpnt++ = 0.0;
@@ -1275,7 +1275,7 @@ static int III_dequantize_sample(real xr[SBLIMIT][SSLIMIT], int *scf,
         /*
         * zero part
         */
-        for (i = (&xr[SBLIMIT][0] - xrpnt) >> 1; i; i--)
+        for (i = (&xr[SBLIMIT - 1][0] - xrpnt) >> 1; i; i--)
         {
             *xrpnt++ = 0.0;
             *xrpnt++ = 0.0;
