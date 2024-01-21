@@ -762,6 +762,7 @@ int changeGain(char *filename AACGAIN_ARG(AACGainHandle aacH), int leftgainchang
             passError(MP3GAIN_UNSPECIFED_ERROR, 3,
                 "\nCan't open ", outfilename, " for temp writing\n");
             NowWriting = 0;
+			free(outfilename);
 			return M3G_ERR_CANT_MAKE_TMP;
 		} 
  
@@ -779,6 +780,7 @@ int changeGain(char *filename AACGAIN_ARG(AACGainHandle aacH), int leftgainchang
 	  passError( MP3GAIN_UNSPECIFED_ERROR, 3,
           "\nCan't open ", filename, " for modifying\n");
       NowWriting = 0;
+      free(outfilename);
 	  return M3G_ERR_CANT_MODIFY_FILE;
   }
   else {

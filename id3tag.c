@@ -303,6 +303,8 @@ static struct ID3v2FrameStruct * id3_make_frame(const char *frameid, const char 
 				break;
 			default:
 				va_end(ap);
+				free(frame->data);
+				free(frame);
 				return NULL;
 		}
 	}
