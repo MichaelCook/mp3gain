@@ -21,6 +21,8 @@
 
 #ifndef LAME_VRBTAG_H
 #define LAME_VRBTAG_H
+
+#include <stdint.h>
 #include "mpglibDBL_lame.h"
 #include "mpglibDBL_config.h"
 

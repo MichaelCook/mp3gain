@@ -12,7 +12,7 @@
 #include "mpglibDBL_layer3.h"
 #include "mpglibDBL_VbrTag.h"
 
-BOOL InitMP3(PMPSTR mp)
+bool InitMP3(PMPSTR mp)
 {
     memset(mp, 0, sizeof(MPSTR));
 

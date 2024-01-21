@@ -54,20 +54,6 @@
 /* compatibility */
 #define INLINE inline
 
-#if defined(_MSC_VER)
-# undef inline
-# define inline _inline
-#elif defined(__SASC) || defined(__GNUC__)
-/* if __GNUC__ we always want to inline, not only if the user requests it */
-# undef inline
-# define inline __inline
-#endif
-
-#if    defined(_MSC_VER)
-# pragma warning( disable : 4244 )
-//# pragma warning( disable : 4305 )
-#endif
-
 /*
  * FLOAT    for variables which require at least 32 bits
  * FLOAT8   for variables which require at least 64 bits

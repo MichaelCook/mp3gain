@@ -19,6 +19,7 @@
 #ifndef INTERFACE_H_INCLUDED
 #define INTERFACE_H_INCLUDED
 
+#include <stdbool.h>
 #include "mpglibDBL_common.h"
 #include "gain_analysis.h"
 
@@ -36,7 +37,7 @@ extern unsigned char maxAmpOnly;
 
 extern int procSamp;
 
-BOOL InitMP3(PMPSTR mp);
+bool InitMP3(PMPSTR mp);
 int      decodeMP3(PMPSTR mp,unsigned char *inmemory,int inmemsize,int *done);
 void ExitMP3(PMPSTR mp);
 
