@@ -1558,7 +1558,6 @@ int main(int argc, char **argv)
     MPSTR mp;
     unsigned long ok;
     int mode;
-    int crcflag;
     unsigned char *Xingcheck;
     unsigned long frame;
     int nchan;
@@ -2590,7 +2589,6 @@ int main(int argc, char **argv)
                                 else
                                 {
                                     mpegver = (curframe[1] >> 3) & 0x03;
-                                    crcflag = curframe[1] & 0x01;
                                     freqidx = (curframe[2] >> 2) & 0x03;
 
                                     bytesinframe = arrbytesinframe[bitridx] + ((curframe[2] >> 1) & 0x01);
