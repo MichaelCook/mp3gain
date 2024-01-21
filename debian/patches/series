@@ -1,4 +1,3 @@
-08_trailingspace.diff
 09_fix_mem_leaks.diff
 10_fix_potential_segfaults.diff
 11_txxx.diff
