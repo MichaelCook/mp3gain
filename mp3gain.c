@@ -152,7 +152,8 @@ static void addWriteBuff(unsigned long pos, unsigned char *vals)
 
 }
 
-/* fill the mp3 buffer */
+/* Fill the mp3 buffer.
+   Return the number of bytes that were added */
 static unsigned long fillBuffer(long savelastbytes)
 {
     unsigned long i;
@@ -176,14 +177,14 @@ static unsigned long fillBuffer(long savelastbytes)
 
     if (savelastbytes != 0) /* save some of the bytes at the end of the buffer */
     {
-        memmove((void *)buffer, (const void *)(buffer + inbuffer - savelastbytes), savelastbytes);
+        memmove(buffer, (buffer + inbuffer - savelastbytes), savelastbytes);
     }
 
     while (skip > 0)   /* skip some bytes from the input file */
     {
         skipbuf = skip > BUFFERSIZE ? BUFFERSIZE : skip;
 
-        i = (unsigned long)fread(buffer, 1, skipbuf, inf);
+        i = fread(buffer, 1, skipbuf, inf);
         if (i != skipbuf)
         {
             return 0;
@@ -199,7 +200,7 @@ static unsigned long fillBuffer(long savelastbytes)
         filepos += i;
         skip -= skipbuf;
     }
-    i = (unsigned long)fread(buffer + savelastbytes, 1, BUFFERSIZE - savelastbytes, inf);
+    i = fread(buffer + savelastbytes, 1, BUFFERSIZE - savelastbytes, inf);
 
     filepos = filepos + i;
     inbuffer = i + savelastbytes;
@@ -250,7 +251,7 @@ static unsigned char peek8Bits()
 
 }
 
-static unsigned long skipID3v2()
+static bool skipID3v2()
 {
     /*
      *  An ID3v2 tag can be detected with the following pattern:
@@ -258,10 +259,9 @@ static unsigned long skipID3v2()
      *  Where yy is less than $FF, xx is the 'flags' byte and zz is less than
      *  $80.
      */
-    unsigned long ok;
     unsigned long ID3Size;
 
-    ok = 1;
+    bool ok = true;
 
     if (wrdpntr[0] == 'I' && wrdpntr[1] == 'D' && wrdpntr[2] == '3'
         && wrdpntr[3] < 0xFF && wrdpntr[4] < 0xFF)
@@ -276,7 +276,7 @@ static unsigned long skipID3v2()
 
         if ((wrdpntr + HEADERSIZE - buffer) > inbuffer)
         {
-            ok = fillBuffer(inbuffer - (wrdpntr - buffer));
+            ok = fillBuffer(inbuffer - (wrdpntr - buffer)) != 0;
             wrdpntr = buffer;
         }
     }
@@ -313,57 +313,55 @@ void passError(MMRESULT lerrnum, int numStrings, ...)
     errstr = NULL;
 }
 
-static unsigned long frameSearch(int startup)
+static bool frameSearch(int startup)
 {
-    unsigned long ok;
-    int done;
     static int startfreq;
     static int startmpegver;
     long tempmpegver;
     double bitbase;
     int i;
 
-    done = 0;
-    ok = 1;
+    bool done = false;
+    bool ok = true;
 
     if ((wrdpntr + HEADERSIZE - buffer) > inbuffer)
     {
-        ok = fillBuffer(inbuffer - (wrdpntr - buffer));
+        ok = fillBuffer(inbuffer - (wrdpntr - buffer)) != 0;
         wrdpntr = buffer;
         if (!ok)
         {
-            done = 1;
+            done = true;
         }
     }
 
     while (!done)
     {
 
-        done = 1;
+        done = true;
 
         if ((wrdpntr[0] & 0xFF) != 0xFF)
         {
-            done = 0;    /* first 8 bits must be '1' */
+            done = false;    /* first 8 bits must be '1' */
         }
         else if ((wrdpntr[1] & 0xE0) != 0xE0)
         {
-            done = 0;    /* next 3 bits are also '1' */
+            done = false;    /* next 3 bits are also '1' */
         }
         else if ((wrdpntr[1] & 0x18) == 0x08)
         {
-            done = 0;    /* invalid MPEG version */
+            done = false;    /* invalid MPEG version */
         }
         else if ((wrdpntr[2] & 0xF0) == 0xF0)
         {
-            done = 0;    /* bad bitrate */
+            done = false;    /* bad bitrate */
         }
         else if ((wrdpntr[2] & 0xF0) == 0x00)
         {
-            done = 0;    /* we'll just completely ignore "free format" bitrates */
+            done = false;    /* we'll just completely ignore "free format" bitrates */
         }
         else if ((wrdpntr[2] & 0x0C) == 0x0C)
         {
-            done = 0;    /* bad sample frequency */
+            done = false;    /* bad sample frequency */
         }
         else if ((wrdpntr[1] & 0x06) != 0x02)   /* not Layer III */
         {
@@ -383,7 +381,7 @@ static unsigned long frameSearch(int startup)
                     return 0;
                 }
             }
-            done = 0; /* probably just corrupt data, keep trying */
+            done = false; /* probably just corrupt data, keep trying */
         }
         else if (startup)
         {
@@ -412,17 +410,17 @@ static unsigned long frameSearch(int startup)
                                   then probably not correctly synched yet */
             if ((wrdpntr[1] & 0x18) != startmpegver)
             {
-                done = 0;
+                done = false;
             }
             else if ((wrdpntr[2] & 0x0C) != startfreq)
             {
-                done = 0;
+                done = false;
             }
             else if ((wrdpntr[2] & 0xF0) == 0) /* bitrate is "free format" probably just
                                                   corrupt data if we've already found
                                                   valid frames */
             {
-                done = 0;
+                done = false;
             }
         }
 
@@ -433,11 +431,11 @@ static unsigned long frameSearch(int startup)
 
         if ((wrdpntr + HEADERSIZE - buffer) > inbuffer)
         {
-            ok = fillBuffer(inbuffer - (wrdpntr - buffer));
+            ok = fillBuffer(inbuffer - (wrdpntr - buffer)) != 0;
             wrdpntr = buffer;
             if (!ok)
             {
-                done = 1;
+                done = true;
             }
         }
     }
@@ -446,7 +444,7 @@ static unsigned long frameSearch(int startup)
     {
         if (inbuffer - (wrdpntr - buffer) < (arrbytesinframe[(wrdpntr[2] >> 4) & 0x0F] + ((wrdpntr[2] >> 1) & 0x01)))
         {
-            ok = fillBuffer(inbuffer - (wrdpntr - buffer));
+            ok = fillBuffer(inbuffer - (wrdpntr - buffer)) != 0;
             wrdpntr = buffer;
         }
         bitidx = 0;
@@ -772,6 +770,7 @@ static int changeGain(const char *filename,
             wrdpntr = buffer;
 
             ok = skipID3v2();
+            // TODO: why are we ignoring `ok` here?
 
             ok = frameSearch(true);
             if (!ok)
@@ -1323,7 +1322,6 @@ static void fullUsage()
 int main(int argc, char **argv)
 {
     MPSTR mp;
-    unsigned long ok;
     int mode;
     unsigned char *Xingcheck;
     unsigned long frame;
@@ -1348,7 +1346,6 @@ int main(int argc, char **argv)
     int applyAlbum = 0;
     int analysisTrack = 0;
     char analysisError = 0;
-    int fileStart;
     int databaseFormat = 0;
     int i;
     int *fileok;
@@ -1380,9 +1377,10 @@ int main(int argc, char **argv)
         errUsage();
     }
 
+    bool ok = true;
     maxAmpOnly = 0;
     saveTime = 0;
-    fileStart = 1;
+    int fileStart = 1;
     numFiles = 0;
 
     for (i = 1; i < argc; i++)
@@ -2130,6 +2128,7 @@ int main(int argc, char **argv)
                         wrdpntr = buffer;
 
                         ok = skipID3v2();
+                        // TODO: why are we ignoring `ok` here?
 
                         ok = frameSearch(true);
                     }
