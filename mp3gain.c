@@ -33,17 +33,6 @@
  *  Additional tweaks by Artur Polaczynski, Mark Armbrust, and others
  */
 
-/*
- *  General warning: I coded this in several stages over the course of several
- *  months. During that time, I changed my mind about my coding style and
- *  naming conventions many, many times. So there's not a lot of consistency
- *  in the code. Sorry about that. I may clean it up some day, but by the time
- *  I would be getting around to it, I'm sure that the more clever programmers
- *  out there will have come up with superior versions already...
- *
- *  So have fun dissecting.
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -61,7 +50,7 @@
 
 #define HEADERSIZE 4
 
-#define CRC16_POLYNOMIAL        0x8005
+#define CRC16_POLYNOMIAL 0x8005
 
 #define BUFFERSIZE 3000000
 #define WRITEBUFFERSIZE 100000
@@ -75,8 +64,6 @@ typedef struct
     unsigned long fileposition;
     unsigned char val[2];
 } wbuffer;
-
-/* Yes, yes, I know I should do something about these globals */
 
 wbuffer writebuffer[WRITEBUFFERSIZE];
 
@@ -111,7 +98,7 @@ unsigned long bitidx;
 unsigned char *wrdpntr;
 unsigned char *curframe;
 
-char *curfilename;
+const char *curfilename;
 
 FILE *inf = NULL;
 
@@ -139,8 +126,7 @@ static const double frequency[4][4] =
 long arrbytesinframe[16];
 
 /* instead of writing each byte change, I buffer them up */
-static
-void flushWriteBuff()
+static void flushWriteBuff()
 {
     unsigned long i;
     for (i = 0; i < writebuffercnt; i++)
@@ -149,10 +135,9 @@ void flushWriteBuff()
         fwrite(writebuffer[i].val, 1, 2, inf);
     }
     writebuffercnt = 0;
-};
+}
 
-static
-void addWriteBuff(unsigned long pos, unsigned char *vals)
+static void addWriteBuff(unsigned long pos, unsigned char *vals)
 {
     if (writebuffercnt >= WRITEBUFFERSIZE)
     {
@@ -167,8 +152,7 @@ void addWriteBuff(unsigned long pos, unsigned char *vals)
 };
 
 /* fill the mp3 buffer */
-static
-unsigned long fillBuffer(long savelastbytes)
+static unsigned long fillBuffer(long savelastbytes)
 {
     unsigned long i;
     unsigned long skip;
@@ -231,10 +215,8 @@ static const unsigned char maskRight8bits[8] =
     0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01
 };
 
-static
-void set8Bits(unsigned short val)
+static void set8Bits(unsigned short val)
 {
-
     val <<= (8 - bitidx);
     wrdpntr[0] &= maskLeft8bits[bitidx];
     wrdpntr[0] |= (val  >> 8);
@@ -247,17 +229,14 @@ void set8Bits(unsigned short val)
     }
 }
 
-static
-void skipBits(int nbits)
+static void skipBits(int nbits)
 {
-
     bitidx += nbits;
     wrdpntr += (bitidx >> 3);
     bitidx &= 7;
 }
 
-static
-unsigned char peek8Bits()
+static unsigned char peek8Bits()
 {
     unsigned short rval;
 
@@ -270,8 +249,7 @@ unsigned char peek8Bits()
 
 }
 
-static
-unsigned long skipID3v2()
+static unsigned long skipID3v2()
 {
     /*
      *  An ID3v2 tag can be detected with the following pattern:
@@ -334,8 +312,7 @@ void passError(MMRESULT lerrnum, int numStrings, ...)
     errstr = NULL;
 }
 
-static
-unsigned long frameSearch(int startup)
+static unsigned long frameSearch(int startup)
 {
     unsigned long ok;
     int done;
@@ -477,8 +454,7 @@ unsigned long frameSearch(int startup)
     return ok;
 }
 
-static
-int crcUpdate(int value, int crc)
+static int crcUpdate(int value, int crc)
 {
     int i;
     value <<= 8;
@@ -495,8 +471,7 @@ int crcUpdate(int value, int crc)
     return crc;
 }
 
-static
-void crcWriteHeader(int headerlength, char *header)
+static void crcWriteHeader(int headerlength, char *header)
 {
     int crc = 0xffff; /* (jo) init crc16 for error_protection */
     int i;
@@ -512,8 +487,7 @@ void crcWriteHeader(int headerlength, char *header)
     header[5] = crc & 255;
 }
 
-static
-long getSizeOfFile(const char *filename)
+static long getSizeOfFile(const char *filename)
 {
     long size = 0;
     FILE *file;
@@ -543,7 +517,7 @@ int moveFile(const char *currentfilename, const char *newfilename)
 
 void fileTime(const char *filename, timeAction action)
 {
-    static        int  timeSaved = 0;
+    static int timeSaved = 0;
     static struct stat savedAttributes;
 
     if (action == storeTime)
@@ -565,7 +539,8 @@ void fileTime(const char *filename, timeAction action)
     }
 }
 
-unsigned long reportPercentWritten(unsigned long percent, unsigned long bytes)
+unsigned long reportPercentWritten(unsigned long percent,
+                                   unsigned long bytes)
 {
     fprintf(stderr, "                                                \r"
             " %2lu%% of %lu bytes written\r",
@@ -574,6 +549,7 @@ unsigned long reportPercentWritten(unsigned long percent, unsigned long bytes)
 }
 
 int numFiles, totFiles;
+
 unsigned long reportPercentAnalyzed(unsigned long percent, unsigned long bytes)
 {
     char fileDivFiles[21];
@@ -679,8 +655,9 @@ void scanFrameGain()
     }
 }
 
-static
-int changeGain(const char *filename, int leftgainchange, int rightgainchange)
+static int changeGain(const char *filename,
+                      int leftgainchange,
+                      int rightgainchange)
 {
     unsigned long ok;
     int mode;
@@ -1103,9 +1080,10 @@ int changeGain(const char *filename, int leftgainchange, int rightgainchange)
     return 0;
 }
 
-static
-void WriteMP3GainTag(const char *filename, struct MP3GainTagInfo *info,
-                     struct FileTagsStruct *fileTags, int saveTimeStamp)
+static void WriteMP3GainTag(const char *filename,
+                            struct MP3GainTagInfo *info,
+                            struct FileTagsStruct *fileTags,
+                            int saveTimeStamp)
 {
     if (useId3)
     {
@@ -1220,8 +1198,7 @@ void changeGainAndTag(const char *filename,
 
 }
 
-static
-int queryUserForClipping(char *argv_mainloop, int intGainChange)
+static int queryUserForClipping(char *argv_mainloop, int intGainChange)
 {
     int ch;
 
@@ -1246,14 +1223,12 @@ int queryUserForClipping(char *argv_mainloop, int intGainChange)
     return 1;
 }
 
-static
-void showVersion(char *progname)
+static void showVersion(const char *progname)
 {
     fprintf(stderr, "%s version %s\n", progname, MP3GAIN_VERSION);
 }
 
-static
-void wrapExplanation()
+static void wrapExplanation()
 {
     fprintf(stderr, "Here's the problem:\n");
     fprintf(stderr, "The \"global gain\" field that mp3gain adjusts is an 8-bit unsigned integer, so\n");
@@ -1287,11 +1262,9 @@ void wrapExplanation()
     fprintf(stderr, "\n");
     fprintf(stderr, "To use the original \"wrapping\" behavior, use -w");
     exit(0);
-
 }
 
-static
-void errUsage(char *progname)
+static void errUsage(const char *progname)
 {
     showVersion(progname);
     fprintf(stderr, "copyright(c) 2001-2009 by Glen Sawyer\n");
@@ -1301,8 +1274,7 @@ void errUsage(char *progname)
     exit(1);
 }
 
-static
-void fullUsage(char *progname)
+static void fullUsage(const char *progname)
 {
     showVersion(progname);
     fprintf(stderr, "copyright(c) 2001-2009 by Glen Sawyer\n");
@@ -1349,7 +1321,7 @@ void fullUsage(char *progname)
     exit(0);
 }
 
-void dumpTaginfo(struct MP3GainTagInfo *info)
+void dumpTaginfo(const struct MP3GainTagInfo *info)
 {
     fprintf(stderr, "haveAlbumGain       %d  albumGain %f\n", info->haveAlbumGain, info->albumGain);
     fprintf(stderr, "haveAlbumPeak       %d  albumPeak %f\n", info->haveAlbumPeak, info->albumPeak);
