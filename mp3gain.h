@@ -42,15 +42,12 @@
 
 #include "rg_error.h"
 
-int deleteFile(const char *filename);
-int moveFile(const char *currentfilename, const char *newfilename);
+void passError(MMRESULT lerrnum, int numStrings, ...);
 
 typedef enum {
     storeTime,
     setStoredTime
 } timeAction;
 
-void passError(MMRESULT lerrnum, int numStrings, ...);
-
-        /* Get/Set file datetime stamp */
+/* Get/Set file datetime stamp */
 void fileTime(const char *filename, timeAction action);

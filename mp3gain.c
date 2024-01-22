@@ -65,48 +65,46 @@ typedef struct
     unsigned char val[2];
 } wbuffer;
 
-wbuffer writebuffer[WRITEBUFFERSIZE];
-
-unsigned long writebuffercnt;
-
-unsigned char buffer[BUFFERSIZE];
-
-int writeself = 0;
-int QuietMode = 0;
-int UsingTemp = 0;
-int NowWriting = 0;
-double lastfreq = -1.0;
-
-int whichChannel = 0;
-int BadLayer = 0;
-int LayerSet = 0;
-int Reckless = 0;
-int wrapGain = 0;
-int undoChanges = 0;
-
-int skipTag = 0;
-int deleteTag = 0;
-int forceRecalculateTag = 0;
-int forceUpdateTag = 0;
-int checkTagOnly = 0;
+static wbuffer writebuffer[WRITEBUFFERSIZE];
+static unsigned long writebuffercnt;
+static unsigned char buffer[BUFFERSIZE];
+static int QuietMode = 0;
+static int UsingTemp = 0;
+static int NowWriting = 0;
+static double lastfreq = -1.0;
+static int whichChannel = 0;
+static int BadLayer = 0;
+static int LayerSet = 0;
+static int Reckless = 0;
+static int wrapGain = 0;
+static int undoChanges = 0;
+static int skipTag = 0;
+static int deleteTag = 0;
+static int forceRecalculateTag = 0;
+static int forceUpdateTag = 0;
+static int checkTagOnly = 0;
 static int useId3 = 0;
+static int gSuccess;
+static long inbuffer;
+static unsigned long bitidx;
+static unsigned char *wrdpntr;
+static unsigned char *curframe;
+static const char *curfilename;
+static FILE *inf;
+static FILE *outf;
+static short int saveTime;
+static unsigned long filepos;
 
-int gSuccess;
+void DoError(char *localerrstr, MMRESULT localerrnum)
+{
+    gSuccess = 0;
+    fprintf(stdout, "%s", localerrstr);
+}
 
-long inbuffer;
-unsigned long bitidx;
-unsigned char *wrdpntr;
-unsigned char *curframe;
-
-const char *curfilename;
-
-FILE *inf = NULL;
-
-FILE *outf;
-
-short int saveTime;
-
-unsigned long filepos;
+void DoUnkError(char *localerrstr)
+{
+    DoError(localerrstr, MP3GAIN_UNSPECIFED_ERROR);
+}
 
 static const double bitrate[4][16] =
 {
@@ -115,6 +113,7 @@ static const double bitrate[4][16] =
     { 1,  8, 16, 24, 32, 40, 48, 56,  64,  80,  96, 112, 128, 144, 160, 1 },
     { 1, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 1 }
 };
+
 static const double frequency[4][4] =
 {
     { 11.025, 12,  8,  1 },
@@ -123,7 +122,7 @@ static const double frequency[4][4] =
     {   44.1, 48, 32,  1 }
 };
 
-long arrbytesinframe[16];
+static long arrbytesinframe[16];
 
 /* instead of writing each byte change, I buffer them up */
 static void flushWriteBuff()
@@ -149,7 +148,7 @@ static void addWriteBuff(unsigned long pos, unsigned char *vals)
     writebuffer[writebuffercnt].val[1] = vals[1];
     writebuffercnt++;
 
-};
+}
 
 /* fill the mp3 buffer */
 static unsigned long fillBuffer(long savelastbytes)
@@ -503,12 +502,12 @@ static long getSizeOfFile(const char *filename)
     return size;
 }
 
-int deleteFile(const char *filename)
+static int deleteFile(const char *filename)
 {
     return remove(filename);
 }
 
-int moveFile(const char *currentfilename, const char *newfilename)
+static int moveFile(const char *currentfilename, const char *newfilename)
 {
     return rename(currentfilename, newfilename);
 }
@@ -539,8 +538,8 @@ void fileTime(const char *filename, timeAction action)
     }
 }
 
-unsigned long reportPercentWritten(unsigned long percent,
-                                   unsigned long bytes)
+static unsigned long reportPercentWritten(unsigned long percent,
+        unsigned long bytes)
 {
     fprintf(stderr, "                                                \r"
             " %2lu%% of %lu bytes written\r",
@@ -548,9 +547,10 @@ unsigned long reportPercentWritten(unsigned long percent,
     return 1;
 }
 
-int numFiles, totFiles;
+static int numFiles, totFiles;
 
-unsigned long reportPercentAnalyzed(unsigned long percent, unsigned long bytes)
+static unsigned long reportPercentAnalyzed(unsigned long percent,
+        unsigned long bytes)
 {
     char fileDivFiles[21];
     fileDivFiles[0] = '\0';
@@ -566,7 +566,7 @@ unsigned long reportPercentAnalyzed(unsigned long percent, unsigned long bytes)
     return 1;
 }
 
-void scanFrameGain()
+static void scanFrameGain()
 {
     int crcflag;
     int mpegver;
@@ -1100,11 +1100,11 @@ static void WriteMP3GainTag(const char *filename,
     }
 }
 
-void changeGainAndTag(const char *filename,
-                      int leftgainchange,
-                      int rightgainchange,
-                      struct MP3GainTagInfo *tag,
-                      struct FileTagsStruct *fileTag)
+static void changeGainAndTag(const char *filename,
+                             int leftgainchange,
+                             int rightgainchange,
+                             struct MP3GainTagInfo *tag,
+                             struct FileTagsStruct *fileTag)
 {
     double dblGainChange;
     int curMin;
@@ -1319,17 +1319,6 @@ static void fullUsage(const char *progname)
     fprintf(stderr, "If you do not specify -c, the program will stop and ask before\n"
             "     applying gain change to a file that might clip\n");
     exit(0);
-}
-
-void dumpTaginfo(const struct MP3GainTagInfo *info)
-{
-    fprintf(stderr, "haveAlbumGain       %d  albumGain %f\n", info->haveAlbumGain, info->albumGain);
-    fprintf(stderr, "haveAlbumPeak       %d  albumPeak %f\n", info->haveAlbumPeak, info->albumPeak);
-    fprintf(stderr, "haveAlbumMinMaxGain %d  min %d  max %d\n", info->haveAlbumMinMaxGain, info->albumMinGain,
-            info->albumMaxGain);
-    fprintf(stderr, "haveTrackGain       %d  trackGain %f\n", info->haveTrackGain, info->trackGain);
-    fprintf(stderr, "haveTrackPeak       %d  trackPeak %f\n", info->haveTrackPeak, info->trackPeak);
-    fprintf(stderr, "haveMinMaxGain      %d  min %d  max %d\n", info->haveMinMaxGain, info->minGain, info->maxGain);
 }
 
 int main(int argc, char **argv)
