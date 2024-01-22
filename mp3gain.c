@@ -513,7 +513,7 @@ void crcWriteHeader(int headerlength, char *header)
 }
 
 static
-long getSizeOfFile(char *filename)
+long getSizeOfFile(const char *filename)
 {
     long size = 0;
     FILE *file;
@@ -529,19 +529,19 @@ long getSizeOfFile(char *filename)
     return size;
 }
 
-int deleteFile(char *filename)
+int deleteFile(const char *filename)
 {
     return remove(filename);
 }
 
-int moveFile(char *currentfilename, char *newfilename)
+int moveFile(const char *currentfilename, const char *newfilename)
 {
     return rename(currentfilename, newfilename);
 }
 
 /* Get File size and datetime stamp */
 
-void fileTime(char *filename, timeAction action)
+void fileTime(const char *filename, timeAction action)
 {
     static        int  timeSaved = 0;
     static struct stat savedAttributes;
@@ -680,7 +680,7 @@ void scanFrameGain()
 }
 
 static
-int changeGain(char *filename, int leftgainchange, int rightgainchange)
+int changeGain(const char *filename, int leftgainchange, int rightgainchange)
 {
     unsigned long ok;
     int mode;

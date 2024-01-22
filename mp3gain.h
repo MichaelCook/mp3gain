@@ -42,8 +42,8 @@
 
 #include "rg_error.h"
 
-int deleteFile(char *filename);
-int moveFile(char *currentfilename, char *newfilename);
+int deleteFile(const char *filename);
+int moveFile(const char *currentfilename, const char *newfilename);
 
 typedef enum {
     storeTime,
@@ -53,4 +53,4 @@ typedef enum {
 void passError(MMRESULT lerrnum, int numStrings, ...);
 
         /* Get/Set file datetime stamp */
-void fileTime(char *filename, timeAction action);
+void fileTime(const char *filename, timeAction action);
