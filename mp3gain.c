@@ -50,8 +50,6 @@
 
 #define HEADERSIZE 4
 
-#define CRC16_POLYNOMIAL 0x8005
-
 #define BUFFERSIZE 3000000
 #define WRITEBUFFERSIZE 100000
 
@@ -117,8 +115,7 @@ static long arrbytesinframe[16];
 /* instead of writing each byte change, I buffer them up */
 static void flushWriteBuff()
 {
-    unsigned long i;
-    for (i = 0; i < writebuffercnt; i++)
+    for (unsigned long i = 0; i < writebuffercnt; i++)
     {
         fseek(inf, writebuffer[i].fileposition, SEEK_SET);
         fwrite(writebuffer[i].val, 1, 2, inf);
@@ -301,8 +298,6 @@ static bool frameSearch(int startup)
     static int startmpegver;
     long tempmpegver;
     double bitbase;
-    int i;
-
     bool done = false;
     bool ok = true;
 
@@ -379,12 +374,13 @@ static bool frameSearch(int startup)
                 bitbase = 576.0;
             }
 
-            for (i = 0; i < 16; i++)
+            for (int i = 0; i < 16; i++)
             {
-                arrbytesinframe[i] = (long)(floor(floor((bitbase * bitrate[tempmpegver][i]) / frequency[tempmpegver][startfreq >> 2]) /
-                                                  8.0));
+                arrbytesinframe[i] = (long)
+                                     (floor(floor((bitbase * bitrate[tempmpegver][i]) /
+                                                  frequency[tempmpegver][startfreq >> 2]) /
+                                            8.0));
             }
-
         }
         else
         {
@@ -434,6 +430,8 @@ static bool frameSearch(int startup)
     }
     return ok;
 }
+
+#define CRC16_POLYNOMIAL 0x8005
 
 static int crcUpdate(int value, int crc)
 {
@@ -547,7 +545,6 @@ static unsigned long reportPercentAnalyzed(unsigned long percent,
 
 static void scanFrameGain()
 {
-    int gr, ch;
     int gain;
 
     int mpegver = (curframe[1] >> 3) & 0x03;
@@ -581,9 +578,9 @@ static void scanFrameGain()
         }
 
         skipBits(nchan * 4);  /* scfsi[ch][band] */
-        for (gr = 0; gr < 2; gr++)
+        for (int gr = 0; gr < 2; gr++)
         {
-            for (ch = 0; ch < nchan; ch++)
+            for (int ch = 0; ch < nchan; ch++)
             {
                 skipBits(21);
                 gain = peek8Bits();
@@ -613,7 +610,7 @@ static void scanFrameGain()
         }
 
         /* only one granule, so no loop */
-        for (ch = 0; ch < nchan; ch++)
+        for (int ch = 0; ch < nchan; ch++)
         {
             skipBits(21);
             gain = peek8Bits();
@@ -638,8 +635,6 @@ static int changeGain(const char *filename,
     int crcflag;
     unsigned char *Xingcheck;
     int nchan;
-    int ch;
-    int gr;
     unsigned char gain;
     int bitridx;
     long bytesinframe;
@@ -852,8 +847,8 @@ static int changeGain(const char *filename,
                         }
 
                         skipBits(nchan * 4); /* scfsi[ch][band] */
-                        for (gr = 0; gr < 2; gr++)
-                            for (ch = 0; ch < nchan; ch++)
+                        for (int gr = 0; gr < 2; gr++)
+                            for (int ch = 0; ch < nchan; ch++)
                             {
                                 skipBits(21);
                                 gain = peek8Bits();
@@ -913,7 +908,7 @@ static int changeGain(const char *filename,
                         }
 
                         /* only one granule, so no loop */
-                        for (ch = 0; ch < nchan; ch++)
+                        for (int ch = 0; ch < nchan; ch++)
                         {
                             skipBits(21);
                             gain = peek8Bits();
@@ -1319,7 +1314,6 @@ int main(int argc, char **argv)
     int analysisTrack = 0;
     bool analysisError = false;
     int databaseFormat = 0;
-    int i;
     int *fileok;
     int goAhead;
     bool directGain = false;
@@ -1354,7 +1348,7 @@ int main(int argc, char **argv)
     int fileStart = 1;
     numFiles = 0;
 
-    for (i = 1; i < argc; i++)
+    for (int i = 1; i < argc; i++)
     {
         const char *arg = argv[i];
         if (arg[0] != '-' || strlen(arg) != 2)
