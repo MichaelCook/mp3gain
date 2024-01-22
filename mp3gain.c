@@ -1122,8 +1122,11 @@ void WriteMP3GainTag(const char *filename, struct MP3GainTagInfo *info,
     }
 }
 
-void changeGainAndTag(char *filename, int leftgainchange, int rightgainchange,
-                      struct MP3GainTagInfo *tag, struct FileTagsStruct *fileTag)
+void changeGainAndTag(const char *filename,
+                      int leftgainchange,
+                      int rightgainchange,
+                      struct MP3GainTagInfo *tag,
+                      struct FileTagsStruct *fileTag)
 {
     double dblGainChange;
     int curMin;
