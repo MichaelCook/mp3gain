@@ -34,7 +34,7 @@
 
 #include "rg_error.h"
 
-void passError(MMRESULT lerrnum, int numStrings, ...);
+void passError(int lerrnum, int numStrings, ...);
 
 typedef enum
 {

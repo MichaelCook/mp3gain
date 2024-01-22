@@ -1,7 +1,4 @@
 /*
- *  ReplayGainAnalysis Error Reporting Header
- *     Handles error reporting for mp3gain in either standalone or DLL form.
- *
  *  Copyright (C) 2002 John Zitterkopf (zitt@bigfoot.com)
  *                     (http://www.zittware.com)
  *
@@ -22,26 +19,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  *  based on code by Glen Sawyer (mp3gain@hotmail.com) 735 W 255 N, Orem, UT 84057-4505 USA
- *
- *  Error code for VC++5.0 by John Zitterkopf (zitt@bigfoot.com)
- *    -- blame him for nothing. This work evolves as needed. <grin>
- *
- *  V1.0 - jzitt
- *  * initial release based on V1.2.3
  */
 
 #pragma once
 
-#include <string.h>
-#include <stdio.h>
-
-#define MMSYSERR_NOERROR  0
-#define MMSYSERR_ERROR    01
-#define WAVERR_BADFORMAT  32
-
-typedef unsigned int MMRESULT;
-
-#define MP3GAIN_NOERROR                  MMSYSERR_NOERROR
-#define MP3GAIN_UNSPECIFED_ERROR         MMSYSERR_ERROR
-#define MP3GAIN_FILEFORMAT_NOTSUPPORTED  WAVERR_BADFORMAT
-#define MP3GAIN_CANCELLED                2006
+#define MP3GAIN_UNSPECIFED_ERROR 1
+#define MP3GAIN_FILEFORMAT_NOTSUPPORTED  32

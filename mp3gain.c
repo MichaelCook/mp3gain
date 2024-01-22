@@ -270,7 +270,7 @@ static bool skipID3v2()
     return ok;
 }
 
-void passError(MMRESULT lerrnum, int numStrings, ...)
+void passError(int lerrnum, int numStrings, ...)
 {
     va_list marker;
     va_start(marker, numStrings);
