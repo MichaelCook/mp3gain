@@ -1,6 +1,7 @@
 # mp3gain
 
-Forked from debian/1.5.2-r2-6 tag.
+Forked from git://anonscm.debian.org/collab-maint/mp3gain.git
+at the debian/1.5.2-r2-6 tag.
 
 - Added regression test
 - Applied Debian patches
