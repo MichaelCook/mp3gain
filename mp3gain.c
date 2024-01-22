@@ -1385,11 +1385,11 @@ int main(int argc, char **argv)
 
     for (i = 1; i < argc; i++)
     {
-        if (((argv[i][0] == '/') || (argv[i][0] == '-')) &&
-            (strlen(argv[i]) == 2))
+        const char *arg = argv[i];
+        if (arg[0] == '-' && strlen(arg) == 2)
         {
             fileStart++;
-            switch (argv[i][1])
+            switch (arg[1])
             {
             case 'a':
             case 'A':
@@ -1404,9 +1404,9 @@ int main(int argc, char **argv)
 
             case 'd':
             case 'D':
-                if (argv[i][2] != '\0')
+                if (arg[2] != '\0')
                 {
-                    dBGainMod = atof(argv[i] + 2);
+                    dBGainMod = atof(arg + 2);
                 }
                 else
                 {
@@ -1432,9 +1432,9 @@ int main(int argc, char **argv)
             case 'G':
                 directGain = true;
                 directSingleChannelGain = 0;
-                if (argv[i][2] != '\0')
+                if (arg[2] != '\0')
                 {
-                    directGainVal = atoi(argv[i] + 2);
+                    directGainVal = atoi(arg + 2);
                 }
                 else
                 {
@@ -1466,9 +1466,9 @@ int main(int argc, char **argv)
             case 'L':
                 directSingleChannelGain = true;
                 directGain = 0;
-                if (argv[i][2] != '\0')
+                if (arg[2] != '\0')
                 {
-                    whichChannel = atoi(argv[i] + 2);
+                    whichChannel = atoi(arg + 2);
                     if (i + 1 < argc)
                     {
                         directGainVal = atoi(argv[i + 1]);
@@ -1500,9 +1500,9 @@ int main(int argc, char **argv)
 
             case 'm':
             case 'M':
-                if (argv[i][2] != '\0')
+                if (arg[2] != '\0')
                 {
-                    mp3GainMod = atoi(argv[i] + 2);
+                    mp3GainMod = atoi(arg + 2);
                 }
                 else
                 {
@@ -1543,13 +1543,13 @@ int main(int argc, char **argv)
             case 's':
             case 'S':
                 chtmp = 0;
-                if (argv[i][2] == '\0')
+                if (arg[2] == '\0')
                 {
                     if (i + 1 < argc)
                     {
                         i++;
                         fileStart++;
-                        chtmp = argv[i][0];
+                        chtmp = arg[0];
                     }
                     else
                     {
@@ -1558,7 +1558,7 @@ int main(int argc, char **argv)
                 }
                 else
                 {
-                    chtmp = argv[i][2];
+                    chtmp = arg[2];
                 }
                 switch (chtmp)
                 {
@@ -1628,7 +1628,7 @@ int main(int argc, char **argv)
                 break;
 
             default:
-                fprintf(stderr, "%s: unknown option '%s'\n", gProgramName, argv[i]);
+                fprintf(stderr, "%s: unknown option '%s'\n", gProgramName, arg);
                 exit(EXIT_FAILURE);
             }
         }
