@@ -29,32 +29,35 @@
 extern "C" {
 #endif
 
-typedef enum vbr_mode_e {
-  vbr_off=0,
-  vbr_mt,
-  vbr_rh,
-  vbr_abr,
-  vbr_mtrh,
-  vbr_max_indicator,    /* Don't use this! It's used for sanity checks.       */
-  vbr_default=vbr_rh  /* change this to change the default VBR mode of LAME */
+typedef enum vbr_mode_e
+{
+    vbr_off = 0,
+    vbr_mt,
+    vbr_rh,
+    vbr_abr,
+    vbr_mtrh,
+    vbr_max_indicator,    /* Don't use this! It's used for sanity checks.       */
+    vbr_default = vbr_rh /* change this to change the default VBR mode of LAME */
 } vbr_mode;
 
 /* MPEG modes */
-typedef enum MPEG_mode_e {
-  STEREO = 0,
-  JOINT_STEREO,
-  DUAL_CHANNEL,   /* LAME doesn't supports this! */
-  MONO,
-  NOT_SET,
-  MAX_INDICATOR   /* Don't use this! It's used for sanity checks. */
+typedef enum MPEG_mode_e
+{
+    STEREO = 0,
+    JOINT_STEREO,
+    DUAL_CHANNEL,   /* LAME doesn't supports this! */
+    MONO,
+    NOT_SET,
+    MAX_INDICATOR   /* Don't use this! It's used for sanity checks. */
 } MPEG_mode;
 
 /* Padding types */
-typedef enum Padding_type_e {
-  PAD_NO = 0,
-  PAD_ALL,
-  PAD_ADJUST,
-  PAD_MAX_INDICATOR   /* Don't use this! It's used for sanity checks. */
+typedef enum Padding_type_e
+{
+    PAD_NO = 0,
+    PAD_ALL,
+    PAD_ADJUST,
+    PAD_MAX_INDICATOR   /* Don't use this! It's used for sanity checks. */
 } Padding_type;
 
 struct lame_global_struct;
@@ -75,7 +78,7 @@ typedef lame_global_flags *lame_t;
  * returns -1 if some malloc()'s failed
  * otherwise returns 0
  */
-lame_global_flags *  lame_init(void);
+lame_global_flags   *lame_init(void);
 /* obsolete version */
 int  lame_init_old(lame_global_flags *);
 
@@ -177,11 +180,11 @@ int  lame_get_free_format(const lame_global_flags *);
  * with just "return;" and use it in the set function.
  */
 int  lame_set_errorf(lame_global_flags *,
-                          void (*func)(const char *, va_list));
+                     void (*func)(const char *, va_list));
 int  lame_set_debugf(lame_global_flags *,
-                          void (*func)(const char *, va_list));
-int  lame_set_msgf  (lame_global_flags *,
-                          void (*func)(const char *, va_list));
+                     void (*func)(const char *, va_list));
+int  lame_set_msgf(lame_global_flags *,
+                   void (*func)(const char *, va_list));
 
 /* set one of brate compression ratio.  default is compression ratio of 11.  */
 int  lame_set_brate(lame_global_flags *, int);
@@ -308,16 +311,16 @@ int  lame_set_ATHlower(lame_global_flags *, float);
 float  lame_get_ATHlower(const lame_global_flags *);
 
 // select adaptive ATH type
-int  lame_set_adjust_type( lame_global_flags *, int);
-int  lame_get_adjust_type( const lame_global_flags *);
+int  lame_set_adjust_type(lame_global_flags *, int);
+int  lame_get_adjust_type(const lame_global_flags *);
 
 // select adaptive ATH level adjustment scheme
-int  lame_set_adapt_thres_type( lame_global_flags *, int);
-int  lame_get_adapt_thres_type( const lame_global_flags *);
+int  lame_set_adapt_thres_type(lame_global_flags *, int);
+int  lame_get_adapt_thres_type(const lame_global_flags *);
 
 // adjust (in dB) the point below which adaptive ATH level adjustment occurs
-int  lame_set_adapt_thres_level( lame_global_flags *, float);
-float  lame_get_adapt_thres_level( const lame_global_flags* );
+int  lame_set_adapt_thres_level(lame_global_flags *, float);
+float  lame_get_adapt_thres_level(const lame_global_flags *);
 
 // predictability limit (ISO tonality formula)
 int  lame_set_cwlimit(lame_global_flags *, int);
@@ -367,14 +370,14 @@ int  lame_get_encoder_padding(const lame_global_flags *);
 int  lame_get_framesize(const lame_global_flags *);
 
 // number of PCM samples buffered, but not yet encoded to mp3 data.
-int  lame_get_mf_samples_to_encode( const lame_global_flags*  gfp );
+int  lame_get_mf_samples_to_encode(const lame_global_flags  *gfp);
 
 // size (bytes) of mp3 data buffered, but not yet encoded.
 // this is the number of bytes which would be output by a call to
 // lame_encode_flush_nogap.  NOTE: lame_encode_flush() will return
 // more bytes than this because it will encode the reamining buffered
 // PCM samples before flushing the mp3 buffers.
-int  lame_get_size_mp3buffer( const lame_global_flags*  gfp );
+int  lame_get_size_mp3buffer(const lame_global_flags  *gfp);
 
 // number of frames encoded so far
 int  lame_get_frameNum(const lame_global_flags *);
@@ -395,18 +398,19 @@ int  lame_init_params(lame_global_flags *);
  * get the version number, in a string. of the form:
  * "3.63 (beta)" or just "3.63".
  */
-const char*   get_lame_version       ( void );
-const char*   get_lame_short_version ( void );
-const char*   get_lame_very_short_version ( void );
-const char*   get_psy_version        ( void );
-const char*   get_mp3x_version       ( void );
-const char*   get_lame_url           ( void );
+const char   *get_lame_version(void);
+const char   *get_lame_short_version(void);
+const char   *get_lame_very_short_version(void);
+const char   *get_psy_version(void);
+const char   *get_mp3x_version(void);
+const char   *get_lame_url(void);
 
 /*
  * OPTIONAL:
  * get the version numbers in numerical form.
  */
-typedef struct {
+typedef struct
+{
     /* generic LAME version */
     int major;
     int minor;
@@ -422,15 +426,15 @@ typedef struct {
     /* compile time features */
     const char *features;    /* Don't make assumptions about the contents! */
 } lame_version_t;
-void  get_lame_version_numerical ( lame_version_t *const );
+void  get_lame_version_numerical(lame_version_t *const);
 
 /*
  * OPTIONAL:
  * print internal lame configuration to message handler
  */
-void  lame_print_config(const lame_global_flags*  gfp);
+void  lame_print_config(const lame_global_flags  *gfp);
 
-void  lame_print_internals( const lame_global_flags *gfp);
+void  lame_print_internals(const lame_global_flags *gfp);
 
 /*
  * input pcm data, output (maybe) mp3 frames.
@@ -466,13 +470,13 @@ void  lame_print_internals( const lame_global_flags *gfp);
  * This will overwrite the data in buffer_l[] and buffer_r[].
  *
 */
-int  lame_encode_buffer (
-        lame_global_flags*  gfp,           /* global context handle         */
-        const short int     buffer_l [],   /* PCM data for left channel     */
-        const short int     buffer_r [],   /* PCM data for right channel    */
-        const int           nsamples,      /* number of samples per channel */
-        unsigned char*      mp3buf,        /* pointer to encoded MP3 stream */
-        const int           mp3buf_size ); /* number of valid octets in this
+int  lame_encode_buffer(
+    lame_global_flags  *gfp,           /* global context handle         */
+    const short int     buffer_l [],   /* PCM data for left channel     */
+    const short int     buffer_r [],   /* PCM data for right channel    */
+    const int           nsamples,      /* number of samples per channel */
+    unsigned char      *mp3buf,        /* pointer to encoded MP3 stream */
+    const int           mp3buf_size); /* number of valid octets in this
                                               stream                        */
 
 /*
@@ -482,44 +486,44 @@ int  lame_encode_buffer (
  * channel, not the total number of samples in pcm[]
  */
 int  lame_encode_buffer_interleaved(
-        lame_global_flags*  gfp,           /* global context handlei        */
-        short int           pcm[],         /* PCM data for left and right
+    lame_global_flags  *gfp,           /* global context handlei        */
+    short int           pcm[],         /* PCM data for left and right
                                               channel, interleaved          */
-        int                 num_samples,   /* number of samples per channel,
+    int                 num_samples,   /* number of samples per channel,
                                               _not_ number of samples in
                                               pcm[]                         */
-        unsigned char*      mp3buf,        /* pointer to encoded MP3 stream */
-        int                 mp3buf_size ); /* number of valid octets in this
+    unsigned char      *mp3buf,        /* pointer to encoded MP3 stream */
+    int                 mp3buf_size); /* number of valid octets in this
                                               stream                        */
 
 /* as lame_encode_buffer, but for 'float's */
 int  lame_encode_buffer_float(
-        lame_global_flags*  gfp,           /* global context handle         */
-        const float     buffer_l [],       /* PCM data for left channel     */
-        const float     buffer_r [],       /* PCM data for right channel    */
-        const int           nsamples,      /* number of samples per channel */
-        unsigned char*      mp3buf,        /* pointer to encoded MP3 stream */
-        const int           mp3buf_size ); /* number of valid octets in this
+    lame_global_flags  *gfp,           /* global context handle         */
+    const float     buffer_l [],       /* PCM data for left channel     */
+    const float     buffer_r [],       /* PCM data for right channel    */
+    const int           nsamples,      /* number of samples per channel */
+    unsigned char      *mp3buf,        /* pointer to encoded MP3 stream */
+    const int           mp3buf_size); /* number of valid octets in this
                                               stream                        */
 
 /* as lame_encode_buffer, but for int's */
 int  lame_encode_buffer_int(
-        lame_global_flags*  gfp,           /* global context handle         */
-        const int      buffer_l [],       /* PCM data for left channel     */
-        const int      buffer_r [],       /* PCM data for right channel    */
-        const int           nsamples,      /* number of samples per channel */
-        unsigned char*      mp3buf,        /* pointer to encoded MP3 stream */
-        const int           mp3buf_size ); /* number of valid octets in this
+    lame_global_flags  *gfp,           /* global context handle         */
+    const int      buffer_l [],       /* PCM data for left channel     */
+    const int      buffer_r [],       /* PCM data for right channel    */
+    const int           nsamples,      /* number of samples per channel */
+    unsigned char      *mp3buf,        /* pointer to encoded MP3 stream */
+    const int           mp3buf_size); /* number of valid octets in this
                                               stream                        */
 
 /* as lame_encode_buffer, but for long's */
 int  lame_encode_buffer_long(
-        lame_global_flags*  gfp,           /* global context handle         */
-        const long     buffer_l [],       /* PCM data for left channel     */
-        const long     buffer_r [],       /* PCM data for right channel    */
-        const int           nsamples,      /* number of samples per channel */
-        unsigned char*      mp3buf,        /* pointer to encoded MP3 stream */
-        const int           mp3buf_size ); /* number of valid octets in this
+    lame_global_flags  *gfp,           /* global context handle         */
+    const long     buffer_l [],       /* PCM data for left channel     */
+    const long     buffer_r [],       /* PCM data for right channel    */
+    const int           nsamples,      /* number of samples per channel */
+    unsigned char      *mp3buf,        /* pointer to encoded MP3 stream */
+    const int           mp3buf_size); /* number of valid octets in this
                                               stream                        */
 
 /*
@@ -535,9 +539,9 @@ int  lame_encode_buffer_long(
  * return code = number of bytes output to mp3buf. Can be 0
  */
 int  lame_encode_flush(
-        lame_global_flags *  gfp,    /* global context handle                 */
-        unsigned char*       mp3buf, /* pointer to encoded MP3 stream         */
-        int                  size);  /* number of valid octets in this stream */
+    lame_global_flags   *gfp,    /* global context handle                 */
+    unsigned char       *mp3buf, /* pointer to encoded MP3 stream         */
+    int                  size);  /* number of valid octets in this stream */
 
 /*
  * OPTIONAL:
@@ -557,9 +561,9 @@ int  lame_encode_flush(
  * return code = number of bytes output to mp3buf. Can be 0
  */
 int  lame_encode_flush_nogap(
-        lame_global_flags *  gfp,    /* global context handle                 */
-        unsigned char*       mp3buf, /* pointer to encoded MP3 stream         */
-        int                  size);  /* number of valid octets in this stream */
+    lame_global_flags   *gfp,    /* global context handle                 */
+    unsigned char       *mp3buf, /* pointer to encoded MP3 stream         */
+    int                  size);  /* number of valid octets in this stream */
 
 /*
  * OPTIONAL:
@@ -569,7 +573,7 @@ int  lame_encode_flush_nogap(
  * lame_encode_flush_nogap().
  */
 int  lame_init_bitstream(
-        lame_global_flags *  gfp);    /* global context handle                 */
+    lame_global_flags   *gfp);    /* global context handle                 */
 
 /*
  * OPTIONAL:    some simple statistics
@@ -586,18 +590,18 @@ int  lame_init_bitstream(
  */
 
 void  lame_bitrate_hist(
-        const lame_global_flags *const gfp,
-              int                      bitrate_count[14] );
+    const lame_global_flags *const gfp,
+    int                      bitrate_count[14]);
 void  lame_bitrate_kbps(
-        const lame_global_flags *const gfp,
-              int                      bitrate_kbps [14] );
+    const lame_global_flags *const gfp,
+    int                      bitrate_kbps [14]);
 void  lame_stereo_mode_hist(
-        const lame_global_flags *const gfp,
-              int                      stereo_mode_count[4] );
+    const lame_global_flags *const gfp,
+    int                      stereo_mode_count[4]);
 
-void  lame_bitrate_stereo_mode_hist (
-        const lame_global_flags*  gfp,
-        int  bitrate_stmode_count [14] [4] );
+void  lame_bitrate_stereo_mode_hist(
+    const lame_global_flags  *gfp,
+    int  bitrate_stmode_count [14] [4]);
 
 /*
  * OPTIONAL:
@@ -610,13 +614,13 @@ void  lame_bitrate_stereo_mode_hist (
  * if VBR  tags are turned off by the user, or turned off by LAME because
  * the output is not a regular file, this call does nothing
 */
-void  lame_mp3_tags_fid(lame_global_flags *,FILE* fid);
+void  lame_mp3_tags_fid(lame_global_flags *, FILE *fid);
 
 /*
  * REQUIRED:
  * final call to free all remaining buffers
  */
-int   lame_close (lame_global_flags *);
+int   lame_close(lame_global_flags *);
 
 /*
  * OBSOLETE:
@@ -625,9 +629,9 @@ int   lame_close (lame_global_flags *);
  * will no longer work because the data will have been cleared
  */
 int  lame_encode_finish(
-        lame_global_flags*  gfp,
-        unsigned char*      mp3buf,
-        int                 size );
+    lame_global_flags  *gfp,
+    unsigned char      *mp3buf,
+    int                 size);
 
 /*********************************************************************
  *
@@ -637,22 +641,23 @@ int  lame_encode_finish(
  * libmp3lame is compiled with HAVE_MPGLIB
  *
  *********************************************************************/
-typedef struct {
-  int header_parsed;   /* 1 if header was parsed and following data was
+typedef struct
+{
+    int header_parsed;   /* 1 if header was parsed and following data was
                           computed                                       */
-  int stereo;          /* number of channels                             */
-  int samplerate;      /* sample rate                                    */
-  int bitrate;         /* bitrate                                        */
-  int mode;            /* mp3 frame type                                 */
-  int mode_ext;        /* mp3 frame type                                 */
-  int framesize;       /* number of samples per mp3 frame                */
+    int stereo;          /* number of channels                             */
+    int samplerate;      /* sample rate                                    */
+    int bitrate;         /* bitrate                                        */
+    int mode;            /* mp3 frame type                                 */
+    int mode_ext;        /* mp3 frame type                                 */
+    int framesize;       /* number of samples per mp3 frame                */
 
-  /* this data is only computed if mpglib detects a Xing VBR header */
-  unsigned long nsamp; /* number of samples in mp3 file.                 */
-  int totalframes;     /* total number of frames in mp3 file             */
+    /* this data is only computed if mpglib detects a Xing VBR header */
+    unsigned long nsamp; /* number of samples in mp3 file.                 */
+    int totalframes;     /* total number of frames in mp3 file             */
 
-  /* this data is not currently computed by the mpglib routines */
-  int framenum;        /* frames decoded counter                         */
+    /* this data is not currently computed by the mpglib routines */
+    int framenum;        /* frames decoded counter                         */
 } mp3data_struct;
 
 /* required call to initialize decoder */
@@ -666,33 +671,33 @@ int  lame_decode_init(void);
  *  n>0: size of pcm output
  *********************************************************************/
 int  lame_decode(
-        unsigned char *  mp3buf,
-        int              len,
-        short            pcm_l[],
-        short            pcm_r[] );
+    unsigned char   *mp3buf,
+    int              len,
+    short            pcm_l[],
+    short            pcm_r[]);
 
 /* same as lame_decode, and also returns mp3 header data */
 int  lame_decode_headers(
-        unsigned char*   mp3buf,
-        int              len,
-        short            pcm_l[],
-        short            pcm_r[],
-        mp3data_struct*  mp3data );
+    unsigned char   *mp3buf,
+    int              len,
+    short            pcm_l[],
+    short            pcm_r[],
+    mp3data_struct  *mp3data);
 
 /* same as lame_decode, but returns at most one frame */
 int  lame_decode1(
-        unsigned char*  mp3buf,
-        int             len,
-        short           pcm_l[],
-        short           pcm_r[] );
+    unsigned char  *mp3buf,
+    int             len,
+    short           pcm_l[],
+    short           pcm_r[]);
 
 /* same as lame_decode1, but returns at most one frame and mp3 header data */
 int  lame_decode1_headers(
-        unsigned char*   mp3buf,
-        int              len,
-        short            pcm_l[],
-        short            pcm_r[],
-        mp3data_struct*  mp3data );
+    unsigned char   *mp3buf,
+    int              len,
+    short            pcm_l[],
+    short            pcm_r[],
+    mp3data_struct  *mp3data);
 
 /*********************************************************************
  *
@@ -722,49 +727,49 @@ int  lame_decode1_headers(
 
 /* utility to obtain alphabetically sorted list of genre names with numbers */
 extern void id3tag_genre_list(
-        void (*handler)(int, const char *, void *),
-        void*  cookie);
+    void (*handler)(int, const char *, void *),
+    void  *cookie);
 
-extern void id3tag_init   (lame_global_flags *gfp);
+extern void id3tag_init(lame_global_flags *gfp);
 
 /* force addition of version 2 tag */
-extern void id3tag_add_v2   (lame_global_flags *gfp);
+extern void id3tag_add_v2(lame_global_flags *gfp);
 
 /* add only a version 1 tag */
-extern void id3tag_v1_only  (lame_global_flags *gfp);
+extern void id3tag_v1_only(lame_global_flags *gfp);
 
 /* add only a version 2 tag */
-extern void id3tag_v2_only  (lame_global_flags *gfp);
+extern void id3tag_v2_only(lame_global_flags *gfp);
 
 /* pad version 1 tag with spaces instead of nulls */
-extern void id3tag_space_v1 (lame_global_flags *gfp);
+extern void id3tag_space_v1(lame_global_flags *gfp);
 
 /* pad version 2 tag with extra 128 bytes */
-extern void id3tag_pad_v2   (lame_global_flags *gfp);
+extern void id3tag_pad_v2(lame_global_flags *gfp);
 
 extern void id3tag_set_title(
-        lame_global_flags*  gfp,
-        const char*         title );
+    lame_global_flags  *gfp,
+    const char         *title);
 extern void id3tag_set_artist(
-        lame_global_flags*  gfp,
-        const char*         artist );
+    lame_global_flags  *gfp,
+    const char         *artist);
 extern void id3tag_set_album(
-        lame_global_flags*  gfp,
-        const char*         album );
+    lame_global_flags  *gfp,
+    const char         *album);
 extern void id3tag_set_year(
-        lame_global_flags*  gfp,
-        const char*         year );
+    lame_global_flags  *gfp,
+    const char         *year);
 extern void id3tag_set_comment(
-        lame_global_flags*  gfp,
-        const char*         comment );
+    lame_global_flags  *gfp,
+    const char         *comment);
 extern void id3tag_set_track(
-        lame_global_flags*  gfp,
-        const char*         track );
+    lame_global_flags  *gfp,
+    const char         *track);
 
 /* return non-zero result if genre name or number is invalid */
 extern int id3tag_set_genre(
-        lame_global_flags*  gfp,
-        const char*         genre );
+    lame_global_flags  *gfp,
+    const char         *genre);
 
 /***********************************************************************
 *

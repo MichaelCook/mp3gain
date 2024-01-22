@@ -20,7 +20,7 @@
 
 #include "mpglibDBL_mpg123.h"
 
-extern double decwin[512+32];
+extern double decwin[512 + 32];
 extern double *pnts[5];
 
 void make_decode_tables(long scale);

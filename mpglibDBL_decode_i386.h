@@ -20,5 +20,5 @@
 
 #include "mpglibDBL_common.h"
 
-int synth_1to1_mono(PMPSTR mp, double *bandPtr,int *pnt);
-int synth_1to1(PMPSTR mp, double *bandPtr,int channel,int *pnt);
+int synth_1to1_mono(PMPSTR mp, double *bandPtr, int *pnt);
+int synth_1to1(PMPSTR mp, double *bandPtr, int channel, int *pnt);

@@ -2,14 +2,15 @@
 
 #include <stdio.h>
 
-struct MP3GainTagInfo {
+struct MP3GainTagInfo
+{
     int haveTrackGain;
     int haveTrackPeak;
     int haveAlbumGain;
     int haveAlbumPeak;
     int haveUndo;
     int haveMinMaxGain;
-        int haveAlbumMinMaxGain;
+    int haveAlbumMinMaxGain;
     double trackGain;
     double trackPeak;
     double albumGain;
@@ -25,16 +26,17 @@ struct MP3GainTagInfo {
      */
     unsigned char minGain;
     unsigned char maxGain;
-        unsigned char albumMinGain;
-        unsigned char albumMaxGain;
+    unsigned char albumMinGain;
+    unsigned char albumMaxGain;
     /* minGain and maxGain are the current minimum and maximum values of
        the "global gain" fields in the frames of the mp3 file
      */
-        int dirty; /* flag if data changes after loaded from file */
-  int recalc; /* Used to signal if recalculation is required */
+    int dirty; /* flag if data changes after loaded from file */
+    int recalc; /* Used to signal if recalculation is required */
 };
 
-struct APEFieldStruct {
+struct APEFieldStruct
+{
     unsigned long vsize;
     unsigned long isize;
     unsigned long flags;
@@ -42,7 +44,8 @@ struct APEFieldStruct {
     char *value;
 };
 
-struct APETagFooterStruct {
+struct APETagFooterStruct
+{
     char ID       [8];
     char Version  [4];
     char Length   [4];
@@ -51,7 +54,8 @@ struct APETagFooterStruct {
     char Reserved [8];
 };
 
-struct APETagStruct {
+struct APETagStruct
+{
     unsigned long originalTagSize;
     int haveHeader;
     struct APETagFooterStruct header;
@@ -60,7 +64,8 @@ struct APETagStruct {
     unsigned long otherFieldsSize;
 };
 
-struct FileTagsStruct {
+struct FileTagsStruct
+{
     long tagOffset;
     struct APETagStruct *apeTag;
     unsigned char *lyrics3tag;

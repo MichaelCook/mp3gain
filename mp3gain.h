@@ -44,7 +44,8 @@
 
 void passError(MMRESULT lerrnum, int numStrings, ...);
 
-typedef enum {
+typedef enum
+{
     storeTime,
     setStoredTime
 } timeAction;

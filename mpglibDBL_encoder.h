@@ -116,9 +116,9 @@
 #include "mpglibDBL_machine.h"
 #include "mpglibDBL_lame.h"
 
-int  lame_encode_mp3_frame (
-        lame_global_flags*  const gfp,
-        sample_t*           inbuf_l,
-        sample_t*           inbuf_r,
-        unsigned char*      mp3buf,
-        int                 mp3buf_size );
+int  lame_encode_mp3_frame(
+    lame_global_flags  *const gfp,
+    sample_t           *inbuf_l,
+    sample_t           *inbuf_r,
+    unsigned char      *mp3buf,
+    int                 mp3buf_size);

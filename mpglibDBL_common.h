@@ -26,10 +26,10 @@ extern const long freqs[9];
 extern unsigned char *wordpointer;
 extern int bitindex;
 
-int  head_check(unsigned long head,int check_layer);
-int  decode_header(struct frame *fr,unsigned long newhead);
+int  head_check(unsigned long head, int check_layer);
+int  decode_header(struct frame *fr, unsigned long newhead);
 void print_header(struct frame *fr);
 void print_header_compact(struct frame *fr);
 unsigned int getbits(int number_of_bits);
 unsigned int getbits_fast(int number_of_bits);
-int set_pointer( PMPSTR mp, long backstep);
+int set_pointer(PMPSTR mp, long backstep);

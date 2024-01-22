@@ -46,5 +46,5 @@ typedef unsigned int MMRESULT;
 #define MP3GAIN_FILEFORMAT_NOTSUPPORTED  WAVERR_BADFORMAT
 #define MP3GAIN_CANCELLED                2006
 
-void DoUnkError( char * localerrstr);
-void DoError( char * localerrstr, MMRESULT localerrnum );
+void DoUnkError(char *localerrstr);
+void DoError(char *localerrstr, MMRESULT localerrnum);

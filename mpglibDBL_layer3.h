@@ -20,4 +20,4 @@
 
 void init_layer3(int);
 int  do_layer3_sideinfo(struct frame *fr);
-int  do_layer3( PMPSTR mp,int *pcm_point);
+int  do_layer3(PMPSTR mp, int *pcm_point);

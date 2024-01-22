@@ -38,5 +38,5 @@ test: mp3gain
 	./test
 
 mp3gain: $(SOURCES) $(HEADERS)
-	astyle --options=.astylerc $(SOURCES)
+	astyle --options=.astylerc $(SOURCES) $(HEADERS)
 	gcc -Wall -Werror $(CFLAGS) -o mp3gain $(SOURCES) -lm
