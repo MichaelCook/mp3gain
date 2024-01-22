@@ -35,41 +35,47 @@ struct MP3GainTagInfo {
 };
 
 struct APEFieldStruct {
-        unsigned long vsize;
-        unsigned long isize;
-        unsigned long flags;
-        char *name;
-        char *value;
+    unsigned long vsize;
+    unsigned long isize;
+    unsigned long flags;
+    char *name;
+    char *value;
 };
 
 struct APETagFooterStruct {
-    char   ID       [8];
-    char   Version  [4];
-    char   Length   [4];
-    char   TagCount [4];
-    char   Flags    [4];
-    char   Reserved [8];
+    char ID       [8];
+    char Version  [4];
+    char Length   [4];
+    char TagCount [4];
+    char Flags    [4];
+    char Reserved [8];
 };
 
 struct APETagStruct {
-        unsigned long originalTagSize;
-        int haveHeader;
-        struct APETagFooterStruct header;
-        struct APETagFooterStruct footer;
-        unsigned char *otherFields; /* i.e. other than MP3Gain */
+    unsigned long originalTagSize;
+    int haveHeader;
+    struct APETagFooterStruct header;
+    struct APETagFooterStruct footer;
+    unsigned char *otherFields; /* i.e. other than MP3Gain */
     unsigned long otherFieldsSize;
 };
 
 struct FileTagsStruct {
-        long tagOffset;
-        struct APETagStruct *apeTag;
+    long tagOffset;
+    struct APETagStruct *apeTag;
     unsigned char *lyrics3tag;
-        unsigned long lyrics3TagSize;
+    unsigned long lyrics3TagSize;
     unsigned char *id31tag;
 };
 
-int ReadMP3GainAPETag (char *filename, struct MP3GainTagInfo *info, struct FileTagsStruct *fileTags);
+int ReadMP3GainAPETag(const char *filename,
+                      struct MP3GainTagInfo *info,
+                      struct FileTagsStruct *fileTags);
 
-int WriteMP3GainAPETag (char *filename, struct MP3GainTagInfo *info, struct FileTagsStruct *fileTags, int saveTimeStamp);
+int WriteMP3GainAPETag(const char *filename,
+                       struct MP3GainTagInfo *info,
+                       struct FileTagsStruct *fileTags,
+                       int saveTimeStamp);
 
-int RemoveMP3GainAPETag (char *filename, int saveTimeStamp);
+int RemoveMP3GainAPETag(const char *filename,
+                        int saveTimeStamp);

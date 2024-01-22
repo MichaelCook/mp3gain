@@ -1326,7 +1326,7 @@ static int id3_copy_data(FILE *inf, FILE *outf, long offset, long count)
 /**
  * Read gain information from an ID3v2 tag.
  */
-int ReadMP3GainID3Tag(char *filename, struct MP3GainTagInfo *info)
+int ReadMP3GainID3Tag(const char *filename, struct MP3GainTagInfo *info)
 {
     FILE *f;
     struct ID3v2TagStruct tag;
@@ -1377,7 +1377,9 @@ int ReadMP3GainID3Tag(char *filename, struct MP3GainTagInfo *info)
  * file is rewritten to a temporary file and then moved in place of the
  * old file.
  */
-int WriteMP3GainID3Tag(char *filename, struct MP3GainTagInfo *info, int saveTimeStamp)
+int WriteMP3GainID3Tag(const char *filename,
+                       struct MP3GainTagInfo *info,
+                       int saveTimeStamp)
 {
     char sbuf[32];
     char *tmpfilename;
@@ -1619,7 +1621,7 @@ int WriteMP3GainID3Tag(char *filename, struct MP3GainTagInfo *info, int saveTime
  * Remove gain information from the ID3v2 tag.
  * Return 1 on success, 0 if no changes are needed, or a negative error code.
  */
-int RemoveMP3GainID3Tag(char *filename, int saveTimeStamp)
+int RemoveMP3GainID3Tag(const char *filename, int saveTimeStamp)
 {
     struct MP3GainTagInfo info;
 

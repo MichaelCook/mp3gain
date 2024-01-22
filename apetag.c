@@ -415,7 +415,7 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
     return 1;
 }
 
-int truncate_file(char *filename, long truncLength)
+int truncate_file(const char *filename, long truncLength)
 {
     int fd;
 
@@ -443,7 +443,9 @@ int truncate_file(char *filename, long truncLength)
  * gain information from it. Any ID3v1 or Lyrics3v2 tags at the end
  * of the file are read and stored, but not processed.
  */
-int ReadMP3GainAPETag(char *filename, struct MP3GainTagInfo *info, struct FileTagsStruct *fileTags)
+int ReadMP3GainAPETag(const char *filename,
+                      struct MP3GainTagInfo *info,
+                      struct FileTagsStruct *fileTags)
 {
     FILE *fi;
     long tag_offset, offs_bk;
@@ -481,7 +483,10 @@ int ReadMP3GainAPETag(char *filename, struct MP3GainTagInfo *info, struct FileTa
  * You need to have already called ReadMP3GainTag and filled in the info
  * and fileTags structures.
  */
-int WriteMP3GainAPETag(char *filename, struct MP3GainTagInfo *info, struct FileTagsStruct *fileTags, int saveTimeStamp)
+int WriteMP3GainAPETag(const char *filename,
+                       struct MP3GainTagInfo *info,
+                       struct FileTagsStruct *fileTags,
+                       int saveTimeStamp)
 {
     FILE *outputFile;
     unsigned long newTagLength;
@@ -771,7 +776,7 @@ int WriteMP3GainAPETag(char *filename, struct MP3GainTagInfo *info, struct FileT
 /**
  * Remove gain information from the APE tag.
  */
-int RemoveMP3GainAPETag(char *filename, int saveTimeStamp)
+int RemoveMP3GainAPETag(const char *filename, int saveTimeStamp)
 {
     struct MP3GainTagInfo info;
     struct FileTagsStruct fileTags;

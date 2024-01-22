@@ -1104,7 +1104,7 @@ int changeGain(const char *filename, int leftgainchange, int rightgainchange)
 }
 
 static
-void WriteMP3GainTag(char *filename, struct MP3GainTagInfo *info,
+void WriteMP3GainTag(const char *filename, struct MP3GainTagInfo *info,
                      struct FileTagsStruct *fileTags, int saveTimeStamp)
 {
     if (useId3)
