@@ -1202,10 +1202,10 @@ static void changeGainAndTag(const char *filename,
 
 static int queryUserForClipping(char *argv_mainloop, int intGainChange)
 {
-    int ch;
+    fprintf(stderr, "%s: WARNING: %s may clip with mp3 gain change %d\n",
+            gProgramName, argv_mainloop, intGainChange);
 
-    fprintf(stderr, "\nWARNING: %s may clip with mp3 gain change %d\n", argv_mainloop, intGainChange);
-    ch = 0;
+    int ch = 0;
     fflush(stdout);
     while ((ch != 'Y') && (ch != 'N'))
     {
@@ -1228,46 +1228,48 @@ static int queryUserForClipping(char *argv_mainloop, int intGainChange)
 #if 0
 static void wrapExplanation()
 {
-    fprintf(stderr, "Here's the problem:\n");
-    fprintf(stderr, "The \"global gain\" field that mp3gain adjusts is an 8-bit unsigned integer, so\n");
-    fprintf(stderr, "the possible values are 0 to 255.\n");
-    fprintf(stderr, "\n");
-    fprintf(stderr, "MOST mp3 files (in fact, ALL the mp3 files I've examined so far) don't go\n");
-    fprintf(stderr, "over 230. So there's plenty of headroom on top-- you can increase the gain\n");
-    fprintf(stderr, "by 37dB (multiplying the amplitude by 76) without a problem.\n");
-    fprintf(stderr, "\n");
-    fprintf(stderr, "The problem is at the bottom of the range. Some encoders create frames with\n");
-    fprintf(stderr, "0 as the global gain for silent frames.\n");
-    fprintf(stderr, "What happens when you _lower_ the global gain by 1?\n");
-    fprintf(stderr, "Well, in the past, mp3gain always simply wrapped the result up to 255.\n");
-    fprintf(stderr, "That way, if you lowered the gain by any amount and then raised it by the\n");
-    fprintf(stderr, "same amount, the mp3 would always be _exactly_ the same.\n");
-    fprintf(stderr, "\n");
-    fprintf(stderr, "There are a few encoders out there, unfortunately, that create 0-gain frames\n");
-    fprintf(stderr, "with other audio data in the frame.\n");
-    fprintf(stderr, "As long as the global gain is 0, you'll never hear the data.\n");
-    fprintf(stderr, "But if you lower the gain on such a file, the global gain is suddenly _huge_.\n");
-    fprintf(stderr, "If you play this modified file, there might be a brief, very loud blip.\n");
-    fprintf(stderr, "\n");
-    fprintf(stderr, "So now the default behavior of mp3gain is to _not_ wrap gain changes.\n");
-    fprintf(stderr, "In other words,\n");
-    fprintf(stderr, "1) If the gain change would make a frame's global gain drop below 0,\n");
-    fprintf(stderr, "   then the global gain is set to 0.\n");
-    fprintf(stderr, "2) If the gain change would make a frame's global gain grow above 255,\n");
-    fprintf(stderr, "   then the global gain is set to 255.\n");
-    fprintf(stderr, "3) If a frame's global gain field is already 0, it is not changed, even if\n");
-    fprintf(stderr, "   the gain change is a positive number\n");
-    fprintf(stderr, "\n");
-    fprintf(stderr, "To use the original \"wrapping\" behavior, use -w");
+    printf("Here's the problem:\n"
+           "The \"global gain\" field that mp3gain adjusts is an 8-bit unsigned integer, so\n"
+           "the possible values are 0 to 255.\n"
+           "\n"
+           "MOST mp3 files (in fact, ALL the mp3 files I've examined so far) don't go\n"
+           "over 230. So there's plenty of headroom on top-- you can increase the gain\n"
+           "by 37dB (multiplying the amplitude by 76) without a problem.\n"
+           "\n"
+           "The problem is at the bottom of the range. Some encoders create frames with\n"
+           "0 as the global gain for silent frames.\n"
+           "What happens when you _lower_ the global gain by 1?\n"
+           "Well, in the past, mp3gain always simply wrapped the result up to 255.\n"
+           "That way, if you lowered the gain by any amount and then raised it by the\n"
+           "same amount, the mp3 would always be _exactly_ the same.\n"
+           "\n"
+           "There are a few encoders out there, unfortunately, that create 0-gain frames\n"
+           "with other audio data in the frame.\n"
+           "As long as the global gain is 0, you'll never hear the data.\n"
+           "But if you lower the gain on such a file, the global gain is suddenly _huge_.\n"
+           "If you play this modified file, there might be a brief, very loud blip.\n"
+           "\n"
+           "So now the default behavior of mp3gain is to _not_ wrap gain changes.\n"
+           "In other words,\n"
+           "1) If the gain change would make a frame's global gain drop below 0,\n"
+           "   then the global gain is set to 0.\n"
+           "2) If the gain change would make a frame's global gain grow above 255,\n"
+           "   then the global gain is set to 255.\n"
+           "3) If a frame's global gain field is already 0, it is not changed, even if\n"
+           "   the gain change is a positive number\n"
+           "\n"
+           "To use the original \"wrapping\" behavior, use -w");
     exit(0);
 }
 #endif
 
 static void errUsage()
 {
-    fprintf(stderr, "uses mpglib, which can be found at http://www.mpg123.de\n");
-    fprintf(stderr, "Usage: %s [options] <infile> [<infile 2> ...]\n", gProgramName);
-    fprintf(stderr, "  --use -? or -h for a full list of options\n");
+    fprintf(stderr,
+            "Usage: %s [options] <infile> [<infile 2> ...]\n"
+            "  --use -? or -h for a full list of options\n"
+            "Uses mpglib, which can be found at http://www.mpg123.de\n",
+            gProgramName);
     exit(1);
 }
 
@@ -1628,7 +1630,8 @@ int main(int argc, char **argv)
                 break;
 
             default:
-                fprintf(stderr, "I don't recognize option %s\n", argv[i]);
+                fprintf(stderr, "%s: unknown option '%s'\n", gProgramName, argv[i]);
+                exit(EXIT_FAILURE);
             }
         }
     }
@@ -1958,8 +1961,9 @@ int main(int argc, char **argv)
             {
                 if ((!QuietMode) && (!databaseFormat))
                 {
-                    fprintf(stderr, "Undoing mp3gain changes (%d,%d) to %s...\n", tagInfo[argi].undoLeft, tagInfo[argi].undoRight,
-                            argv[argi]);
+                    printf("Undoing mp3gain changes (%d,%d) to %s...\n",
+                           tagInfo[argi].undoLeft, tagInfo[argi].undoRight,
+                           argv[argi]);
                 }
 
                 if (databaseFormat)
@@ -1982,11 +1986,13 @@ int main(int argc, char **argv)
                 {
                     if (tagInfo[argi].haveUndo)
                     {
-                        fprintf(stderr, "No changes to undo in %s\n", argv[argi]);
+                        fprintf(stderr, "%s: No changes to undo in %s\n",
+                                gProgramName, argv[argi]);
                     }
                     else
                     {
-                        fprintf(stderr, "No undo information in %s\n", argv[argi]);
+                        fprintf(stderr, "%s: No undo information in %s\n",
+                                gProgramName, argv[argi]);
                     }
                     gSuccess = false;
                 }
@@ -1996,7 +2002,8 @@ int main(int argc, char **argv)
         {
             if (!QuietMode)
             {
-                fprintf(stderr, "Applying gain change of %d to CHANNEL %d of %s...\n", directGainVal, whichChannel, argv[argi]);
+                printf("Applying gain change of %d to CHANNEL %d of %s...\n",
+                       directGainVal, whichChannel, argv[argi]);
             }
             if (whichChannel)   /* do right channel */
             {
@@ -2022,14 +2029,15 @@ int main(int argc, char **argv)
             }
             if (!QuietMode && gSuccess)
             {
-                fprintf(stderr, "\ndone\n");
+                printf("\ndone\n");
             }
         }
         else if (directGain)
         {
             if (!QuietMode)
             {
-                fprintf(stderr, "Applying gain change of %d to %s...\n", directGainVal, argv[argi]);
+                printf("Applying gain change of %d to %s...\n",
+                       directGainVal, argv[argi]);
             }
             if (skipTag)
             {
@@ -2038,11 +2046,12 @@ int main(int argc, char **argv)
             else
             {
                 changeGainAndTag(argv[argi],
-                                 directGainVal, directGainVal, tagInfo + argi, fileTags + argi);
+                                 directGainVal, directGainVal, tagInfo + argi,
+                                 fileTags + argi);
             }
             if (!QuietMode && gSuccess)
             {
-                fprintf(stderr, "\ndone\n");
+                printf("\ndone\n");
             }
         }
         else if (deleteTag)
@@ -2056,7 +2065,7 @@ int main(int argc, char **argv)
             }
             if ((!QuietMode) && (!databaseFormat))
             {
-                fprintf(stderr, "Deleting tag info of %s...\n", argv[argi]);
+                printf("Deleting tag info of %s...\n", argv[argi]);
             }
             if (databaseFormat)
             {
@@ -2079,7 +2088,8 @@ int main(int argc, char **argv)
 
             if ((inf == NULL) && (tagInfo[argi].recalc > 0))
             {
-                fprintf(stderr, "Can't open %s for reading\n", argv[argi]);
+                fprintf(stderr, "%s: Can't open %s for reading\n",
+                        gProgramName, argv[argi]);
                 gSuccess = false;
             }
             else
@@ -2128,16 +2138,16 @@ int main(int argc, char **argv)
                     {
                         if (!BadLayer)
                         {
-                            fprintf(stderr, "Can't find any valid MP3 frames in file %s\n", argv[argi]);
+                            fprintf(stderr, "%s: Can't find any valid MP3 frames in file %s\n",
+                                    gProgramName, argv[argi]);
                             gSuccess = false;
                         }
                     }
                     else
                     {
                         LayerSet = 1; /* We've found at least one valid layer 3 frame.
-                                                                   * Assume any later layer 1 or 2 frames are just
-                                                                   * bitstream corruption
-                                                                   */
+                                         Assume any later layer 1 or 2 frames are just
+                                         bitstream corruption */
                         fileok[argi] = true;
                         numFiles++;
 
@@ -2167,7 +2177,8 @@ int main(int argc, char **argv)
                                 bitridx = (curframe[2] >> 4) & 0x0F;
                                 if (bitridx == 0)
                                 {
-                                    fprintf(stderr, "%s is free format (not currently supported)\n", curfilename);
+                                    fprintf(stderr, "%s: %s is free format (not currently supported)\n",
+                                            gProgramName, curfilename);
                                     ok = 0;
                                 }
                                 else
@@ -2219,7 +2230,8 @@ int main(int argc, char **argv)
                                 bitridx = (curframe[2] >> 4) & 0x0F;
                                 if (bitridx == 0)
                                 {
-                                    fprintf(stderr, "%s is free format (not currently supported)\n", curfilename);
+                                    fprintf(stderr, "%s: %s is free format (not currently supported)\n",
+                                            gProgramName, curfilename);
                                     ok = 0;
                                 }
                                 else
@@ -2256,7 +2268,7 @@ int main(int argc, char **argv)
                                             {
                                                 if (AnalyzeSamples(lsamples, rsamples, procSamp / nchan, nchan) == GAIN_ANALYSIS_ERROR)
                                                 {
-                                                    fprintf(stderr, "Error analyzing further samples (max time reached)          \n");
+                                                    fprintf(stderr, "%s: Error analyzing further samples (max time reached)\n", gProgramName);
                                                     analysisError = true;
                                                     ok = 0;
                                                 }
@@ -2305,7 +2317,8 @@ int main(int argc, char **argv)
 
                         if (dBchange == GAIN_NOT_ENOUGH_SAMPLES)
                         {
-                            fprintf(stderr, "Not enough samples in %s to do analysis\n", argv[argi]);
+                            fprintf(stderr, "%s: Not enough samples in %s to do analysis\n",
+                                    gProgramName, argv[argi]);
                             gSuccess = false;
                             numFiles--;
                         }
@@ -2483,8 +2496,9 @@ int main(int argc, char **argv)
         }
         else
         {
-            /* the following if-else is for the weird case where someone applies "Album" gain to
-               a single file, but the file doesn't actually have an Album field */
+            /* the following if-else is for the weird case where someone
+               applies "Album" gain to a single file, but the file doesn't
+               actually have an Album field */
             if (tagInfo[fileStart].haveAlbumGain)
             {
                 dBchange = tagInfo[fileStart].albumGain;
@@ -2497,7 +2511,8 @@ int main(int argc, char **argv)
 
         if (dBchange == GAIN_NOT_ENOUGH_SAMPLES)
         {
-            fprintf(stderr, "Not enough samples in mp3 files to do analysis\n");
+            fprintf(stderr, "%s: Not enough samples in mp3 files to do analysis\n",
+                    gProgramName);
         }
         else
         {
