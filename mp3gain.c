@@ -84,7 +84,7 @@ static int forceRecalculateTag = 0;
 static int forceUpdateTag = 0;
 static int checkTagOnly = 0;
 static int useId3 = 0;
-static int gSuccess;
+static bool gSuccess;
 static long inbuffer;
 static unsigned long bitidx;
 static unsigned char *wrdpntr;
@@ -97,7 +97,7 @@ static unsigned long filepos;
 
 void DoError(const char *localerrstr, MMRESULT localerrnum)
 {
-    gSuccess = 0;
+    gSuccess = false;
     fprintf(stderr, "%s", localerrstr);
 }
 
@@ -1368,7 +1368,7 @@ int main(int argc, char **argv)
     unsigned char curAlbumMaxGain = 0;
     char chtmp;
 
-    gSuccess = 1;
+    gSuccess = true;
 
     if (argc < 2)
     {
@@ -1985,7 +1985,7 @@ int main(int argc, char **argv)
                     {
                         fprintf(stderr, "No undo information in %s\n", argv[argi]);
                     }
-                    gSuccess = 0;
+                    gSuccess = false;
                 }
             }
         }
@@ -2017,7 +2017,7 @@ int main(int argc, char **argv)
                     changeGainAndTag(argv[argi], directGainVal, 0, tagInfo + argi, fileTags + argi);
                 }
             }
-            if ((!QuietMode) && (gSuccess == 1))
+            if (!QuietMode && gSuccess)
             {
                 fprintf(stderr, "\ndone\n");
             }
@@ -2037,7 +2037,7 @@ int main(int argc, char **argv)
                 changeGainAndTag(argv[argi],
                                  directGainVal, directGainVal, tagInfo + argi, fileTags + argi);
             }
-            if ((!QuietMode) && (gSuccess == 1))
+            if (!QuietMode && gSuccess)
             {
                 fprintf(stderr, "\ndone\n");
             }
@@ -2077,7 +2077,7 @@ int main(int argc, char **argv)
             if ((inf == NULL) && (tagInfo[argi].recalc > 0))
             {
                 fprintf(stderr, "Can't open %s for reading\n", argv[argi]);
-                gSuccess = 0;
+                gSuccess = false;
             }
             else
             {
@@ -2126,7 +2126,7 @@ int main(int argc, char **argv)
                         if (!BadLayer)
                         {
                             fprintf(stderr, "Can't find any valid MP3 frames in file %s\n", argv[argi]);
-                            gSuccess = 0;
+                            gSuccess = false;
                         }
                     }
                     else
@@ -2303,7 +2303,7 @@ int main(int argc, char **argv)
                         if (dBchange == GAIN_NOT_ENOUGH_SAMPLES)
                         {
                             fprintf(stderr, "Not enough samples in %s to do analysis\n", argv[argi]);
-                            gSuccess = 0;
+                            gSuccess = false;
                             numFiles--;
                         }
                         else
