@@ -43,6 +43,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
+#include <libgen.h>
 #include "mpglibDBL_interface.h"
 #include "gain_analysis.h"
 #include "mp3gain.h"
@@ -94,11 +95,12 @@ static FILE *inf;
 static FILE *outf;
 static short int saveTime;
 static unsigned long filepos;
+static const char *gProgramName;
 
 void DoError(const char *localerrstr, MMRESULT localerrnum)
 {
     gSuccess = false;
-    fprintf(stderr, "%s", localerrstr);
+    fprintf(stderr, "%s: %s", gProgramName, localerrstr);
 }
 
 void DoUnkError(const char *localerrstr)
@@ -1261,15 +1263,15 @@ static void wrapExplanation()
 }
 #endif
 
-static void errUsage(const char *progname)
+static void errUsage()
 {
     fprintf(stderr, "uses mpglib, which can be found at http://www.mpg123.de\n");
-    fprintf(stderr, "Usage: %s [options] <infile> [<infile 2> ...]\n", progname);
+    fprintf(stderr, "Usage: %s [options] <infile> [<infile 2> ...]\n", gProgramName);
     fprintf(stderr, "  --use -? or -h for a full list of options\n");
     exit(1);
 }
 
-static void fullUsage(const char *progname)
+static void fullUsage()
 {
     printf("copyright(c) 2001-2009 by Glen Sawyer\n"
            "uses mpglib, which can be found at http://www.mpg123.de\n"
@@ -1312,7 +1314,7 @@ static void fullUsage(const char *progname)
            "If you specify -r and -a, only the second one will work\n"
            "If you do not specify -c, the program will stop and ask before\n"
            "     applying gain change to a file that might clip\n",
-           progname);
+           gProgramName);
     exit(0);
 }
 
@@ -1369,10 +1371,11 @@ int main(int argc, char **argv)
     char chtmp;
 
     gSuccess = true;
+    gProgramName = basename(argv[0]);
 
     if (argc < 2)
     {
-        errUsage(argv[0]);
+        errUsage();
     }
 
     maxAmpOnly = 0;
@@ -1415,7 +1418,7 @@ int main(int argc, char **argv)
                     }
                     else
                     {
-                        errUsage(argv[0]);
+                        errUsage();
                     }
                 }
                 break;
@@ -1443,7 +1446,7 @@ int main(int argc, char **argv)
                     }
                     else
                     {
-                        errUsage(argv[0]);
+                        errUsage();
                     }
                 }
                 break;
@@ -1451,7 +1454,7 @@ int main(int argc, char **argv)
             case 'h':
             case 'H':
             case '?':
-                fullUsage(argv[0]);
+                fullUsage();
                 break;
 
             case 'k':
@@ -1474,7 +1477,7 @@ int main(int argc, char **argv)
                     }
                     else
                     {
-                        errUsage(argv[0]);
+                        errUsage();
                     }
                 }
                 else
@@ -1490,7 +1493,7 @@ int main(int argc, char **argv)
                     }
                     else
                     {
-                        errUsage(argv[0]);
+                        errUsage();
                     }
                 }
                 break;
@@ -1511,7 +1514,7 @@ int main(int argc, char **argv)
                     }
                     else
                     {
-                        errUsage(argv[0]);
+                        errUsage();
                     }
                 }
                 break;
@@ -1550,7 +1553,7 @@ int main(int argc, char **argv)
                     }
                     else
                     {
-                        errUsage(argv[0]);
+                        errUsage();
                     }
                 }
                 else
@@ -1588,7 +1591,7 @@ int main(int argc, char **argv)
                     useId3 = 0;
                     break;
                 default:
-                    errUsage(argv[0]);
+                    errUsage();
                 }
 
                 break;
@@ -1605,7 +1608,7 @@ int main(int argc, char **argv)
 
             case 'v':
             case 'V':
-                printf("%s version %s (%s %s)\n", argv[0], MP3GAIN_VERSION,
+                printf("%s version %s (%s %s)\n", gProgramName, MP3GAIN_VERSION,
                        __DATE__, __TIME__);
                 exit(0);
 
