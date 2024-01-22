@@ -64,25 +64,28 @@ static int Lyrics3GetNumber6(const unsigned char *string)
 
 struct Lyrics3TagFooterStruct
 {
-    unsigned char   Length  [6];
-    unsigned char   ID      [9];
+    unsigned char Length  [6];
+    unsigned char ID      [9];
 };
 
 struct Lyrics3TagField
 {
-    unsigned char   ID      [3];
-    unsigned char   Length  [5];
+    unsigned char ID      [3];
+    unsigned char Length  [5];
 };
 
 // Reads Lyrics3 v2.0 tag
-static int ReadMP3Lyrics3v2Tag(FILE *fp, unsigned char **tagbuff, unsigned long *tagSize, unsigned char **id3tagbuff,
+static int ReadMP3Lyrics3v2Tag(FILE *fp,
+                               unsigned char **tagbuff,
+                               unsigned long *tagSize,
+                               unsigned char **id3tagbuff,
                                long *tag_offset)
 {
-    int                                 len;
-    struct Lyrics3TagFooterStruct       T;
-    char                                tmpid3[128];
-    char                                tmp[11];
-    long                                taglen;
+    int len;
+    struct Lyrics3TagFooterStruct T;
+    char tmpid3[128];
+    char tmp[11];
+    long taglen;
 
     if (*tag_offset < 128)
     {
@@ -475,7 +478,7 @@ int ReadMP3GainAPETag(const char *filename,
     fclose(fi);
 
     return 1;
-};
+}
 
 /**
  * (Re-)Write gain information to an APEv2 tag.
@@ -771,7 +774,7 @@ int WriteMP3GainAPETag(const char *filename,
 
     free(newFieldData);
     return 1;
-};
+}
 
 /**
  * Remove gain information from the APE tag.
@@ -819,4 +822,4 @@ int RemoveMP3GainAPETag(const char *filename, int saveTimeStamp)
     }
 
     return 1;
-};
+}
