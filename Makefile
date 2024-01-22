@@ -31,10 +31,12 @@ HEADERS = \
  mpglibDBL_VbrTag.h \
  rg_error.h \
 
+CFLAGS = -O3 -s
+
 .PHONY: test
 test: mp3gain
 	./test
 
 mp3gain: $(SOURCES) $(HEADERS)
 	astyle --options=.astylerc $(SOURCES)
-	gcc -Wall -Werror -O3 -s -o mp3gain $(SOURCES) -lm
+	gcc -Wall -Werror $(CFLAGS) -o mp3gain $(SOURCES) -lm

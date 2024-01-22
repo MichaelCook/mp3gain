@@ -789,8 +789,11 @@ static const int pretab2 [22] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 /*
  * don't forget to apply the same changes to III_dequantize_sample_ms() !!!
  */
-static int III_dequantize_sample(double xr[SBLIMIT][SSLIMIT], int *scf,
-                                 struct gr_info_s *gr_infos, int sfreq, int part2bits)
+static int III_dequantize_sample(double xr[SBLIMIT][SSLIMIT],
+                                 int *scf,
+                                 struct gr_info_s *gr_infos,
+                                 int sfreq,
+                                 int part2bits)
 {
     int shift = 1 + gr_infos->scalefac_scale;
     double *xrpnt = (double *) xr;
@@ -1095,8 +1098,8 @@ static int III_dequantize_sample(double xr[SBLIMIT][SSLIMIT], int *scf,
 #endif
 
         /*
-        * long hash table values
-        */
+         * long hash table values
+         */
         for (i = 0; i < 3; i++)
         {
             int lp = l[i];
@@ -1192,8 +1195,8 @@ static int III_dequantize_sample(double xr[SBLIMIT][SSLIMIT], int *scf,
         }
 
         /*
-        * short (count1table) values
-        */
+         * short (count1table) values
+         */
         for (; l3 && (part2remain > 0); l3--)
         {
             struct newhuff *h = (struct newhuff *)(htc + gr_infos->count1table_select);
@@ -1251,9 +1254,9 @@ static int III_dequantize_sample(double xr[SBLIMIT][SSLIMIT], int *scf,
         }
 
         /*
-        * zero part
-        */
-        for (i = (&xr[SBLIMIT - 1][0] - xrpnt) >> 1; i; i--)
+         * zero part
+         */
+        for (i = (&xr[SBLIMIT - 1][0] - xrpnt) >> 1; i > 0; i--)
         {
             *xrpnt++ = 0.0;
             *xrpnt++ = 0.0;
@@ -1961,7 +1964,8 @@ int do_layer3(PMPSTR mp, int *pcm_point)
                 part2bits = III_get_scale_factors_1(scalefacs[0], gr_infos);
             }
 
-            if (III_dequantize_sample(hybridIn[0], scalefacs[0], gr_infos, sfreq, part2bits))
+            if (III_dequantize_sample(hybridIn[0], scalefacs[0],
+                                      gr_infos, sfreq, part2bits))
             {
                 return 0;
             }
@@ -1979,7 +1983,8 @@ int do_layer3(PMPSTR mp, int *pcm_point)
                 part2bits = III_get_scale_factors_1(scalefacs[1], gr_infos);
             }
 
-            if (III_dequantize_sample(hybridIn[1], scalefacs[1], gr_infos, sfreq, part2bits))
+            if (III_dequantize_sample(hybridIn[1], scalefacs[1],
+                                      gr_infos, sfreq, part2bits))
             {
                 return 0;
             }
