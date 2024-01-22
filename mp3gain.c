@@ -79,11 +79,11 @@ static int LayerSet = 0;
 static int Reckless = 0;
 static int wrapGain = 0;
 static int undoChanges = 0;
-static bool skipTag = false;
-static bool deleteTag = false;
+static bool gSkipTag = false;
+static bool gDeleteTag = false;
 static bool gForceRecalculateTag = false;
 static bool gForceUpdateTag = false;
-static bool checkTagOnly = false;
+static bool gCheckTagOnly = false;
 static bool gUseId3 = false;
 static bool gSuccess;
 static long inbuffer;
@@ -1354,7 +1354,6 @@ int main(int argc, char **argv)
     double curAlbumPeak = 0;
     unsigned char curAlbumMinGain = 0;
     unsigned char curAlbumMaxGain = 0;
-    char chtmp;
 
     gSuccess = true;
     gProgramName = basename(argv[0]);
@@ -1529,19 +1528,17 @@ int main(int argc, char **argv)
 
             case 's':
             case 'S':
-                chtmp = 0;
+            {
+                char chtmp = 0;
                 if (arg[2] == '\0')
                 {
-                    if (i + 1 < argc)
-                    {
-                        i++;
-                        fileStart++;
-                        chtmp = arg[0];
-                    }
-                    else
+                    if (i + 1 >= argc)
                     {
                         errUsage();
                     }
+                    i++;
+                    fileStart++;
+                    chtmp = arg[0];
                 }
                 else
                 {
@@ -1551,15 +1548,15 @@ int main(int argc, char **argv)
                 {
                 case 'c':
                 case 'C':
-                    checkTagOnly = true;
+                    gCheckTagOnly = true;
                     break;
                 case 'd':
                 case 'D':
-                    deleteTag = true;
+                    gDeleteTag = true;
                     break;
                 case 's':
                 case 'S':
-                    skipTag = true;
+                    gSkipTag = true;
                     break;
                 case 'u':
                 case 'U':
@@ -1580,8 +1577,8 @@ int main(int argc, char **argv)
                 default:
                     errUsage();
                 }
-
                 break;
+            }
 
             case 't':
             case 'T':
@@ -1630,7 +1627,7 @@ int main(int argc, char **argv)
 
     if (databaseFormat)
     {
-        if (checkTagOnly)
+        if (gCheckTagOnly)
         {
             printf("File\tMP3 gain\tdB gain\tMax Amplitude\tMax global_gain\t"
                    "Min global_gain\tAlbum gain\tAlbum dB gain\tAlbum Max Amplitude\t"
@@ -1667,7 +1664,7 @@ int main(int argc, char **argv)
         tagInfo[argi].haveAlbumMinMaxGain = 0;
         tagInfo[argi].recalc = 0;
 
-        if (!skipTag && !deleteTag)
+        if (!gSkipTag && !gDeleteTag)
         {
             {
                 ReadMP3GainAPETag(curfilename, &(tagInfo[argi]), &(fileTags[argi]));
@@ -1731,8 +1728,8 @@ int main(int argc, char **argv)
     }
 
     /* check if we need to actually process the file(s) */
-    albumRecalc = gForceRecalculateTag || skipTag ? FULL_RECALC : 0;
-    if (!skipTag && !deleteTag && !gForceRecalculateTag)
+    albumRecalc = gForceRecalculateTag || gSkipTag ? FULL_RECALC : 0;
+    if (!gSkipTag && !gDeleteTag && !gForceRecalculateTag)
     {
         /* we're not automatically recalculating, so check if we already have
            all the information */
@@ -1811,7 +1808,7 @@ int main(int argc, char **argv)
         tagInfo[argi].recalc |= albumRecalc;
 
         curfilename = argv[argi];
-        if (checkTagOnly)
+        if (gCheckTagOnly)
         {
             curTag = tagInfo + argi;
             if (curTag->haveTrackGain)
@@ -1998,7 +1995,7 @@ int main(int argc, char **argv)
             }
             if (whichChannel)   /* do right channel */
             {
-                if (skipTag)
+                if (gSkipTag)
                 {
                     changeGain(argv[argi], 0, directGainVal);
                 }
@@ -2009,7 +2006,7 @@ int main(int argc, char **argv)
             }
             else   /* do left channel */
             {
-                if (skipTag)
+                if (gSkipTag)
                 {
                     changeGain(argv[argi], directGainVal, 0);
                 }
@@ -2030,7 +2027,7 @@ int main(int argc, char **argv)
                 printf("Applying gain change of %d to %s...\n",
                        directGainVal, argv[argi]);
             }
-            if (skipTag)
+            if (gSkipTag)
             {
                 changeGain(argv[argi], directGainVal, directGainVal);
             }
@@ -2045,7 +2042,7 @@ int main(int argc, char **argv)
                 printf("\ndone\n");
             }
         }
-        else if (deleteTag)
+        else if (gDeleteTag)
         {
             {
                 RemoveMP3GainAPETag(argv[argi], gSaveTime);
@@ -2317,7 +2314,7 @@ int main(int argc, char **argv)
                         }
                         else
                         {
-                            /* even if skipTag is on, we'll leave this part
+                            /* even if gSkipTag is on, we'll leave this part
                                running just to store the minpeak and
                                maxpeak */
                             curTag = tagInfo + argi;
@@ -2408,7 +2405,7 @@ int main(int argc, char **argv)
                                 if (intGainChange == 0)
                                 {
                                     printf("No changes to %s are necessary\n", argv[argi]);
-                                    if (!skipTag && tagInfo[argi].dirty)
+                                    if (!gSkipTag && tagInfo[argi].dirty)
                                     {
                                         printf("...but tag needs update: Writing tag information for %s\n", argv[argi]);
                                         WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, gSaveTime);
@@ -2449,7 +2446,7 @@ int main(int argc, char **argv)
                                         {
                                             printf("Applying mp3 gain change of %d to %s...\n", intGainChange, argv[argi]);
                                         }
-                                        if (skipTag)
+                                        if (gSkipTag)
                                         {
                                             changeGain(argv[argi], intGainChange, intGainChange);
                                         }
@@ -2459,7 +2456,7 @@ int main(int argc, char **argv)
                                                              intGainChange, intGainChange, tagInfo + argi, fileTags + argi);
                                         }
                                     }
-                                    else if (!skipTag && tagInfo[argi].dirty)
+                                    else if (!gSkipTag && tagInfo[argi].dirty)
                                     {
                                         printf("Writing tag information for %s\n", argv[argi]);
                                         WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, gSaveTime);
@@ -2541,7 +2538,7 @@ int main(int argc, char **argv)
                 }
             }
 
-            if (!skipTag && (numFiles > 1 || applyAlbum))
+            if (!gSkipTag && (numFiles > 1 || applyAlbum))
             {
                 for (int argi = fileStart; argi < argc; argi++)
                 {
@@ -2651,7 +2648,7 @@ int main(int argc, char **argv)
                         if (intGainChange == 0)
                         {
                             printf("\nNo changes to %s are necessary\n", argv[argi]);
-                            if (!skipTag && tagInfo[argi].dirty)
+                            if (!gSkipTag && tagInfo[argi].dirty)
                             {
                                 printf("...but tag needs update: Writing tag information for %s\n", argv[argi]);
                                 WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, gSaveTime);
@@ -2672,7 +2669,7 @@ int main(int argc, char **argv)
                                 {
                                     printf("Applying mp3 gain change of %d to %s...\n", intGainChange, argv[argi]);
                                 }
-                                if (skipTag)
+                                if (gSkipTag)
                                 {
                                     changeGain(argv[argi], intGainChange, intGainChange);
                                 }
@@ -2682,7 +2679,7 @@ int main(int argc, char **argv)
                                                      fileTags + argi);
                                 }
                             }
-                            else if (!skipTag && tagInfo[argi].dirty)
+                            else if (!gSkipTag && tagInfo[argi].dirty)
                             {
                                 printf("Writing tag information for %s\n", argv[argi]);
                                 WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, gSaveTime);
@@ -2699,9 +2696,9 @@ int main(int argc, char **argv)
         !applyAlbum &&
         !directGain &&
         !directSingleChannelGain &&
-        !deleteTag &&
-        !skipTag &&
-        !checkTagOnly)
+        !gDeleteTag &&
+        !gSkipTag &&
+        !gCheckTagOnly)
     {
         /* if we made changes, we already updated the tags */
         for (int argi = fileStart; argi < argc; argi++)
