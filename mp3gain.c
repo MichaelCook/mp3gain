@@ -292,7 +292,7 @@ void passError(MMRESULT lerrnum, int numStrings, ...)
     }
     va_end(marker);
 
-    char *errstr = (char *)malloc(totalStrLen + 3);
+    char *errstr = malloc(totalStrLen + 3);
     errstr[0] = '\0';
 
     va_start(marker, numStrings);
@@ -689,7 +689,7 @@ static int changeGain(const char *filename,
     {
         fflush(stdout);
         outlength = (long)strlen(filename);
-        outfilename = (char *)malloc(outlength + 5);
+        outfilename = malloc(outlength + 5);
         strcpy(outfilename, filename);
         if ((filename[outlength - 3] == 'T' || filename[outlength - 3] == 't') &&
             (filename[outlength - 2] == 'M' || filename[outlength - 2] == 'm') &&
@@ -1623,11 +1623,11 @@ int main(int argc, char **argv)
     }
 
     /* now stored in tagInfo---  maxsample = malloc(sizeof(Float_t) * argc); */
-    fileok = (int *)malloc(sizeof(int) * argc);
+    fileok = malloc(sizeof(int) * argc);
     /* now stored in tagInfo---  maxgain = malloc(sizeof(unsigned char) * argc); */
     /* now stored in tagInfo---  mingain = malloc(sizeof(unsigned char) * argc); */
-    tagInfo = (struct MP3GainTagInfo *)calloc(argc, sizeof(struct MP3GainTagInfo));
-    fileTags = (struct FileTagsStruct *)malloc(sizeof(struct FileTagsStruct) * argc);
+    tagInfo = calloc(argc, sizeof(struct MP3GainTagInfo));
+    fileTags = malloc(sizeof(struct FileTagsStruct) * argc);
 
     if (databaseFormat)
     {

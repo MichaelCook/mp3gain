@@ -51,17 +51,17 @@ void ExitMP3(PMPSTR mp)
     }
 }
 
-static struct buf *addbuf(PMPSTR mp, unsigned char *ibuf, int size)
+static struct buf *addbuf(PMPSTR mp, const unsigned char *ibuf, int size)
 {
     struct buf *nbuf;
 
-    nbuf = (struct buf *) malloc(sizeof(struct buf));
+    nbuf = malloc(sizeof(struct buf));
     if (!nbuf)
     {
         fprintf(stderr, "Out of memory!\n");
         return NULL;
     }
-    nbuf->pnt = (unsigned char *) malloc((size_t)size);
+    nbuf->pnt = malloc((size_t)size);
     if (!nbuf->pnt)
     {
         free(nbuf);
@@ -460,7 +460,7 @@ int sync_buffer(PMPSTR mp, int free_match)
     return -1;
 }
 
-int decodeMP3(PMPSTR mp, unsigned char *in, int isize, int *done)
+int decodeMP3(PMPSTR mp, const unsigned char *in, int isize, int *done)
 {
     int i, iret, bits, bytes;
 

@@ -34,7 +34,7 @@ int ReadMP3ID3v1Tag(FILE *fi, unsigned char **tagbuff, long *tag_offset)
     {
         free(*tagbuff);
     }
-    *tagbuff = (unsigned char *)malloc(128);
+    *tagbuff = malloc(128);
     memcpy(*tagbuff, tmp, 128);
     *tag_offset -= 128;
 
@@ -109,7 +109,7 @@ static int ReadMP3Lyrics3v2Tag(FILE *fp,
     {
         free(*id3tagbuff);
     }
-    *id3tagbuff = (unsigned char *)malloc(128);
+    *id3tagbuff = malloc(128);
     memcpy(*id3tagbuff, tmpid3, 128);
     if (fseek(fp, *tag_offset - 128 - sizeof(T), SEEK_SET))
     {
@@ -145,7 +145,7 @@ static int ReadMP3Lyrics3v2Tag(FILE *fp,
     {
         free(*tagbuff);
     }
-    *tagbuff = (unsigned char *)malloc(taglen);
+    *tagbuff = malloc(taglen);
     fseek(fp, *tag_offset, SEEK_SET);
     size_t r = fread(*tagbuff, 1, taglen, fp);
     if (r != taglen)
@@ -241,7 +241,7 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
     {
         return 0;
     }
-    buff = (char *)malloc(TagLen);
+    buff = malloc(TagLen);
     if (fread(buff, 1, TagLen - sizeof(T), fp) != (TagLen - sizeof(T)))
     {
         free(buff);
@@ -256,9 +256,9 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
         }
         free(*apeTag);
     }
-    *apeTag = (struct APETagStruct *)malloc(sizeof(struct APETagStruct));
+    *apeTag = malloc(sizeof(struct APETagStruct));
     (*apeTag)->haveHeader = 0;
-    (*apeTag)->otherFields = (unsigned char *)malloc(TagLen - sizeof(T));
+    (*apeTag)->otherFields = malloc(TagLen - sizeof(T));
     (*apeTag)->otherFieldsSize = 0;
 
     memcpy(&((*apeTag)->footer), &T, sizeof(T));
@@ -285,10 +285,10 @@ int ReadMP3APETag(FILE *fp,  struct MP3GainTagInfo *info, struct APETagStruct **
             break;
         }
 
-        name = (char *)malloc(isize + 1);
+        name = malloc(isize + 1);
         memcpy(name, p, isize);
         name[isize] = 0;
-        value = (char *)malloc(vsize + 1);
+        value = malloc(vsize + 1);
         memcpy(value, p + isize + 1, vsize);
         value[vsize] = 0;
 
@@ -564,7 +564,7 @@ int WriteMP3GainAPETag(const char *filename,
 
     newTagLength += mp3gainTagLength;
 
-    newFieldData = (char *)malloc(newTagLength - (sizeof(newFooter) + sizeof(newHeader)));
+    newFieldData = malloc(newTagLength - (sizeof(newFooter) + sizeof(newHeader)));
     mp3gainTagData = newFieldData;
 
     if (fileTags->apeTag)

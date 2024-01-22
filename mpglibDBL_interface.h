@@ -27,14 +27,10 @@ extern Float_t *rSamp;
 extern Float_t *maxSamp;
 extern unsigned char *maxGain;
 extern unsigned char *minGain;
-
 extern bool maxAmpOnly;
-
 extern int procSamp;
 
 bool InitMP3(PMPSTR mp);
-int decodeMP3(PMPSTR mp, unsigned char *inmemory, int inmemsize, int *done);
+int decodeMP3(PMPSTR mp, const unsigned char *inmemory, int inmemsize, int *done);
 void ExitMP3(PMPSTR mp);
-
-/* added remove_buf to support mpglib seeking */
 void remove_buf(PMPSTR mp);
