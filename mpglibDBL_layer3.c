@@ -801,17 +801,7 @@ static int III_dequantize_sample(double xr[SBLIMIT][SSLIMIT],
     int part2remain = gr_infos->part2_3_length - part2bits;
     int *me;
 
-    {
-        int i;
-
-        for (i = (&xr[SBLIMIT - 1][0] - xrpnt) >> 1; i > 0; i--)
-        {
-            *xrpnt++ = 0.0;
-            *xrpnt++ = 0.0;
-        }
-
-        xrpnt = (double *) xr;
-    }
+    memset(xr, 0, SBLIMIT * SSLIMIT * sizeof(double));
 
     {
         int bv       = gr_infos->big_values;
@@ -1251,15 +1241,6 @@ static int III_dequantize_sample(double xr[SBLIMIT][SSLIMIT],
                     *xrpnt++ = 0.0;
                 }
             }
-        }
-
-        /*
-         * zero part
-         */
-        for (i = (&xr[SBLIMIT - 1][0] - xrpnt) >> 1; i > 0; i--)
-        {
-            *xrpnt++ = 0.0;
-            *xrpnt++ = 0.0;
         }
 
         gr_infos->maxbandl = max + 1;
