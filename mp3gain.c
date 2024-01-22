@@ -1332,7 +1332,7 @@ int main(int argc, char **argv)
     bool applyTrack = false;
     bool applyAlbum = false;
     int analysisTrack = 0;
-    char analysisError = 0;
+    bool analysisError = false;
     int databaseFormat = 0;
     int i;
     int *fileok;
@@ -2199,7 +2199,7 @@ int main(int argc, char **argv)
                                     {
                                         lastfreq = frequency[mpegver][freqidx];
                                         InitGainAnalysis((long)(lastfreq * 1000.0));
-                                        analysisError = 0;
+                                        analysisError = false;
                                         first = 0;
                                     }
                                     else
@@ -2214,7 +2214,7 @@ int main(int argc, char **argv)
                             }
                             else
                             {
-                                analysisError = 0;
+                                analysisError = false;
                             }
 
                             while (ok)
