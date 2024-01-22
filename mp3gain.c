@@ -1372,234 +1372,227 @@ int main(int argc, char **argv)
     for (i = 1; i < argc; i++)
     {
         const char *arg = argv[i];
-        if (arg[0] == '-' && strlen(arg) == 2)
+        if (arg[0] != '-' || strlen(arg) != 2)
         {
+            continue;
+        }
+        fileStart++;
+        switch (arg[1])
+        {
+        case 'a':
+        case 'A':
+            applyTrack = false;
+            applyAlbum = true;
+            break;
+
+        case 'c':
+        case 'C':
+            ignoreClipWarning = true;
+            break;
+
+        case 'd':
+        case 'D':
+            if (arg[2] != '\0')
+            {
+                dBGainMod = atof(arg + 2);
+                break;
+            }
+            if (i + 1 >= argc)
+            {
+                errUsage();
+            }
+            dBGainMod = atof(argv[i + 1]);
+            i++;
             fileStart++;
-            switch (arg[1])
+            break;
+
+        case 'f':
+        case 'F':
+            Reckless = 1;
+            break;
+
+        case 'g':
+        case 'G':
+            directGain = true;
+            directSingleChannelGain = false;
+            if (arg[2] != '\0')
             {
-            case 'a':
-            case 'A':
-                applyTrack = false;
-                applyAlbum = true;
+                directGainVal = atoi(arg + 2);
                 break;
-
-            case 'c':
-            case 'C':
-                ignoreClipWarning = true;
-                break;
-
-            case 'd':
-            case 'D':
-                if (arg[2] != '\0')
-                {
-                    dBGainMod = atof(arg + 2);
-                }
-                else
-                {
-                    if (i + 1 >= argc)
-                    {
-                        errUsage();
-                    }
-                    dBGainMod = atof(argv[i + 1]);
-                    i++;
-                    fileStart++;
-                }
-                break;
-
-            case 'f':
-            case 'F':
-                Reckless = 1;
-                break;
-
-            case 'g':
-            case 'G':
-                directGain = true;
-                directSingleChannelGain = false;
-                if (arg[2] != '\0')
-                {
-                    directGainVal = atoi(arg + 2);
-                }
-                else
-                {
-                    if (i + 1 >= argc)
-                    {
-                        errUsage();
-                    }
-                    directGainVal = atoi(argv[i + 1]);
-                    i++;
-                    fileStart++;
-                }
-                break;
-
-            case 'h':
-            case 'H':
-            case '?':
-                fullUsage();
-                break;
-
-            case 'k':
-            case 'K':
-                autoClip = true;
-                break;
-
-            case 'l':
-            case 'L':
-                directSingleChannelGain = true;
-                directGain = false;
-                if (arg[2] != '\0')
-                {
-                    whichChannel = atoi(arg + 2);
-                    if (i + 1 >= argc)
-                    {
-                        errUsage();
-                    }
-                    directGainVal = atoi(argv[i + 1]);
-                    i++;
-                    fileStart++;
-                }
-                else
-                {
-                    if (i + 2 >= argc)
-                    {
-                        errUsage();
-                    }
-                    whichChannel = atoi(argv[i + 1]);
-                    i++;
-                    fileStart++;
-                    directGainVal = atoi(argv[i + 1]);
-                    i++;
-                    fileStart++;
-                }
-                break;
-
-            case 'm':
-            case 'M':
-                if (arg[2] != '\0')
-                {
-                    mp3GainMod = atoi(arg + 2);
-                }
-                else
-                {
-                    if (i + 1 >= argc)
-                    {
-                        errUsage();
-                    }
-                    mp3GainMod = atoi(argv[i + 1]);
-                    i++;
-                    fileStart++;
-                }
-                break;
-
-            case 'o':
-            case 'O':
-                databaseFormat = true;
-                break;
-
-            case 'p':
-            case 'P':
-                gSaveTime = true;
-                break;
-
-            case 'q':
-            case 'Q':
-                gQuiet = true;
-                break;
-
-            case 'r':
-            case 'R':
-                applyTrack = true;
-                applyAlbum = false;
-                break;
-
-            case 's':
-            case 'S':
+            }
+            if (i + 1 >= argc)
             {
-                char chtmp = 0;
-                if (arg[2] == '\0')
+                errUsage();
+            }
+            directGainVal = atoi(argv[i + 1]);
+            i++;
+            fileStart++;
+            break;
+
+        case 'h':
+        case 'H':
+        case '?':
+            fullUsage();
+            break;
+
+        case 'k':
+        case 'K':
+            autoClip = true;
+            break;
+
+        case 'l':
+        case 'L':
+            directSingleChannelGain = true;
+            directGain = false;
+            if (arg[2] != '\0')
+            {
+                whichChannel = atoi(arg + 2);
+                if (i + 1 >= argc)
                 {
-                    if (i + 1 >= argc)
-                    {
-                        errUsage();
-                    }
-                    i++;
-                    fileStart++;
-                    chtmp = arg[0];
-                }
-                else
-                {
-                    chtmp = arg[2];
-                }
-                switch (chtmp)
-                {
-                case 'c':
-                case 'C':
-                    gCheckTagOnly = true;
-                    break;
-                case 'd':
-                case 'D':
-                    gDeleteTag = true;
-                    break;
-                case 's':
-                case 'S':
-                    gSkipTag = true;
-                    break;
-                case 'u':
-                case 'U':
-                    gForceUpdateTag = true;
-                    break;
-                case 'r':
-                case 'R':
-                    gForceRecalculateTag = true;
-                    break;
-                case 'i':
-                case 'I':
-                    gUseId3 = true;
-                    break;
-                case 'a':
-                case 'A':
-                    gUseId3 = false;
-                    break;
-                default:
                     errUsage();
                 }
+                directGainVal = atoi(argv[i + 1]);
+                i++;
+                fileStart++;
                 break;
             }
+            if (i + 2 >= argc)
+            {
+                errUsage();
+            }
+            whichChannel = atoi(argv[i + 1]);
+            i++;
+            fileStart++;
+            directGainVal = atoi(argv[i + 1]);
+            i++;
+            fileStart++;
+            break;
 
-            case 't':
-            case 'T':
-                gUsingTemp = true;
+        case 'm':
+        case 'M':
+            if (arg[2] != '\0')
+            {
+                mp3GainMod = atoi(arg + 2);
                 break;
+            }
+            if (i + 1 >= argc)
+            {
+                errUsage();
+            }
+            mp3GainMod = atoi(argv[i + 1]);
+            i++;
+            fileStart++;
+            break;
 
+        case 'o':
+        case 'O':
+            databaseFormat = true;
+            break;
+
+        case 'p':
+        case 'P':
+            gSaveTime = true;
+            break;
+
+        case 'q':
+        case 'Q':
+            gQuiet = true;
+            break;
+
+        case 'r':
+        case 'R':
+            applyTrack = true;
+            applyAlbum = false;
+            break;
+
+        case 's':
+        case 'S':
+        {
+            char c = 0;
+            if (arg[2] == '\0')
+            {
+                if (i + 1 >= argc)
+                {
+                    errUsage();
+                }
+                i++;
+                fileStart++;
+                c = arg[0];
+            }
+            else
+            {
+                c = arg[2];
+            }
+            switch (c)
+            {
+            case 'c':
+            case 'C':
+                gCheckTagOnly = true;
+                break;
+            case 'd':
+            case 'D':
+                gDeleteTag = true;
+                break;
+            case 's':
+            case 'S':
+                gSkipTag = true;
+                break;
             case 'u':
             case 'U':
-                undoChanges = true;
+                gForceUpdateTag = true;
                 break;
-
-            case 'v':
-            case 'V':
-                printf("%s version %s (%s %s)\n", gProgramName, MP3GAIN_VERSION,
-                       __DATE__, __TIME__);
-                exit(0);
-
-            case 'w':
-            case 'W':
-                wrapGain = true;
+            case 'r':
+            case 'R':
+                gForceRecalculateTag = true;
                 break;
-
-            case 'x':
-            case 'X':
-                maxAmpOnly = true;
+            case 'i':
+            case 'I':
+                gUseId3 = true;
                 break;
-
-            case 'e':
-            case 'E':
-                analysisTrack = true;
+            case 'a':
+            case 'A':
+                gUseId3 = false;
                 break;
-
             default:
-                fprintf(stderr, "%s: unknown option '%s'\n", gProgramName, arg);
-                exit(EXIT_FAILURE);
+                errUsage();
             }
+            break;
+        }
+
+        case 't':
+        case 'T':
+            gUsingTemp = true;
+            break;
+
+        case 'u':
+        case 'U':
+            undoChanges = true;
+            break;
+
+        case 'v':
+        case 'V':
+            printf("%s version %s (%s %s)\n", gProgramName, MP3GAIN_VERSION,
+                   __DATE__, __TIME__);
+            exit(0);
+
+        case 'w':
+        case 'W':
+            wrapGain = true;
+            break;
+
+        case 'x':
+        case 'X':
+            maxAmpOnly = true;
+            break;
+
+        case 'e':
+        case 'E':
+            analysisTrack = true;
+            break;
+
+        default:
+            fprintf(stderr, "%s: unknown option '%s'\n", gProgramName, arg);
+            exit(EXIT_FAILURE);
         }
     }
 
