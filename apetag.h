@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdio.h>
+#include <stdbool.h>
 
 struct MP3GainTagInfo
 {
@@ -80,7 +81,7 @@ int ReadMP3GainAPETag(const char *filename,
 int WriteMP3GainAPETag(const char *filename,
                        struct MP3GainTagInfo *info,
                        struct FileTagsStruct *fileTags,
-                       int saveTimeStamp);
+                       bool saveTimeStamp);
 
 int RemoveMP3GainAPETag(const char *filename,
-                        int saveTimeStamp);
+                        bool saveTimeStamp);

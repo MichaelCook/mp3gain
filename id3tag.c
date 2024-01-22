@@ -1379,7 +1379,7 @@ int ReadMP3GainID3Tag(const char *filename, struct MP3GainTagInfo *info)
  */
 int WriteMP3GainID3Tag(const char *filename,
                        struct MP3GainTagInfo *info,
-                       int saveTimeStamp)
+                       bool saveTimeStamp)
 {
     char sbuf[32];
     char *tmpfilename;
@@ -1621,7 +1621,7 @@ int WriteMP3GainID3Tag(const char *filename,
  * Remove gain information from the ID3v2 tag.
  * Return 1 on success, 0 if no changes are needed, or a negative error code.
  */
-int RemoveMP3GainID3Tag(const char *filename, int saveTimeStamp)
+int RemoveMP3GainID3Tag(const char *filename, bool saveTimeStamp)
 {
     struct MP3GainTagInfo info;
 

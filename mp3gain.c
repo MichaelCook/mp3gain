@@ -69,22 +69,22 @@ typedef struct
 static wbuffer writebuffer[WRITEBUFFERSIZE];
 static unsigned long writebuffercnt;
 static unsigned char buffer[BUFFERSIZE];
-static int QuietMode = 0;
-static int UsingTemp = 0;
-static int NowWriting = 0;
+static bool gQuiet = false;
+static bool gUsingTemp = false;
+static bool gNowWriting = false;
 static double lastfreq = -1.0;
 static int whichChannel = 0;
-static int BadLayer = 0;
+static bool gBadLayer = false;
 static int LayerSet = 0;
 static int Reckless = 0;
 static int wrapGain = 0;
 static int undoChanges = 0;
-static int skipTag = 0;
-static int deleteTag = 0;
-static int forceRecalculateTag = 0;
-static int forceUpdateTag = 0;
-static int checkTagOnly = 0;
-static int useId3 = 0;
+static bool skipTag = false;
+static bool deleteTag = false;
+static bool gForceRecalculateTag = false;
+static bool gForceUpdateTag = false;
+static bool checkTagOnly = false;
+static bool gUseId3 = false;
 static bool gSuccess;
 static long inbuffer;
 static unsigned long bitidx;
@@ -93,7 +93,7 @@ static unsigned char *curframe;
 static const char *curfilename;
 static FILE *inf;
 static FILE *outf;
-static short int saveTime;
+static bool gSaveTime;
 static unsigned long filepos;
 static const char *gProgramName;
 
@@ -149,11 +149,9 @@ static void addWriteBuff(unsigned long pos, unsigned char *vals)
     writebuffer[writebuffercnt].val[0] = *vals;
     writebuffer[writebuffercnt].val[1] = vals[1];
     writebuffercnt++;
-
 }
 
-/* Fill the mp3 buffer.
-   Return the number of bytes that were added */
+/* Fill the mp3 buffer.  Return the number of bytes that were added */
 static unsigned long fillBuffer(long savelastbytes)
 {
     unsigned long i;
@@ -167,7 +165,7 @@ static unsigned long fillBuffer(long savelastbytes)
         savelastbytes = 0;
     }
 
-    if (UsingTemp && NowWriting)
+    if (gUsingTemp && gNowWriting)
     {
         if (fwrite(buffer, 1, inbuffer - savelastbytes, outf) != (size_t)(inbuffer - savelastbytes))
         {
@@ -190,7 +188,7 @@ static unsigned long fillBuffer(long savelastbytes)
             return 0;
         }
 
-        if (UsingTemp && NowWriting)
+        if (gUsingTemp && gNowWriting)
         {
             if (fwrite(buffer, 1, skipbuf, outf) != skipbuf)
             {
@@ -225,7 +223,7 @@ static void set8Bits(unsigned short val)
     wrdpntr[1] &= maskRight8bits[bitidx];
     wrdpntr[1] |= (val  & 0xFF);
 
-    if (!UsingTemp)
+    if (!gUsingTemp)
     {
         addWriteBuff(filepos - (inbuffer - (wrdpntr - buffer)), wrdpntr);
     }
@@ -248,7 +246,6 @@ static unsigned char peek8Bits()
     rval >>= (8 - bitidx);
 
     return (rval & 0xFF);
-
 }
 
 static bool skipID3v2()
@@ -286,23 +283,20 @@ static bool skipID3v2()
 
 void passError(MMRESULT lerrnum, int numStrings, ...)
 {
-    char *errstr;
-    size_t totalStrLen = 0;
-    int i;
     va_list marker;
-
     va_start(marker, numStrings);
-    for (i = 0; i < numStrings; i++)
+    size_t totalStrLen = 0;
+    for (int i = 0; i < numStrings; i++)
     {
         totalStrLen += strlen(va_arg(marker, const char *));
     }
     va_end(marker);
 
-    errstr = (char *)malloc(totalStrLen + 3);
+    char *errstr = (char *)malloc(totalStrLen + 3);
     errstr[0] = '\0';
 
     va_start(marker, numStrings);
-    for (i = 0; i < numStrings; i++)
+    for (int i = 0; i < numStrings; i++)
     {
         strcat(errstr, va_arg(marker, const char *));
     }
@@ -310,7 +304,6 @@ void passError(MMRESULT lerrnum, int numStrings, ...)
 
     DoError(errstr, lerrnum);
     free(errstr);
-    errstr = NULL;
 }
 
 static bool frameSearch(int startup)
@@ -370,12 +363,12 @@ static bool frameSearch(int startup)
                 switch (wrdpntr[1] & 0x06)
                 {
                 case 0x06:
-                    BadLayer = true;
+                    gBadLayer = true;
                     passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
                               curfilename, " is an MPEG Layer I file, not a layer III file\n");
                     return 0;
                 case 0x04:
-                    BadLayer = true;
+                    gBadLayer = true;
                     passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
                               curfilename, " is an MPEG Layer II file, not a layer III file\n");
                     return 0;
@@ -455,9 +448,8 @@ static bool frameSearch(int startup)
 
 static int crcUpdate(int value, int crc)
 {
-    int i;
     value <<= 8;
-    for (i = 0; i < 8; i++)
+    for (int i = 0; i < 8; i++)
     {
         value <<= 1;
         crc <<= 1;
@@ -473,11 +465,9 @@ static int crcUpdate(int value, int crc)
 static void crcWriteHeader(int headerlength, char *header)
 {
     int crc = 0xffff; /* (jo) init crc16 for error_protection */
-    int i;
-
     crc = crcUpdate(((unsigned char *)header)[2], crc);
     crc = crcUpdate(((unsigned char *)header)[3], crc);
-    for (i = 6; i < headerlength; i++)
+    for (int i = 6; i < headerlength; i++)
     {
         crc = crcUpdate(((unsigned char *)header)[i], crc);
     }
@@ -568,17 +558,13 @@ static unsigned long reportPercentAnalyzed(unsigned long percent,
 
 static void scanFrameGain()
 {
-    int crcflag;
-    int mpegver;
-    int mode;
-    int nchan;
     int gr, ch;
     int gain;
 
-    mpegver = (curframe[1] >> 3) & 0x03;
-    crcflag = curframe[1] & 0x01;
-    mode = (curframe[3] >> 6) & 0x03;
-    nchan = (mode == 3) ? 1 : 2;
+    int mpegver = (curframe[1] >> 3) & 0x03;
+    int crcflag = curframe[1] & 0x01;
+    int mode = (curframe[3] >> 6) & 0x03;
+    int nchan = (mode == 3) ? 1 : 2;
 
     if (!crcflag)
     {
@@ -663,7 +649,6 @@ static int changeGain(const char *filename,
     int mode;
     int crcflag;
     unsigned char *Xingcheck;
-    unsigned long frame;
     int nchan;
     int ch;
     int gr;
@@ -673,35 +658,34 @@ static int changeGain(const char *filename,
     int sideinfo_len;
     int mpegver;
     long gFilesize = 0;
-    char *outfilename;
     int gainchange[2];
     int singlechannel;
     long outlength, inlength; /* size checker when using Temp files */
 
-    outfilename = NULL;
-    frame = 0;
-    BadLayer = 0;
+    char *outfilename = NULL;
+    unsigned long frame = 0;
+    gBadLayer = false;
     LayerSet = Reckless;
 
-    NowWriting = true;
+    gNowWriting = true;
 
-    if ((leftgainchange == 0) && (rightgainchange == 0))
+    if (leftgainchange == 0 && rightgainchange == 0)
     {
         return 0;
     }
 
     gainchange[0] = leftgainchange;
     gainchange[1] = rightgainchange;
-    singlechannel = !(leftgainchange == rightgainchange);
+    singlechannel = leftgainchange != rightgainchange;
 
-    if (saveTime)
+    if (gSaveTime)
     {
         fileTime(filename, storeTime);
     }
 
     gFilesize = getSizeOfFile(filename);
 
-    if (UsingTemp)
+    if (gUsingTemp)
     {
         fflush(stdout);
         outlength = (long)strlen(filename);
@@ -732,7 +716,7 @@ static int changeGain(const char *filename,
                 inf = NULL;
                 passError(MP3GAIN_UNSPECIFED_ERROR, 3,
                           "\nCan't open ", outfilename, " for temp writing\n");
-                NowWriting = 0;
+                gNowWriting = false;
                 free(outfilename);
                 return M3G_ERR_CANT_MAKE_TMP;
             }
@@ -746,14 +730,14 @@ static int changeGain(const char *filename,
 
     if (inf == NULL)
     {
-        if (UsingTemp && (outf != NULL))
+        if (gUsingTemp && (outf != NULL))
         {
             fclose(outf);
             outf = NULL;
         }
         passError(MP3GAIN_UNSPECIFED_ERROR, 3,
                   "\nCan't open ", filename, " for modifying\n");
-        NowWriting = 0;
+        gNowWriting = false;
         free(outfilename);
         return M3G_ERR_CANT_MODIFY_FILE;
     }
@@ -775,16 +759,15 @@ static int changeGain(const char *filename,
             ok = frameSearch(true);
             if (!ok)
             {
-                if (!BadLayer)
+                if (!gBadLayer)
                     passError(MP3GAIN_UNSPECIFED_ERROR, 3,
                               "Can't find any valid MP3 frames in file ", filename, "\n");
             }
             else
             {
                 LayerSet = 1; /* We've found at least one valid layer 3 frame.
-                                                   * Assume any later layer 1 or 2 frames are just
-                                                   * bitstream corruption
-                                                   */
+                                 Assume any later layer 1 or 2 frames are just
+                                 bitstream corruption */
                 mode = (curframe[3] >> 6) & 3;
 
                 if ((curframe[1] & 0x08) == 0x08) /* MPEG 1 */
@@ -923,7 +906,7 @@ static int changeGain(const char *filename,
                                 crcWriteHeader(38, (char *)curframe);
                             }
                             /* WRITETOFILE */
-                            if (!UsingTemp)
+                            if (!gUsingTemp)
                             {
                                 addWriteBuff(filepos - (inbuffer - (curframe + 4 - buffer)), curframe + 4);
                             }
@@ -983,14 +966,14 @@ static int changeGain(const char *filename,
                                 crcWriteHeader(23, (char *)curframe);
                             }
                             /* WRITETOFILE */
-                            if (!UsingTemp)
+                            if (!gUsingTemp)
                             {
                                 addWriteBuff(filepos - (inbuffer - (curframe + 4 - buffer)), curframe + 4);
                             }
                         }
 
                     }
-                    if (!QuietMode)
+                    if (!gQuiet)
                     {
                         frame++;
                         if (frame % 200 == 0)
@@ -1009,12 +992,12 @@ static int changeGain(const char *filename,
             }
         }
 
-        if (!QuietMode)
+        if (!gQuiet)
         {
             fprintf(stderr, "                                                   \r");
         }
         fflush(stdout);
-        if (UsingTemp)
+        if (gUsingTemp)
         {
             while (fillBuffer(0));
             fflush(outf);
@@ -1033,7 +1016,7 @@ static int changeGain(const char *filename,
                 passError(MP3GAIN_UNSPECIFED_ERROR, 3,
                           "Not enough temp space on disk to modify ", filename,
                           "\nEither free some space, or do not use \"temp file\" option\n");
-                NowWriting = 0;
+                gNowWriting = false;
                 return M3G_ERR_NOT_ENOUGH_TMP_SPACE;
             }
             else
@@ -1044,7 +1027,7 @@ static int changeGain(const char *filename,
                     deleteFile(outfilename); //try to delete tmp file
                     passError(MP3GAIN_UNSPECIFED_ERROR, 3,
                               "Can't open ", filename, " for modifying\n");
-                    NowWriting = 0;
+                    gNowWriting = false;
                     return M3G_ERR_CANT_MODIFY_FILE;
                 }
                 if (moveFile(outfilename, filename))
@@ -1054,10 +1037,10 @@ static int changeGain(const char *filename,
                               "\nThe mp3 was correctly modified, but you will need to re-name ",
                               outfilename, " to ", filename,
                               " yourself.\n");
-                    NowWriting = 0;
+                    gNowWriting = false;
                     return M3G_ERR_RENAME_TMP;
                 };
-                if (saveTime)
+                if (gSaveTime)
                 {
                     fileTime(filename, setStoredTime);
                 }
@@ -1069,14 +1052,14 @@ static int changeGain(const char *filename,
             flushWriteBuff();
             fclose(inf);
             inf = NULL;
-            if (saveTime)
+            if (gSaveTime)
             {
                 fileTime(filename, setStoredTime);
             }
         }
     }
 
-    NowWriting = 0;
+    gNowWriting = false;
 
     return 0;
 }
@@ -1084,9 +1067,9 @@ static int changeGain(const char *filename,
 static void WriteMP3GainTag(const char *filename,
                             struct MP3GainTagInfo *info,
                             struct FileTagsStruct *fileTags,
-                            int saveTimeStamp)
+                            bool saveTimeStamp)
 {
-    if (useId3)
+    if (gUseId3)
     {
         /* Write ID3 tag; remove stale APE tag if it exists. */
         if (WriteMP3GainID3Tag(filename, info, saveTimeStamp) >= 0)
@@ -1193,7 +1176,7 @@ static void changeGainAndTag(const char *filename,
                     }
                 }
             } // if (leftgainchange == rightgainchange ...
-            WriteMP3GainTag(filename, tag, fileTag, saveTime);
+            WriteMP3GainTag(filename, tag, fileTag, gSaveTime);
         } // if (!changeGain(filename ...
     }// if (leftgainchange !=0 ...
 
@@ -1342,16 +1325,16 @@ int main(int argc, char **argv)
     unsigned char mingain;
     int ignoreClipWarning = 0;
     int autoClip = 0;
-    int applyTrack = 0;
-    int applyAlbum = 0;
+    bool applyTrack = false;
+    bool applyAlbum = false;
     int analysisTrack = 0;
     char analysisError = 0;
     int databaseFormat = 0;
     int i;
     int *fileok;
     int goAhead;
-    int directGain = 0;
-    int directSingleChannelGain = 0;
+    bool directGain = false;
+    bool directSingleChannelGain = false;
     int directGainVal = 0;
     int mp3GainMod = 0;
     double dBGainMod = 0;
@@ -1379,7 +1362,7 @@ int main(int argc, char **argv)
 
     bool ok = true;
     maxAmpOnly = 0;
-    saveTime = 0;
+    gSaveTime = false;
     int fileStart = 1;
     numFiles = 0;
 
@@ -1393,7 +1376,7 @@ int main(int argc, char **argv)
             {
             case 'a':
             case 'A':
-                applyTrack = 0;
+                applyTrack = false;
                 applyAlbum = true;
                 break;
 
@@ -1431,7 +1414,7 @@ int main(int argc, char **argv)
             case 'g':
             case 'G':
                 directGain = true;
-                directSingleChannelGain = 0;
+                directSingleChannelGain = false;
                 if (arg[2] != '\0')
                 {
                     directGainVal = atoi(arg + 2);
@@ -1465,7 +1448,7 @@ int main(int argc, char **argv)
             case 'l':
             case 'L':
                 directSingleChannelGain = true;
-                directGain = 0;
+                directGain = false;
                 if (arg[2] != '\0')
                 {
                     whichChannel = atoi(arg + 2);
@@ -1526,18 +1509,18 @@ int main(int argc, char **argv)
 
             case 'p':
             case 'P':
-                saveTime = true;
+                gSaveTime = true;
                 break;
 
             case 'q':
             case 'Q':
-                QuietMode = true;
+                gQuiet = true;
                 break;
 
             case 'r':
             case 'R':
                 applyTrack = true;
-                applyAlbum = 0;
+                applyAlbum = false;
                 break;
 
             case 's':
@@ -1576,19 +1559,19 @@ int main(int argc, char **argv)
                     break;
                 case 'u':
                 case 'U':
-                    forceUpdateTag = true;
+                    gForceUpdateTag = true;
                     break;
                 case 'r':
                 case 'R':
-                    forceRecalculateTag = true;
+                    gForceRecalculateTag = true;
                     break;
                 case 'i':
                 case 'I':
-                    useId3 = 1;
+                    gUseId3 = true;
                     break;
                 case 'a':
                 case 'A':
-                    useId3 = 0;
+                    gUseId3 = false;
                     break;
                 default:
                     errUsage();
@@ -1598,7 +1581,7 @@ int main(int argc, char **argv)
 
             case 't':
             case 'T':
-                UsingTemp = true;
+                gUsingTemp = true;
                 break;
 
             case 'u':
@@ -1670,7 +1653,7 @@ int main(int argc, char **argv)
         fileTags[argi].apeTag = NULL;
         fileTags[argi].lyrics3tag = NULL;
         fileTags[argi].id31tag = NULL;
-        tagInfo[argi].dirty = forceUpdateTag;
+        tagInfo[argi].dirty = gForceUpdateTag;
         tagInfo[argi].haveAlbumGain = 0;
         tagInfo[argi].haveAlbumPeak = 0;
         tagInfo[argi].haveTrackGain = 0;
@@ -1680,11 +1663,11 @@ int main(int argc, char **argv)
         tagInfo[argi].haveAlbumMinMaxGain = 0;
         tagInfo[argi].recalc = 0;
 
-        if ((!skipTag) && (!deleteTag))
+        if (!skipTag && !deleteTag)
         {
             {
                 ReadMP3GainAPETag(curfilename, &(tagInfo[argi]), &(fileTags[argi]));
-                if (useId3)
+                if (gUseId3)
                 {
                     if (tagInfo[argi].haveTrackGain || tagInfo[argi].haveAlbumGain ||
                         tagInfo[argi].haveMinMaxGain || tagInfo[argi].haveAlbumMinMaxGain ||
@@ -1700,7 +1683,7 @@ int main(int argc, char **argv)
             printf("Read previous tags from %s\n", curfilename);
             dumpTaginfo(&(tagInfo[argi]));
 #endif
-            if (forceRecalculateTag)
+            if (gForceRecalculateTag)
             {
                 if (tagInfo[argi].haveAlbumGain)
                 {
@@ -1743,10 +1726,11 @@ int main(int argc, char **argv)
     }
 
     /* check if we need to actually process the file(s) */
-    albumRecalc = forceRecalculateTag || skipTag ? FULL_RECALC : 0;
-    if ((!skipTag) && (!deleteTag) && (!forceRecalculateTag))
+    albumRecalc = gForceRecalculateTag || skipTag ? FULL_RECALC : 0;
+    if (!skipTag && !deleteTag && !gForceRecalculateTag)
     {
-        /* we're not automatically recalculating, so check if we already have all the information */
+        /* we're not automatically recalculating, so check if we already have
+           all the information */
         if (argc - fileStart > 1)
         {
             curAlbumGain = tagInfo[fileStart].albumGain;
@@ -1847,7 +1831,7 @@ int main(int argc, char **argv)
                     intAlbumGainChange = (int)(dblGainChange) + (dblGainChange < 0 ? -1 : 1);
                 }
             }
-            if (!QuietMode && !databaseFormat)
+            if (!gQuiet && !databaseFormat)
             {
                 printf("%s\n", argv[argi]);
                 if (curTag->haveTrackGain)
@@ -1957,7 +1941,7 @@ int main(int argc, char **argv)
             directGain = true; /* so we don't write the tag a second time */
             if ((tagInfo[argi].haveUndo) && (tagInfo[argi].undoLeft || tagInfo[argi].undoRight))
             {
-                if ((!QuietMode) && (!databaseFormat))
+                if (!gQuiet && !databaseFormat)
                 {
                     printf("Undoing mp3gain changes (%d,%d) to %s...\n",
                            tagInfo[argi].undoLeft, tagInfo[argi].undoRight,
@@ -1980,7 +1964,7 @@ int main(int argc, char **argv)
                 {
                     printf("%s\t0\t0\n", argv[argi]);
                 }
-                else if (!QuietMode)
+                else if (!gQuiet)
                 {
                     if (tagInfo[argi].haveUndo)
                     {
@@ -1998,7 +1982,7 @@ int main(int argc, char **argv)
         }
         else if (directSingleChannelGain)
         {
-            if (!QuietMode)
+            if (!gQuiet)
             {
                 printf("Applying gain change of %d to CHANNEL %d of %s...\n",
                        directGainVal, whichChannel, argv[argi]);
@@ -2025,14 +2009,14 @@ int main(int argc, char **argv)
                     changeGainAndTag(argv[argi], directGainVal, 0, tagInfo + argi, fileTags + argi);
                 }
             }
-            if (!QuietMode && gSuccess)
+            if (!gQuiet && gSuccess)
             {
                 printf("\ndone\n");
             }
         }
         else if (directGain)
         {
-            if (!QuietMode)
+            if (!gQuiet)
             {
                 printf("Applying gain change of %d to %s...\n",
                        directGainVal, argv[argi]);
@@ -2047,7 +2031,7 @@ int main(int argc, char **argv)
                                  directGainVal, directGainVal, tagInfo + argi,
                                  fileTags + argi);
             }
-            if (!QuietMode && gSuccess)
+            if (!gQuiet && gSuccess)
             {
                 printf("\ndone\n");
             }
@@ -2055,13 +2039,13 @@ int main(int argc, char **argv)
         else if (deleteTag)
         {
             {
-                RemoveMP3GainAPETag(argv[argi], saveTime);
-                if (useId3)
+                RemoveMP3GainAPETag(argv[argi], gSaveTime);
+                if (gUseId3)
                 {
-                    RemoveMP3GainID3Tag(argv[argi], saveTime);
+                    RemoveMP3GainID3Tag(argv[argi], gSaveTime);
                 }
             }
-            if ((!QuietMode) && (!databaseFormat))
+            if (!gQuiet && !databaseFormat)
             {
                 printf("Deleting tag info of %s...\n", argv[argi]);
             }
@@ -2072,7 +2056,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            if (!databaseFormat && !QuietMode)
+            if (!databaseFormat && !gQuiet)
             {
                 printf("%s\n", argv[argi]);
             }
@@ -2111,7 +2095,7 @@ int main(int argc, char **argv)
                         maxsample = 0;
                     }
                     {
-                        BadLayer = 0;
+                        gBadLayer = false;
                         LayerSet = Reckless;
                         maxgain = 0;
                         mingain = 255;
@@ -2135,7 +2119,7 @@ int main(int argc, char **argv)
 
                     if (!ok)
                     {
-                        if (!BadLayer)
+                        if (!gBadLayer)
                         {
                             fprintf(stderr, "%s: Can't find any valid MP3 frames in file %s\n",
                                     gProgramName, argv[argi]);
@@ -2281,7 +2265,7 @@ int main(int argc, char **argv)
                                         ok = frameSearch(0);
                                     }
 
-                                    if (!QuietMode)
+                                    if (!gQuiet)
                                     {
                                         if (!(++frame % 200))
                                         {
@@ -2293,7 +2277,7 @@ int main(int argc, char **argv)
                             }
                         }
 
-                        if (!QuietMode)
+                        if (!gQuiet)
                         {
                             fprintf(stderr, "                                                 \r");
                         }
@@ -2323,15 +2307,18 @@ int main(int argc, char **argv)
                         }
                         else
                         {
-                            /* even if skipTag is on, we'll leave this part running just to store the minpeak and maxpeak */
+                            /* even if skipTag is on, we'll leave this part
+                               running just to store the minpeak and
+                               maxpeak */
                             curTag = tagInfo + argi;
                             if (!maxAmpOnly)
                             {
-                                if ( /* if we don't already have a tagged track gain OR we have it, but it doesn't match */
-                                    !curTag->haveTrackGain ||
+                                /* if we don't already have a tagged track
+                                   gain OR we have it, but it doesn't match */
+                                if (!curTag->haveTrackGain ||
                                     (curTag->haveTrackGain &&
                                      (fabs(dBchange - curTag->trackGain) >= 0.01))
-                                )
+                                   )
                                 {
                                     curTag->dirty = true;
                                     curTag->haveTrackGain = 1;
@@ -2378,7 +2365,7 @@ int main(int argc, char **argv)
                                 printf("%s\t%d\t%f\t%f\t%d\t%d\n", argv[argi], intGainChange, dBchange, maxsample, maxgain, mingain);
                                 fflush(stdout);
                             }
-                            if ((!applyTrack) && (!applyAlbum))
+                            if (!applyTrack && !applyAlbum)
                             {
                                 if (!databaseFormat)
                                 {
@@ -2410,7 +2397,7 @@ int main(int argc, char **argv)
                                     if (!skipTag && tagInfo[argi].dirty)
                                     {
                                         printf("...but tag needs update: Writing tag information for %s\n", argv[argi]);
-                                        WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, saveTime);
+                                        WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, gSaveTime);
                                     }
                                 }
                                 else
@@ -2431,7 +2418,7 @@ int main(int argc, char **argv)
                                         {
                                             if (queryUserForClipping(argv[argi], intGainChange))
                                             {
-                                                if (!QuietMode)
+                                                if (!gQuiet)
                                                 {
                                                     printf("Applying mp3 gain change of %d to %s...\n", intGainChange, argv[argi]);
                                                 }
@@ -2444,7 +2431,7 @@ int main(int argc, char **argv)
                                     }
                                     if (goAhead)
                                     {
-                                        if (!QuietMode)
+                                        if (!gQuiet)
                                         {
                                             printf("Applying mp3 gain change of %d to %s...\n", intGainChange, argv[argi]);
                                         }
@@ -2461,7 +2448,7 @@ int main(int argc, char **argv)
                                     else if (!skipTag && tagInfo[argi].dirty)
                                     {
                                         printf("Writing tag information for %s\n", argv[argi]);
-                                        WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, saveTime);
+                                        WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, gSaveTime);
                                     }
                                 }
                             }
@@ -2480,7 +2467,7 @@ int main(int argc, char **argv)
         }
     }
 
-    if ((numFiles > 0) && (!applyTrack) && (!analysisTrack))
+    if (numFiles > 0 && !applyTrack && !analysisTrack)
     {
         if (albumRecalc & FULL_RECALC)
         {
@@ -2540,7 +2527,7 @@ int main(int argc, char **argv)
                 }
             }
 
-            if ((!skipTag) && (numFiles > 1 || applyAlbum))
+            if (!skipTag && (numFiles > 1 || applyAlbum))
             {
                 for (int argi = fileStart; argi < argc; argi++)
                 {
@@ -2646,7 +2633,7 @@ int main(int argc, char **argv)
                             if (!skipTag && tagInfo[argi].dirty)
                             {
                                 printf("...but tag needs update: Writing tag information for %s\n", argv[argi]);
-                                WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, saveTime);
+                                WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, gSaveTime);
                             }
                         }
                         else
@@ -2660,7 +2647,7 @@ int main(int argc, char **argv)
                             }
                             if (goAhead)
                             {
-                                if (!QuietMode)
+                                if (!gQuiet)
                                 {
                                     printf("Applying mp3 gain change of %d to %s...\n", intGainChange, argv[argi]);
                                 }
@@ -2677,7 +2664,7 @@ int main(int argc, char **argv)
                             else if (!skipTag && tagInfo[argi].dirty)
                             {
                                 printf("Writing tag information for %s\n", argv[argi]);
-                                WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, saveTime);
+                                WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, gSaveTime);
                             }
                         }
                     }
@@ -2687,13 +2674,13 @@ int main(int argc, char **argv)
     }
 
     /* update file tags */
-    if ((!applyTrack) &&
-        (!applyAlbum) &&
-        (!directGain) &&
-        (!directSingleChannelGain) &&
-        (!deleteTag) &&
-        (!skipTag) &&
-        (!checkTagOnly))
+    if (!applyTrack &&
+        !applyAlbum &&
+        !directGain &&
+        !directSingleChannelGain &&
+        !deleteTag &&
+        !skipTag &&
+        !checkTagOnly)
     {
         /* if we made changes, we already updated the tags */
         for (int argi = fileStart; argi < argc; argi++)
@@ -2702,7 +2689,7 @@ int main(int argc, char **argv)
             {
                 if (tagInfo[argi].dirty)
                 {
-                    WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, saveTime);
+                    WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, gSaveTime);
                 }
             }
         }

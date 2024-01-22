@@ -489,7 +489,7 @@ int ReadMP3GainAPETag(const char *filename,
 int WriteMP3GainAPETag(const char *filename,
                        struct MP3GainTagInfo *info,
                        struct FileTagsStruct *fileTags,
-                       int saveTimeStamp)
+                       bool saveTimeStamp)
 {
     FILE *outputFile;
     unsigned long newTagLength;
@@ -779,7 +779,7 @@ int WriteMP3GainAPETag(const char *filename,
 /**
  * Remove gain information from the APE tag.
  */
-int RemoveMP3GainAPETag(const char *filename, int saveTimeStamp)
+int RemoveMP3GainAPETag(const char *filename, bool saveTimeStamp)
 {
     struct MP3GainTagInfo info;
     struct FileTagsStruct fileTags;
