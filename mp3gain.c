@@ -1359,18 +1359,15 @@ int main(int argc, char **argv)
         switch (arg[1])
         {
         case 'a':
-        case 'A':
             applyTrack = false;
             applyAlbum = true;
             break;
 
         case 'c':
-        case 'C':
             ignoreClipWarning = true;
             break;
 
         case 'd':
-        case 'D':
             if (arg[2] != '\0')
             {
                 dBGainMod = atof(arg + 2);
@@ -1386,12 +1383,10 @@ int main(int argc, char **argv)
             break;
 
         case 'f':
-        case 'F':
             Reckless = 1;
             break;
 
         case 'g':
-        case 'G':
             directGain = true;
             directSingleChannelGain = false;
             if (arg[2] != '\0')
@@ -1409,18 +1404,15 @@ int main(int argc, char **argv)
             break;
 
         case 'h':
-        case 'H':
         case '?':
             fullUsage();
             break;
 
         case 'k':
-        case 'K':
             autoClip = true;
             break;
 
         case 'l':
-        case 'L':
             directSingleChannelGain = true;
             directGain = false;
             if (arg[2] != '\0')
@@ -1448,7 +1440,6 @@ int main(int argc, char **argv)
             break;
 
         case 'm':
-        case 'M':
             if (arg[2] != '\0')
             {
                 mp3GainMod = atoi(arg + 2);
@@ -1464,28 +1455,23 @@ int main(int argc, char **argv)
             break;
 
         case 'o':
-        case 'O':
             databaseFormat = true;
             break;
 
         case 'p':
-        case 'P':
             gSaveTime = true;
             break;
 
         case 'q':
-        case 'Q':
             gQuiet = true;
             break;
 
         case 'r':
-        case 'R':
             applyTrack = true;
             applyAlbum = false;
             break;
 
         case 's':
-        case 'S':
         {
             char c = 0;
             if (arg[2] == '\0')
@@ -1505,31 +1491,24 @@ int main(int argc, char **argv)
             switch (c)
             {
             case 'c':
-            case 'C':
                 gCheckTagOnly = true;
                 break;
             case 'd':
-            case 'D':
                 gDeleteTag = true;
                 break;
             case 's':
-            case 'S':
                 gSkipTag = true;
                 break;
             case 'u':
-            case 'U':
                 gForceUpdateTag = true;
                 break;
             case 'r':
-            case 'R':
                 gForceRecalculateTag = true;
                 break;
             case 'i':
-            case 'I':
                 gUseId3 = true;
                 break;
             case 'a':
-            case 'A':
                 gUseId3 = false;
                 break;
             default:
@@ -1539,33 +1518,27 @@ int main(int argc, char **argv)
         }
 
         case 't':
-        case 'T':
             gUsingTemp = true;
             break;
 
         case 'u':
-        case 'U':
             undoChanges = true;
             break;
 
         case 'v':
-        case 'V':
             printf("%s version %s (%s %s)\n", gProgramName, MP3GAIN_VERSION,
                    __DATE__, __TIME__);
             exit(0);
 
         case 'w':
-        case 'W':
             wrapGain = true;
             break;
 
         case 'x':
-        case 'X':
             maxAmpOnly = true;
             break;
 
         case 'e':
-        case 'E':
             analysisTrack = true;
             break;
 
@@ -2355,8 +2328,8 @@ int main(int argc, char **argv)
                                 if (inf)
                                 {
                                     fclose(inf);
+                                    inf = NULL;
                                 }
-                                inf = NULL;
                                 goAhead = true;
 
                                 if (intGainChange == 0)
@@ -2429,8 +2402,8 @@ int main(int argc, char **argv)
                 if (inf)
                 {
                     fclose(inf);
+                    inf = NULL;
                 }
-                inf = NULL;
             }
         }
     }
