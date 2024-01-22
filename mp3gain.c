@@ -97,17 +97,6 @@ static bool gSaveTime;
 static unsigned long filepos;
 static const char *gProgramName;
 
-void DoError(const char *localerrstr, MMRESULT localerrnum)
-{
-    gSuccess = false;
-    fprintf(stderr, "%s: %s", gProgramName, localerrstr);
-}
-
-void DoUnkError(const char *localerrstr)
-{
-    DoError(localerrstr, MP3GAIN_UNSPECIFED_ERROR);
-}
-
 static const double bitrate[4][16] =
 {
     { 1,  8, 16, 24, 32, 40, 48, 56,  64,  80,  96, 112, 128, 144, 160, 1 },
@@ -302,7 +291,8 @@ void passError(MMRESULT lerrnum, int numStrings, ...)
     }
     va_end(marker);
 
-    DoError(errstr, lerrnum);
+    fprintf(stderr, "%s: %s", gProgramName, errstr);
+    gSuccess = false;
     free(errstr);
 }
 
