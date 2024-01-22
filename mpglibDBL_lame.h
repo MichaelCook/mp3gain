@@ -25,10 +25,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 typedef enum vbr_mode_e
 {
     vbr_off = 0,
@@ -785,7 +781,3 @@ extern const int      samplerate_table [3] [ 4];
    each call to lame_encode_buffer.  see lame_encode_buffer() below
    (LAME_MAXMP3BUFFER is now obsolete)  */
 #define LAME_MAXMP3BUFFER   16384
-
-#if defined(__cplusplus)
-}
-#endif

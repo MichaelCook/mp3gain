@@ -1366,7 +1366,7 @@ int main(int argc, char **argv)
     }
 
     bool ok = true;
-    maxAmpOnly = 0;
+    maxAmpOnly = false;
     gSaveTime = false;
     int fileStart = 1;
     numFiles = 0;
@@ -2258,7 +2258,7 @@ int main(int argc, char **argv)
                                         }
                                         if (decodeSuccess == MP3_OK)
                                         {
-                                            if ((!maxAmpOnly) && (tagInfo[argi].recalc & FULL_RECALC))
+                                            if (!maxAmpOnly && (tagInfo[argi].recalc & FULL_RECALC))
                                             {
                                                 if (AnalyzeSamples(lsamples, rsamples, procSamp / nchan, nchan) == GAIN_ANALYSIS_ERROR)
                                                 {

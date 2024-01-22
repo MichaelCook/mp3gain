@@ -21,7 +21,7 @@
 Float_t *lSamp;
 Float_t *rSamp;
 Float_t *maxSamp;
-unsigned char maxAmpOnly;
+bool maxAmpOnly;
 
 int procSamp;
 
