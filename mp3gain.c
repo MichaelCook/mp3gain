@@ -1396,16 +1396,13 @@ int main(int argc, char **argv)
                 }
                 else
                 {
-                    if (i + 1 < argc)
-                    {
-                        dBGainMod = atof(argv[i + 1]);
-                        i++;
-                        fileStart++;
-                    }
-                    else
+                    if (i + 1 >= argc)
                     {
                         errUsage();
                     }
+                    dBGainMod = atof(argv[i + 1]);
+                    i++;
+                    fileStart++;
                 }
                 break;
 
@@ -1424,16 +1421,13 @@ int main(int argc, char **argv)
                 }
                 else
                 {
-                    if (i + 1 < argc)
-                    {
-                        directGainVal = atoi(argv[i + 1]);
-                        i++;
-                        fileStart++;
-                    }
-                    else
+                    if (i + 1 >= argc)
                     {
                         errUsage();
                     }
+                    directGainVal = atoi(argv[i + 1]);
+                    i++;
+                    fileStart++;
                 }
                 break;
 
@@ -1455,32 +1449,26 @@ int main(int argc, char **argv)
                 if (arg[2] != '\0')
                 {
                     whichChannel = atoi(arg + 2);
-                    if (i + 1 < argc)
-                    {
-                        directGainVal = atoi(argv[i + 1]);
-                        i++;
-                        fileStart++;
-                    }
-                    else
+                    if (i + 1 >= argc)
                     {
                         errUsage();
                     }
+                    directGainVal = atoi(argv[i + 1]);
+                    i++;
+                    fileStart++;
                 }
                 else
                 {
-                    if (i + 2 < argc)
-                    {
-                        whichChannel = atoi(argv[i + 1]);
-                        i++;
-                        fileStart++;
-                        directGainVal = atoi(argv[i + 1]);
-                        i++;
-                        fileStart++;
-                    }
-                    else
+                    if (i + 2 >= argc)
                     {
                         errUsage();
                     }
+                    whichChannel = atoi(argv[i + 1]);
+                    i++;
+                    fileStart++;
+                    directGainVal = atoi(argv[i + 1]);
+                    i++;
+                    fileStart++;
                 }
                 break;
 
@@ -1492,16 +1480,13 @@ int main(int argc, char **argv)
                 }
                 else
                 {
-                    if (i + 1 < argc)
-                    {
-                        mp3GainMod = atoi(argv[i + 1]);
-                        i++;
-                        fileStart++;
-                    }
-                    else
+                    if (i + 1 >= argc)
                     {
                         errUsage();
                     }
+                    mp3GainMod = atoi(argv[i + 1]);
+                    i++;
+                    fileStart++;
                 }
                 break;
 
