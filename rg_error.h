@@ -33,18 +33,18 @@
 #pragma once
 
 #include <string.h>
-
 #include <stdio.h>
+
 #define MMSYSERR_NOERROR  0
 #define MMSYSERR_ERROR    01
 #define WAVERR_BADFORMAT  32
 
 typedef unsigned int MMRESULT;
 
-#define MP3GAIN_NOERROR                                  MMSYSERR_NOERROR
+#define MP3GAIN_NOERROR                  MMSYSERR_NOERROR
 #define MP3GAIN_UNSPECIFED_ERROR         MMSYSERR_ERROR
 #define MP3GAIN_FILEFORMAT_NOTSUPPORTED  WAVERR_BADFORMAT
 #define MP3GAIN_CANCELLED                2006
 
-void DoUnkError(char *localerrstr);
-void DoError(char *localerrstr, MMRESULT localerrnum);
+void DoUnkError(const char *localerrstr);
+void DoError(const char *localerrstr, MMRESULT localerrnum);

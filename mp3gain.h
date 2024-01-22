@@ -1,5 +1,4 @@
 /*
- *  ReplayGainAnalysis Heder - DLL for Glen Sawyer's MP3GAIN.C source
  *  Copyright (C) 2002 John Zitterkopf (zitt@bigfoot.com)
  *                     (http://www.zittware.com)
  *
@@ -18,18 +17,11 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *  This header for VC++5.0 by John Zitterkopf (zitt@bigfoot.com)
- *    -- blame him for nothing. This work evolves as needed.
- *
- *  V0.0 - jzitt9/4/2002
- *  * header needed to eliminate 'changeGain' undefined compiler warning
  */
 
 #pragma once
 
 #define MP3GAIN_VERSION "1.5.2"
-/* jzitt: moved from mp3gain.c */
 
 #define M3G_ERR_CANT_MODIFY_FILE -1
 #define M3G_ERR_CANT_MAKE_TMP -2

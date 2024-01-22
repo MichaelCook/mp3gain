@@ -95,13 +95,13 @@ static FILE *outf;
 static short int saveTime;
 static unsigned long filepos;
 
-void DoError(char *localerrstr, MMRESULT localerrnum)
+void DoError(const char *localerrstr, MMRESULT localerrnum)
 {
     gSuccess = 0;
-    fprintf(stdout, "%s", localerrstr);
+    fprintf(stderr, "%s", localerrstr);
 }
 
-void DoUnkError(char *localerrstr)
+void DoUnkError(const char *localerrstr)
 {
     DoError(localerrstr, MP3GAIN_UNSPECIFED_ERROR);
 }
@@ -370,12 +370,12 @@ static unsigned long frameSearch(int startup)
                 switch (wrdpntr[1] & 0x06)
                 {
                 case 0x06:
-                    BadLayer = !0;
+                    BadLayer = true;
                     passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
                               curfilename, " is an MPEG Layer I file, not a layer III file\n");
                     return 0;
                 case 0x04:
-                    BadLayer = !0;
+                    BadLayer = true;
                     passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
                               curfilename, " is an MPEG Layer II file, not a layer III file\n");
                     return 0;
@@ -683,7 +683,7 @@ static int changeGain(const char *filename,
     BadLayer = 0;
     LayerSet = Reckless;
 
-    NowWriting = !0;
+    NowWriting = true;
 
     if ((leftgainchange == 0) && (rightgainchange == 0))
     {
@@ -771,7 +771,7 @@ static int changeGain(const char *filename,
 
             ok = skipID3v2();
 
-            ok = frameSearch(!0);
+            ok = frameSearch(true);
             if (!ok)
             {
                 if (!BadLayer)
@@ -1119,13 +1119,13 @@ static void changeGainAndTag(const char *filename,
                 tag->undoLeft = 0;
                 tag->undoRight = 0;
             }
-            tag->dirty = !0;
+            tag->dirty = true;
             tag->undoRight -= rightgainchange;
             tag->undoLeft -= leftgainchange;
             tag->undoWrap = wrapGain;
 
             /* if undo == 0, then remove Undo tag */
-            tag->haveUndo = !0;
+            tag->haveUndo = true;
             /* on second thought, don't remove it. Shortening the tag causes full file copy, which is slow so we avoid it if we can
                             tag->haveUndo =
                                     ((tag->undoRight != 0) ||
@@ -1223,11 +1223,7 @@ static int queryUserForClipping(char *argv_mainloop, int intGainChange)
     return 1;
 }
 
-static void showVersion(const char *progname)
-{
-    fprintf(stderr, "%s version %s\n", progname, MP3GAIN_VERSION);
-}
-
+#if 0
 static void wrapExplanation()
 {
     fprintf(stderr, "Here's the problem:\n");
@@ -1263,11 +1259,10 @@ static void wrapExplanation()
     fprintf(stderr, "To use the original \"wrapping\" behavior, use -w");
     exit(0);
 }
+#endif
 
 static void errUsage(const char *progname)
 {
-    showVersion(progname);
-    fprintf(stderr, "copyright(c) 2001-2009 by Glen Sawyer\n");
     fprintf(stderr, "uses mpglib, which can be found at http://www.mpg123.de\n");
     fprintf(stderr, "Usage: %s [options] <infile> [<infile 2> ...]\n", progname);
     fprintf(stderr, "  --use -? or -h for a full list of options\n");
@@ -1276,48 +1271,48 @@ static void errUsage(const char *progname)
 
 static void fullUsage(const char *progname)
 {
-    showVersion(progname);
-    fprintf(stderr, "copyright(c) 2001-2009 by Glen Sawyer\n");
-    fprintf(stderr, "uses mpglib, which can be found at http://www.mpg123.de\n");
-    fprintf(stderr, "Usage: %s [options] <infile> [<infile 2> ...]\n", progname);
-    fprintf(stderr, "options:\n");
-    fprintf(stderr, "\t-v - show version number\n");
-    fprintf(stderr, "\t-g <i>  - apply gain i without doing any analysis\n");
-    fprintf(stderr, "\t-l 0 <i> - apply gain i to channel 0 (left channel)\n");
-    fprintf(stderr, "\t          without doing any analysis (ONLY works for STEREO files,\n");
-    fprintf(stderr, "\t          not Joint Stereo)\n");
-    fprintf(stderr, "\t-l 1 <i> - apply gain i to channel 1 (right channel)\n");
-    fprintf(stderr, "\t-e - skip Album analysis, even if multiple files listed\n");
-    fprintf(stderr, "\t-r - apply Track gain automatically (all files set to equal loudness)\n");
-    fprintf(stderr, "\t-k - automatically lower Track/Album gain to not clip audio\n");
-    fprintf(stderr, "\t-a - apply Album gain automatically (files are all from the same\n");
-    fprintf(stderr, "\t              album: a single gain change is applied to all files, so\n");
-    fprintf(stderr, "\t              their loudness relative to each other remains unchanged,\n");
-    fprintf(stderr, "\t              but the average album loudness is normalized)\n");
-    fprintf(stderr, "\t-m <i> - modify suggested MP3 gain by integer i\n");
-    fprintf(stderr, "\t-d <n> - modify suggested dB gain by floating-point n\n");
-    fprintf(stderr, "\t-c - ignore clipping warning when applying gain\n");
-    fprintf(stderr, "\t-o - output is a database-friendly tab-delimited list\n");
-    fprintf(stderr, "\t-t - writes modified data to temp file, then deletes original\n");
-    fprintf(stderr, "\t     instead of modifying bytes in original file\n");
-    fprintf(stderr, "\t-q - Quiet mode: no status messages\n");
-    fprintf(stderr, "\t-p - Preserve original file timestamp\n");
-    fprintf(stderr, "\t-x - Only find max. amplitude of file\n");
-    fprintf(stderr, "\t-f - Assume input file is an MPEG 2 Layer III file\n");
-    fprintf(stderr, "\t     (i.e. don't check for mis-named Layer I or Layer II files)\n");
-    fprintf(stderr, "\t-? or -h - show this message\n");
-    fprintf(stderr, "\t-s c - only check stored tag info (no other processing)\n");
-    fprintf(stderr, "\t-s d - delete stored tag info (no other processing)\n");
-    fprintf(stderr, "\t-s s - skip (ignore) stored tag info (do not read or write tags)\n");
-    fprintf(stderr, "\t-s r - force re-calculation (do not read tag info)\n");
-    fprintf(stderr, "\t-s i - use ID3v2 tag for MP3 gain info\n");
-    fprintf(stderr, "\t-s a - use APE tag for MP3 gain info (default)\n");
-    fprintf(stderr, "\t-u - undo changes made (based on stored tag info)\n");
-    fprintf(stderr, "\t-w - \"wrap\" gain change if gain+change > 255 or gain+change < 0\n");
-    fprintf(stderr, "\t      (use \"-? wrap\" switch for a complete explanation)\n");
-    fprintf(stderr, "If you specify -r and -a, only the second one will work\n");
-    fprintf(stderr, "If you do not specify -c, the program will stop and ask before\n"
-            "     applying gain change to a file that might clip\n");
+    printf("copyright(c) 2001-2009 by Glen Sawyer\n"
+           "uses mpglib, which can be found at http://www.mpg123.de\n"
+           "Usage: %s [options] <infile> [<infile 2> ...]\n"
+           "options:\n"
+           "\t-v - show version number\n"
+           "\t-g <i>  - apply gain i without doing any analysis\n"
+           "\t-l 0 <i> - apply gain i to channel 0 (left channel)\n"
+           "\t          without doing any analysis (ONLY works for STEREO files,\n"
+           "\t          not Joint Stereo)\n"
+           "\t-l 1 <i> - apply gain i to channel 1 (right channel)\n"
+           "\t-e - skip Album analysis, even if multiple files listed\n"
+           "\t-r - apply Track gain automatically (all files set to equal loudness)\n"
+           "\t-k - automatically lower Track/Album gain to not clip audio\n"
+           "\t-a - apply Album gain automatically (files are all from the same\n"
+           "\t              album: a single gain change is applied to all files, so\n"
+           "\t              their loudness relative to each other remains unchanged,\n"
+           "\t              but the average album loudness is normalized)\n"
+           "\t-m <i> - modify suggested MP3 gain by integer i\n"
+           "\t-d <n> - modify suggested dB gain by floating-point n\n"
+           "\t-c - ignore clipping warning when applying gain\n"
+           "\t-o - output is a database-friendly tab-delimited list\n"
+           "\t-t - writes modified data to temp file, then deletes original\n"
+           "\t     instead of modifying bytes in original file\n"
+           "\t-q - Quiet mode: no status messages\n"
+           "\t-p - Preserve original file timestamp\n"
+           "\t-x - Only find max. amplitude of file\n"
+           "\t-f - Assume input file is an MPEG 2 Layer III file\n"
+           "\t     (i.e. don't check for mis-named Layer I or Layer II files)\n"
+           "\t-? or -h - show this message\n"
+           "\t-s c - only check stored tag info (no other processing)\n"
+           "\t-s d - delete stored tag info (no other processing)\n"
+           "\t-s s - skip (ignore) stored tag info (do not read or write tags)\n"
+           "\t-s r - force re-calculation (do not read tag info)\n"
+           "\t-s i - use ID3v2 tag for MP3 gain info\n"
+           "\t-s a - use APE tag for MP3 gain info (default)\n"
+           "\t-u - undo changes made (based on stored tag info)\n"
+           "\t-w - \"wrap\" gain change if gain+change > 255 or gain+change < 0\n"
+           "\t      (use \"-? wrap\" switch for a complete explanation)\n"
+           "If you specify -r and -a, only the second one will work\n"
+           "If you do not specify -c, the program will stop and ask before\n"
+           "     applying gain change to a file that might clip\n",
+           progname);
     exit(0);
 }
 
@@ -1396,12 +1391,12 @@ int main(int argc, char **argv)
             case 'a':
             case 'A':
                 applyTrack = 0;
-                applyAlbum = !0;
+                applyAlbum = true;
                 break;
 
             case 'c':
             case 'C':
-                ignoreClipWarning = !0;
+                ignoreClipWarning = true;
                 break;
 
             case 'd':
@@ -1432,7 +1427,7 @@ int main(int argc, char **argv)
 
             case 'g':
             case 'G':
-                directGain = !0;
+                directGain = true;
                 directSingleChannelGain = 0;
                 if (argv[i][2] != '\0')
                 {
@@ -1456,35 +1451,17 @@ int main(int argc, char **argv)
             case 'h':
             case 'H':
             case '?':
-                if ((argv[i][2] == 'w') || (argv[i][2] == 'W'))
-                {
-                    wrapExplanation();
-                }
-                else
-                {
-                    if (i + 1 < argc)
-                    {
-                        if ((argv[i + 1][0] == 'w') || (argv[i + 1][0] == 'W'))
-                        {
-                            wrapExplanation();
-                        }
-                    }
-                    else
-                    {
-                        fullUsage(argv[0]);
-                    }
-                }
                 fullUsage(argv[0]);
                 break;
 
             case 'k':
             case 'K':
-                autoClip = !0;
+                autoClip = true;
                 break;
 
             case 'l':
             case 'L':
-                directSingleChannelGain = !0;
+                directSingleChannelGain = true;
                 directGain = 0;
                 if (argv[i][2] != '\0')
                 {
@@ -1541,22 +1518,22 @@ int main(int argc, char **argv)
 
             case 'o':
             case 'O':
-                databaseFormat = !0;
+                databaseFormat = true;
                 break;
 
             case 'p':
             case 'P':
-                saveTime = !0;
+                saveTime = true;
                 break;
 
             case 'q':
             case 'Q':
-                QuietMode = !0;
+                QuietMode = true;
                 break;
 
             case 'r':
             case 'R':
-                applyTrack = !0;
+                applyTrack = true;
                 applyAlbum = 0;
                 break;
 
@@ -1584,23 +1561,23 @@ int main(int argc, char **argv)
                 {
                 case 'c':
                 case 'C':
-                    checkTagOnly = !0;
+                    checkTagOnly = true;
                     break;
                 case 'd':
                 case 'D':
-                    deleteTag = !0;
+                    deleteTag = true;
                     break;
                 case 's':
                 case 'S':
-                    skipTag = !0;
+                    skipTag = true;
                     break;
                 case 'u':
                 case 'U':
-                    forceUpdateTag = !0;
+                    forceUpdateTag = true;
                     break;
                 case 'r':
                 case 'R':
-                    forceRecalculateTag = !0;
+                    forceRecalculateTag = true;
                     break;
                 case 'i':
                 case 'I':
@@ -1618,32 +1595,33 @@ int main(int argc, char **argv)
 
             case 't':
             case 'T':
-                UsingTemp = !0;
+                UsingTemp = true;
                 break;
 
             case 'u':
             case 'U':
-                undoChanges = !0;
+                undoChanges = true;
                 break;
 
             case 'v':
             case 'V':
-                showVersion(argv[0]);
+                printf("%s version %s (%s %s)\n", argv[0], MP3GAIN_VERSION,
+                       __DATE__, __TIME__);
                 exit(0);
 
             case 'w':
             case 'W':
-                wrapGain = !0;
+                wrapGain = true;
                 break;
 
             case 'x':
             case 'X':
-                maxAmpOnly = !0;
+                maxAmpOnly = true;
                 break;
 
             case 'e':
             case 'E':
-                analysisTrack = !0;
+                analysisTrack = true;
                 break;
 
             default:
@@ -1663,16 +1641,18 @@ int main(int argc, char **argv)
     {
         if (checkTagOnly)
         {
-            fprintf(stdout,
-                    "File\tMP3 gain\tdB gain\tMax Amplitude\tMax global_gain\tMin global_gain\tAlbum gain\tAlbum dB gain\tAlbum Max Amplitude\tAlbum Max global_gain\tAlbum Min global_gain\n");
+            printf("File\tMP3 gain\tdB gain\tMax Amplitude\tMax global_gain\t"
+                   "Min global_gain\tAlbum gain\tAlbum dB gain\tAlbum Max Amplitude\t"
+                   "Album Max global_gain\tAlbum Min global_gain\n");
         }
         else if (undoChanges)
         {
-            fprintf(stdout, "File\tleft global_gain change\tright global_gain change\n");
+            printf("File\tleft global_gain change\tright global_gain change\n");
         }
         else
         {
-            fprintf(stdout, "File\tMP3 gain\tdB gain\tMax Amplitude\tMax global_gain\tMin global_gain\n");
+            printf("File\tMP3 gain\tdB gain\tMax Amplitude\tMax global_gain\t"
+                   "Min global_gain\n");
         }
         fflush(stdout);
     }
@@ -1712,44 +1692,46 @@ int main(int argc, char **argv)
                     ReadMP3GainID3Tag(curfilename, &(tagInfo[argi]));
                 }
             }
-            /*fprintf(stdout,"Read previous tags from %s\n",curfilename);
-              dumpTaginfo(&(tagInfo[argi]));*/
+#if 0
+            printf("Read previous tags from %s\n", curfilename);
+            dumpTaginfo(&(tagInfo[argi]));
+#endif
             if (forceRecalculateTag)
             {
                 if (tagInfo[argi].haveAlbumGain)
                 {
-                    tagInfo[argi].dirty = !0;
+                    tagInfo[argi].dirty = true;
                     tagInfo[argi].haveAlbumGain = 0;
                 }
                 if (tagInfo[argi].haveAlbumPeak)
                 {
-                    tagInfo[argi].dirty = !0;
+                    tagInfo[argi].dirty = true;
                     tagInfo[argi].haveAlbumPeak = 0;
                 }
                 if (tagInfo[argi].haveTrackGain)
                 {
-                    tagInfo[argi].dirty = !0;
+                    tagInfo[argi].dirty = true;
                     tagInfo[argi].haveTrackGain = 0;
                 }
                 if (tagInfo[argi].haveTrackPeak)
                 {
-                    tagInfo[argi].dirty = !0;
+                    tagInfo[argi].dirty = true;
                     tagInfo[argi].haveTrackPeak = 0;
                 }
                 /* NOT Undo information!
                                           if (tagInfo[argi].haveUndo) {
-                                                  tagInfo[argi].dirty = !0;
+                                                  tagInfo[argi].dirty = true;
                                                   tagInfo[argi].haveUndo = 0;
                                           }
                 */
                 if (tagInfo[argi].haveMinMaxGain)
                 {
-                    tagInfo[argi].dirty = !0;
+                    tagInfo[argi].dirty = true;
                     tagInfo[argi].haveMinMaxGain = 0;
                 }
                 if (tagInfo[argi].haveAlbumMinMaxGain)
                 {
-                    tagInfo[argi].dirty = !0;
+                    tagInfo[argi].dirty = true;
                     tagInfo[argi].haveAlbumMinMaxGain = 0;
                 }
             }
@@ -1863,112 +1845,112 @@ int main(int argc, char **argv)
             }
             if (!QuietMode && !databaseFormat)
             {
-                fprintf(stdout, "%s\n", argv[argi]);
+                printf("%s\n", argv[argi]);
                 if (curTag->haveTrackGain)
                 {
-                    fprintf(stdout, "Recommended \"Track\" dB change: %f\n", curTag->trackGain);
-                    fprintf(stdout, "Recommended \"Track\" mp3 gain change: %d\n", intGainChange);
+                    printf("Recommended \"Track\" dB change: %f\n", curTag->trackGain);
+                    printf("Recommended \"Track\" mp3 gain change: %d\n", intGainChange);
                     if (curTag->haveTrackPeak)
                     {
                         if (curTag->trackPeak * (Float_t)(pow(2.0, (double)(intGainChange) / 4.0)) > 1.0)
                         {
-                            fprintf(stdout, "WARNING: some clipping may occur with this gain change!\n");
+                            printf("WARNING: some clipping may occur with this gain change!\n");
                         }
                     }
                 }
                 if (curTag->haveTrackPeak)
                 {
-                    fprintf(stdout, "Max PCM sample at current gain: %f\n", curTag->trackPeak * 32768.0);
+                    printf("Max PCM sample at current gain: %f\n", curTag->trackPeak * 32768.0);
                 }
                 if (curTag->haveMinMaxGain)
                 {
-                    fprintf(stdout, "Max mp3 global gain field: %d\n", curTag->maxGain);
-                    fprintf(stdout, "Min mp3 global gain field: %d\n", curTag->minGain);
+                    printf("Max mp3 global gain field: %d\n", curTag->maxGain);
+                    printf("Min mp3 global gain field: %d\n", curTag->minGain);
                 }
                 if (curTag->haveAlbumGain)
                 {
-                    fprintf(stdout, "Recommended \"Album\" dB change: %f\n", curTag->albumGain);
-                    fprintf(stdout, "Recommended \"Album\" mp3 gain change: %d\n", intAlbumGainChange);
+                    printf("Recommended \"Album\" dB change: %f\n", curTag->albumGain);
+                    printf("Recommended \"Album\" mp3 gain change: %d\n", intAlbumGainChange);
                     if (curTag->haveTrackPeak)
                     {
                         if (curTag->trackPeak * (Float_t)(pow(2.0, (double)(intAlbumGainChange) / 4.0)) > 1.0)
                         {
-                            fprintf(stdout, "WARNING: some clipping may occur with this gain change!\n");
+                            printf("WARNING: some clipping may occur with this gain change!\n");
                         }
                     }
                 }
                 if (curTag->haveAlbumPeak)
                 {
-                    fprintf(stdout, "Max Album PCM sample at current gain: %f\n", curTag->albumPeak * 32768.0);
+                    printf("Max Album PCM sample at current gain: %f\n", curTag->albumPeak * 32768.0);
                 }
                 if (curTag->haveAlbumMinMaxGain)
                 {
-                    fprintf(stdout, "Max Album mp3 global gain field: %d\n", curTag->albumMaxGain);
-                    fprintf(stdout, "Min Album mp3 global gain field: %d\n", curTag->albumMinGain);
+                    printf("Max Album mp3 global gain field: %d\n", curTag->albumMaxGain);
+                    printf("Min Album mp3 global gain field: %d\n", curTag->albumMinGain);
                 }
-                fprintf(stdout, "\n");
+                printf("\n");
             }
             else
             {
-                fprintf(stdout, "%s\t", argv[argi]);
+                printf("%s\t", argv[argi]);
                 if (curTag->haveTrackGain)
                 {
-                    fprintf(stdout, "%d\t", intGainChange);
-                    fprintf(stdout, "%f\t", curTag->trackGain);
+                    printf("%d\t", intGainChange);
+                    printf("%f\t", curTag->trackGain);
                 }
                 else
                 {
-                    fprintf(stdout, "NA\tNA\t");
+                    printf("NA\tNA\t");
                 }
                 if (curTag->haveTrackPeak)
                 {
-                    fprintf(stdout, "%f\t", curTag->trackPeak * 32768.0);
+                    printf("%f\t", curTag->trackPeak * 32768.0);
                 }
                 else
                 {
-                    fprintf(stdout, "NA\t");
+                    printf("NA\t");
                 }
                 if (curTag->haveMinMaxGain)
                 {
-                    fprintf(stdout, "%d\t", curTag->maxGain);
-                    fprintf(stdout, "%d\t", curTag->minGain);
+                    printf("%d\t", curTag->maxGain);
+                    printf("%d\t", curTag->minGain);
                 }
                 else
                 {
-                    fprintf(stdout, "NA\tNA\t");
+                    printf("NA\tNA\t");
                 }
                 if (curTag->haveAlbumGain)
                 {
-                    fprintf(stdout, "%d\t", intAlbumGainChange);
-                    fprintf(stdout, "%f\t", curTag->albumGain);
+                    printf("%d\t", intAlbumGainChange);
+                    printf("%f\t", curTag->albumGain);
                 }
                 else
                 {
-                    fprintf(stdout, "NA\tNA\t");
+                    printf("NA\tNA\t");
                 }
                 if (curTag->haveAlbumPeak)
                 {
-                    fprintf(stdout, "%f\t", curTag->albumPeak * 32768.0);
+                    printf("%f\t", curTag->albumPeak * 32768.0);
                 }
                 else
                 {
-                    fprintf(stdout, "NA\t");
+                    printf("NA\t");
                 }
                 if (curTag->haveAlbumMinMaxGain)
                 {
-                    fprintf(stdout, "%d\t", curTag->albumMaxGain);
-                    fprintf(stdout, "%d\n", curTag->albumMinGain);
+                    printf("%d\t", curTag->albumMaxGain);
+                    printf("%d\n", curTag->albumMinGain);
                 }
                 else
                 {
-                    fprintf(stdout, "NA\tNA\n");
+                    printf("NA\tNA\n");
                 }
                 fflush(stdout);
             }
         }
         else if (undoChanges)
         {
-            directGain = !0; /* so we don't write the tag a second time */
+            directGain = true; /* so we don't write the tag a second time */
             if ((tagInfo[argi].haveUndo) && (tagInfo[argi].undoLeft || tagInfo[argi].undoRight))
             {
                 if ((!QuietMode) && (!databaseFormat))
@@ -1979,7 +1961,7 @@ int main(int argc, char **argv)
 
                 if (databaseFormat)
                 {
-                    fprintf(stdout, "%s\t%d\t%d\n", argv[argi], tagInfo[argi].undoLeft, tagInfo[argi].undoRight);
+                    printf("%s\t%d\t%d\n", argv[argi], tagInfo[argi].undoLeft, tagInfo[argi].undoRight);
                 }
 
                 changeGainAndTag(argv[argi],
@@ -1991,7 +1973,7 @@ int main(int argc, char **argv)
             {
                 if (databaseFormat)
                 {
-                    fprintf(stdout, "%s\t0\t0\n", argv[argi]);
+                    printf("%s\t0\t0\n", argv[argi]);
                 }
                 else if (!QuietMode)
                 {
@@ -2075,14 +2057,14 @@ int main(int argc, char **argv)
             }
             if (databaseFormat)
             {
-                fprintf(stdout, "%s\tNA\tNA\tNA\tNA\tNA\n", argv[argi]);
+                printf("%s\tNA\tNA\tNA\tNA\tNA\n", argv[argi]);
             }
         }
         else
         {
             if (!databaseFormat && !QuietMode)
             {
-                fprintf(stdout, "%s\n", argv[argi]);
+                printf("%s\n", argv[argi]);
             }
 
             if (tagInfo[argi].recalc > 0)
@@ -2105,7 +2087,7 @@ int main(int argc, char **argv)
                     maxsample = tagInfo[argi].trackPeak * 32768.0;
                     maxgain = tagInfo[argi].maxGain;
                     mingain = tagInfo[argi].minGain;
-                    ok = !0;
+                    ok = true;
                 }
                 else
                 {
@@ -2136,7 +2118,7 @@ int main(int argc, char **argv)
 
                         ok = skipID3v2();
 
-                        ok = frameSearch(!0);
+                        ok = frameSearch(true);
                     }
 
                     if (!ok)
@@ -2153,7 +2135,7 @@ int main(int argc, char **argv)
                                                                    * Assume any later layer 1 or 2 frames are just
                                                                    * bitstream corruption
                                                                    */
-                        fileok[argi] = !0;
+                        fileok[argi] = true;
                         numFiles++;
 
                         if (tagInfo[argi].recalc > 0)
@@ -2272,7 +2254,7 @@ int main(int argc, char **argv)
                                                 if (AnalyzeSamples(lsamples, rsamples, procSamp / nchan, nchan) == GAIN_ANALYSIS_ERROR)
                                                 {
                                                     fprintf(stderr, "Error analyzing further samples (max time reached)          \n");
-                                                    analysisError = !0;
+                                                    analysisError = true;
                                                     ok = 0;
                                                 }
                                             }
@@ -2336,7 +2318,7 @@ int main(int argc, char **argv)
                                      (fabs(dBchange - curTag->trackGain) >= 0.01))
                                 )
                                 {
-                                    curTag->dirty = !0;
+                                    curTag->dirty = true;
                                     curTag->haveTrackGain = 1;
                                     curTag->trackGain = dBchange;
                                 }
@@ -2345,8 +2327,8 @@ int main(int argc, char **argv)
                                 (curTag->haveMinMaxGain &&
                                  (curTag->minGain != mingain || curTag->maxGain != maxgain)))
                             {
-                                curTag->dirty = !0;
-                                curTag->haveMinMaxGain = !0;
+                                curTag->dirty = true;
+                                curTag->haveMinMaxGain = true;
                                 curTag->minGain = mingain;
                                 curTag->maxGain = maxgain;
                             }
@@ -2355,8 +2337,8 @@ int main(int argc, char **argv)
                                 (curTag->haveTrackPeak &&
                                  (fabs(maxsample - (curTag->trackPeak) * 32768.0) >= 3.3)))
                             {
-                                curTag->dirty = !0;
-                                curTag->haveTrackPeak = !0;
+                                curTag->dirty = true;
+                                curTag->haveTrackPeak = true;
                                 curTag->trackPeak = maxsample / 32768.0;
                             }
                             /* the TAG version of the suggested Track Gain should ALWAYS be based on the 89dB standard.
@@ -2378,41 +2360,41 @@ int main(int argc, char **argv)
 
                             if (databaseFormat)
                             {
-                                fprintf(stdout, "%s\t%d\t%f\t%f\t%d\t%d\n", argv[argi], intGainChange, dBchange, maxsample, maxgain, mingain);
+                                printf("%s\t%d\t%f\t%f\t%d\t%d\n", argv[argi], intGainChange, dBchange, maxsample, maxgain, mingain);
                                 fflush(stdout);
                             }
                             if ((!applyTrack) && (!applyAlbum))
                             {
                                 if (!databaseFormat)
                                 {
-                                    fprintf(stdout, "Recommended \"Track\" dB change: %f\n", dBchange);
-                                    fprintf(stdout, "Recommended \"Track\" mp3 gain change: %d\n", intGainChange);
+                                    printf("Recommended \"Track\" dB change: %f\n", dBchange);
+                                    printf("Recommended \"Track\" mp3 gain change: %d\n", intGainChange);
                                     if (maxsample * (Float_t)(pow(2.0, (double)(intGainChange) / 4.0)) > 32767.0)
                                     {
-                                        fprintf(stdout, "WARNING: some clipping may occur with this gain change!\n");
+                                        printf("WARNING: some clipping may occur with this gain change!\n");
                                     }
-                                    fprintf(stdout, "Max PCM sample at current gain: %f\n", maxsample);
-                                    fprintf(stdout, "Max mp3 global gain field: %d\n", maxgain);
-                                    fprintf(stdout, "Min mp3 global gain field: %d\n", mingain);
-                                    fprintf(stdout, "\n");
+                                    printf("Max PCM sample at current gain: %f\n", maxsample);
+                                    printf("Max mp3 global gain field: %d\n", maxgain);
+                                    printf("Min mp3 global gain field: %d\n", mingain);
+                                    printf("\n");
                                 }
                             }
                             else if (applyTrack)
                             {
-                                first = !0; /* don't keep track of Album gain */
+                                first = true; /* don't keep track of Album gain */
                                 if (inf)
                                 {
                                     fclose(inf);
                                 }
                                 inf = NULL;
-                                goAhead = !0;
+                                goAhead = true;
 
                                 if (intGainChange == 0)
                                 {
-                                    fprintf(stdout, "No changes to %s are necessary\n", argv[argi]);
+                                    printf("No changes to %s are necessary\n", argv[argi]);
                                     if (!skipTag && tagInfo[argi].dirty)
                                     {
-                                        fprintf(stdout, "...but tag needs update: Writing tag information for %s\n", argv[argi]);
+                                        printf("...but tag needs update: Writing tag information for %s\n", argv[argi]);
                                         WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, saveTime);
                                     }
                                 }
@@ -2423,8 +2405,8 @@ int main(int argc, char **argv)
                                         int intMaxNoClipGain = (int)(floor(4.0 * log10(32767.0 / maxsample) / log10(2.0)));
                                         if (intGainChange > intMaxNoClipGain)
                                         {
-                                            fprintf(stdout, "Applying auto-clipped mp3 gain change of %d to %s\n(Original suggested gain was %d)\n",
-                                                    intMaxNoClipGain, argv[argi], intGainChange);
+                                            printf("Applying auto-clipped mp3 gain change of %d to %s\n(Original suggested gain was %d)\n",
+                                                   intMaxNoClipGain, argv[argi], intGainChange);
                                             intGainChange = intMaxNoClipGain;
                                         }
                                     }
@@ -2436,7 +2418,7 @@ int main(int argc, char **argv)
                                             {
                                                 if (!QuietMode)
                                                 {
-                                                    fprintf(stdout, "Applying mp3 gain change of %d to %s...\n", intGainChange, argv[argi]);
+                                                    printf("Applying mp3 gain change of %d to %s...\n", intGainChange, argv[argi]);
                                                 }
                                             }
                                             else
@@ -2449,7 +2431,7 @@ int main(int argc, char **argv)
                                     {
                                         if (!QuietMode)
                                         {
-                                            fprintf(stdout, "Applying mp3 gain change of %d to %s...\n", intGainChange, argv[argi]);
+                                            printf("Applying mp3 gain change of %d to %s...\n", intGainChange, argv[argi]);
                                         }
                                         if (skipTag)
                                         {
@@ -2463,7 +2445,7 @@ int main(int argc, char **argv)
                                     }
                                     else if (!skipTag && tagInfo[argi].dirty)
                                     {
-                                        fprintf(stdout, "Writing tag information for %s\n", argv[argi]);
+                                        printf("Writing tag information for %s\n", argv[argi]);
                                         WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, saveTime);
                                     }
                                 }
@@ -2554,7 +2536,7 @@ int main(int argc, char **argv)
                              (fabs(dBchange - curTag->albumGain) >= 0.01))
                         )
                         {
-                            curTag->dirty = !0;
+                            curTag->dirty = true;
                             curTag->haveAlbumGain = 1;
                             curTag->albumGain = dBchange;
                         }
@@ -2564,8 +2546,8 @@ int main(int argc, char **argv)
                         (curTag->haveAlbumMinMaxGain &&
                          (curTag->albumMinGain != minmingain || curTag->albumMaxGain != maxmaxgain)))
                     {
-                        curTag->dirty = !0;
-                        curTag->haveAlbumMinMaxGain = !0;
+                        curTag->dirty = true;
+                        curTag->haveAlbumMinMaxGain = true;
                         curTag->albumMinGain = minmingain;
                         curTag->albumMaxGain = maxmaxgain;
                     }
@@ -2574,8 +2556,8 @@ int main(int argc, char **argv)
                         (curTag->haveAlbumPeak &&
                          (fabs(maxmaxsample - curTag->albumPeak) >= 0.0001)))
                     {
-                        curTag->dirty = !0;
-                        curTag->haveAlbumPeak = !0;
+                        curTag->dirty = true;
+                        curTag->haveAlbumPeak = true;
                         curTag->albumPeak = maxmaxsample;
                     }
                 }
@@ -2599,8 +2581,8 @@ int main(int argc, char **argv)
 
             if (databaseFormat)
             {
-                fprintf(stdout, "\"Album\"\t%d\t%f\t%f\t%d\t%d\n", intGainChange, dBchange, maxmaxsample * 32768.0, maxmaxgain,
-                        minmingain);
+                printf("\"Album\"\t%d\t%f\t%f\t%d\t%d\n", intGainChange, dBchange, maxmaxsample * 32768.0, maxmaxgain,
+                       minmingain);
                 fflush(stdout);
             }
 
@@ -2608,14 +2590,14 @@ int main(int argc, char **argv)
             {
                 if (!databaseFormat)
                 {
-                    fprintf(stdout, "\nRecommended \"Album\" dB change for all files: %f\n", dBchange);
-                    fprintf(stdout, "Recommended \"Album\" mp3 gain change for all files: %d\n", intGainChange);
+                    printf("\nRecommended \"Album\" dB change for all files: %f\n", dBchange);
+                    printf("Recommended \"Album\" mp3 gain change for all files: %d\n", intGainChange);
                     for (int argi = fileStart; argi < argc; argi++)
                     {
                         if (fileok[argi])
                             if (tagInfo[argi].trackPeak * (Float_t)(pow(2.0, (double)(intGainChange) / 4.0)) > 1.0)
                             {
-                                fprintf(stdout, "WARNING: with this global gain change, some clipping may occur in file %s\n", argv[argi]);
+                                printf("WARNING: with this global gain change, some clipping may occur in file %s\n", argv[argi]);
                             }
                     }
                 }
@@ -2640,13 +2622,13 @@ int main(int argc, char **argv)
                 {
                     if (fileok[argi])
                     {
-                        goAhead = !0;
+                        goAhead = true;
                         if (intGainChange == 0)
                         {
-                            fprintf(stdout, "\nNo changes to %s are necessary\n", argv[argi]);
+                            printf("\nNo changes to %s are necessary\n", argv[argi]);
                             if (!skipTag && tagInfo[argi].dirty)
                             {
-                                fprintf(stdout, "...but tag needs update: Writing tag information for %s\n", argv[argi]);
+                                printf("...but tag needs update: Writing tag information for %s\n", argv[argi]);
                                 WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, saveTime);
                             }
                         }
@@ -2663,7 +2645,7 @@ int main(int argc, char **argv)
                             {
                                 if (!QuietMode)
                                 {
-                                    fprintf(stdout, "Applying mp3 gain change of %d to %s...\n", intGainChange, argv[argi]);
+                                    printf("Applying mp3 gain change of %d to %s...\n", intGainChange, argv[argi]);
                                 }
                                 if (skipTag)
                                 {
@@ -2677,7 +2659,7 @@ int main(int argc, char **argv)
                             }
                             else if (!skipTag && tagInfo[argi].dirty)
                             {
-                                fprintf(stdout, "Writing tag information for %s\n", argv[argi]);
+                                printf("Writing tag information for %s\n", argv[argi]);
                                 WriteMP3GainTag(argv[argi], tagInfo + argi, fileTags + argi, saveTime);
                             }
                         }
