@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -x
-for i in example{1,2}; do
+for i in example{1,2,3}; do
     cp "$i.mp3" "#$i.mp3" || exit
     ./mp3gain -r -q -c -m 7 "#$i.mp3" || exit
     cmp "#$i.mp3" "$i-expected.mp3" || exit
