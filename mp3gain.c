@@ -400,7 +400,7 @@ static bool frameSearch(int startup)
         else
         {
             /* !startup -- if MPEG version or frequency is different,
-                                  then probably not correctly synched yet */
+               then probably not correctly synched yet */
             if ((wrdpntr[1] & 0x18) != startmpegver)
             {
                 done = false;
@@ -817,7 +817,8 @@ static int changeGain(const char *filename,
                 bitridx = (curframe[2] >> 4) & 0x0F;
                 if (singlechannel)
                 {
-                    if ((curframe[3] >> 6) & 0x01)   /* if mode is NOT stereo or dual channel */
+                    if ((curframe[3] >> 6) & 0x01)   /* if mode is NOT stereo
+                                                        or dual channel */
                     {
                         passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
                                   filename, ": Can't adjust single channel for mono or joint stereo\n");
@@ -1110,13 +1111,18 @@ static void changeGainAndTag(const char *filename,
 
             /* if undo == 0, then remove Undo tag */
             tag->haveUndo = true;
-            /* on second thought, don't remove it. Shortening the tag causes full file copy, which is slow so we avoid it if we can
-                            tag->haveUndo =
-                                    ((tag->undoRight != 0) ||
-                                     (tag->undoLeft != 0));
+            /* on second thought, don't remove it. Shortening the tag causes
+               full file copy, which is slow so we avoid it if we can
+
+               tag->haveUndo =
+                 ((tag->undoRight != 0) ||
+                  (tag->undoLeft != 0));
             */
 
-            if (leftgainchange == rightgainchange)   /* don't screw around with other fields if mis-matched left/right */
+            if (leftgainchange == rightgainchange)   /* don't screw around
+                                                        with other fields if
+                                                        mis-matched
+                                                        left/right */
             {
                 dblGainChange = leftgainchange * 1.505; /* approx. 5 * log10(2) */
                 if (tag->haveTrackGain)
@@ -1179,7 +1185,6 @@ static void changeGainAndTag(const char *filename,
             WriteMP3GainTag(filename, tag, fileTag, gSaveTime);
         } // if (!changeGain(filename ...
     }// if (leftgainchange !=0 ...
-
 }
 
 static int queryUserForClipping(char *argv_mainloop, int intGainChange)
@@ -1705,12 +1710,13 @@ int main(int argc, char **argv)
                     tagInfo[argi].dirty = true;
                     tagInfo[argi].haveTrackPeak = 0;
                 }
-                /* NOT Undo information!
-                                          if (tagInfo[argi].haveUndo) {
-                                                  tagInfo[argi].dirty = true;
-                                                  tagInfo[argi].haveUndo = 0;
-                                          }
-                */
+#if 0 // NOT Undo information!
+                if (tagInfo[argi].haveUndo)
+                {
+                    tagInfo[argi].dirty = true;
+                    tagInfo[argi].haveUndo = 0;
+                }
+#endif
                 if (tagInfo[argi].haveMinMaxGain)
                 {
                     tagInfo[argi].dirty = true;
@@ -1740,10 +1746,12 @@ int main(int argc, char **argv)
         }
         for (int argi = fileStart; argi < argc; argi++)
         {
-            if (!maxAmpOnly)   /* we don't care about these things if we're only looking for max amp */
+            if (!maxAmpOnly)   /* we don't care about these things if we're
+                                  only looking for max amp */
             {
                 if (argc - fileStart > 1 && !applyTrack &&
-                    !analysisTrack)   /* only check album stuff if more than one file in the list */
+                    !analysisTrack)   /* only check album stuff if more than
+                                         one file in the list */
                 {
                     if (!tagInfo[argi].haveAlbumGain)
                     {
@@ -1760,7 +1768,8 @@ int main(int argc, char **argv)
                 }
             }
             if (argc - fileStart > 1 && !applyTrack &&
-                !analysisTrack)   /* only check album stuff if more than one file in the list */
+                !analysisTrack)   /* only check album stuff if more than one
+                                     file in the list */
             {
                 if (!tagInfo[argi].haveAlbumPeak)
                 {
@@ -1798,7 +1807,8 @@ int main(int argc, char **argv)
     {
         memset(&mp, 0, sizeof(mp));
 
-        // if the entire Album requires some kind of recalculation, then each track needs it
+        // if the entire Album requires some kind of recalculation, then each
+        // track needs it
         tagInfo[argi].recalc |= albumRecalc;
 
         curfilename = argv[argi];
@@ -2240,8 +2250,9 @@ int main(int argc, char **argv)
                                         }
                                         else
                                         {
-                                            /* don't need to actually decode frame,
-                                                                    just scan for min/max gain values */
+                                            /* don't need to actually decode
+                                               frame, just scan for min/max
+                                               gain values */
                                             decodeSuccess = !MP3_OK;
                                             scanFrameGain();//curframe);
                                         }
@@ -2325,7 +2336,9 @@ int main(int argc, char **argv)
                                     curTag->trackGain = dBchange;
                                 }
                             }
-                            if (!curTag->haveMinMaxGain || /* if minGain or maxGain doesn't match tag */
+                            if (!curTag->haveMinMaxGain || /* if minGain or
+                                                              maxGain doesn't
+                                                              match tag */
                                 (curTag->haveMinMaxGain &&
                                  (curTag->minGain != mingain || curTag->maxGain != maxgain)))
                             {
@@ -2343,8 +2356,10 @@ int main(int argc, char **argv)
                                 curTag->haveTrackPeak = true;
                                 curTag->trackPeak = maxsample / 32768.0;
                             }
-                            /* the TAG version of the suggested Track Gain should ALWAYS be based on the 89dB standard.
-                               So we don't modify the suggested gain change until this point */
+                            /* the TAG version of the suggested Track Gain
+                               should ALWAYS be based on the 89dB standard.
+                               So we don't modify the suggested gain change
+                               until this point */
 
                             dBchange += dBGainMod;
 
@@ -2534,7 +2549,9 @@ int main(int argc, char **argv)
                     curTag = tagInfo + argi;
                     if (!maxAmpOnly)
                     {
-                        if ( /* if we don't already have a tagged track gain OR we have it, but it doesn't match */
+                        /* if we don't already have a tagged track gain OR we
+                           have it, but it doesn't match */
+                        if (
                             !curTag->haveAlbumGain ||
                             (curTag->haveAlbumGain &&
                              (fabs(dBchange - curTag->albumGain) >= 0.01))
@@ -2546,9 +2563,11 @@ int main(int argc, char **argv)
                         }
                     }
 
-                    if (!curTag->haveAlbumMinMaxGain || /* if albumMinGain or albumMaxGain doesn't match tag */
+                    /* if albumMinGain or albumMaxGain doesn't match tag... */
+                    if (!curTag->haveAlbumMinMaxGain ||
                         (curTag->haveAlbumMinMaxGain &&
-                         (curTag->albumMinGain != minmingain || curTag->albumMaxGain != maxmaxgain)))
+                         (curTag->albumMinGain != minmingain ||
+                          curTag->albumMaxGain != maxmaxgain)))
                     {
                         curTag->dirty = true;
                         curTag->haveAlbumMinMaxGain = true;
@@ -2567,8 +2586,9 @@ int main(int argc, char **argv)
                 }
             }
 
-            /* the TAG version of the suggested Album Gain should ALWAYS be based on the 89dB standard.
-               So we don't modify the suggested gain change until this point */
+            /* the TAG version of the suggested Album Gain should ALWAYS be
+               based on the 89dB standard.  So we don't modify the suggested
+               gain change until this point */
 
             dBchange += dBGainMod;
 
@@ -2615,7 +2635,9 @@ int main(int argc, char **argv)
                     if (intGainChange > intMaxNoClipGain)
                     {
                         fprintf(stdout,
-                                "Applying auto-clipped mp3 gain change of %d to album\n(Original suggested gain was %d)\n", intMaxNoClipGain,
+                                "Applying auto-clipped mp3 gain change of %d to album\n"
+                                "(Original suggested gain was %d)\n",
+                                intMaxNoClipGain,
                                 intGainChange);
                         intGainChange = intMaxNoClipGain;
 
