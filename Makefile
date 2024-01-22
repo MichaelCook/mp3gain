@@ -15,6 +15,6 @@ SOURCES = \
 test: mp3gain
 	./test
 
-mp3gain: $(SOURCES)
+mp3gain: $(shell git ls-tree -r --name-only HEAD)
 	astyle --options=.astylerc $(SOURCES)
 	gcc -Wall -Werror -O3 -s -o mp3gain $(SOURCES) -lm
