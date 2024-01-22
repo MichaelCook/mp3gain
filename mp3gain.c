@@ -645,7 +645,6 @@ static int changeGain(const char *filename,
                       int leftgainchange,
                       int rightgainchange)
 {
-    unsigned long ok;
     int mode;
     int crcflag;
     unsigned char *Xingcheck;
@@ -747,7 +746,7 @@ static int changeGain(const char *filename,
         inbuffer = 0;
         filepos = 0;
         bitidx = 0;
-        ok = fillBuffer(0);
+        bool ok = fillBuffer(0);
         if (ok)
         {
 
@@ -795,7 +794,7 @@ static int changeGain(const char *filename,
                     {
                         passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
                                   filename, " is free format (not currently supported)\n");
-                        ok = 0;
+                        ok = false;
                     }
                     else
                     {
@@ -822,14 +821,14 @@ static int changeGain(const char *filename,
                     {
                         passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
                                   filename, ": Can't adjust single channel for mono or joint stereo\n");
-                        ok = 0;
+                        ok = false;
                     }
                 }
                 if (bitridx == 0)
                 {
                     passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
                               filename, " is free format (not currently supported)\n");
-                    ok = 0;
+                    ok = false;
                 }
                 if (ok)
                 {
@@ -2172,7 +2171,7 @@ int main(int argc, char **argv)
                                 {
                                     fprintf(stderr, "%s: %s is free format (not currently supported)\n",
                                             gProgramName, curfilename);
-                                    ok = 0;
+                                    ok = false;
                                 }
                                 else
                                 {
@@ -2225,7 +2224,7 @@ int main(int argc, char **argv)
                                 {
                                     fprintf(stderr, "%s: %s is free format (not currently supported)\n",
                                             gProgramName, curfilename);
-                                    ok = 0;
+                                    ok = false;
                                 }
                                 else
                                 {
@@ -2264,7 +2263,7 @@ int main(int argc, char **argv)
                                                 {
                                                     fprintf(stderr, "%s: Error analyzing further samples (max time reached)\n", gProgramName);
                                                     analysisError = true;
-                                                    ok = 0;
+                                                    ok = false;
                                                 }
                                             }
                                         }
