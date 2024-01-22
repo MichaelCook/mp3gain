@@ -1336,7 +1336,7 @@ int ReadMP3GainID3Tag(const char *filename, struct MP3GainTagInfo *info)
     f = fopen(filename, "rb");
     if (f == NULL)
     {
-        passError(MP3GAIN_UNSPECIFED_ERROR, 3, "Could not open ", filename, "\n");
+        passError(2, "Could not open ", filename);
         return M3G_ERR_FILEOPEN;
     }
 
@@ -1345,7 +1345,7 @@ int ReadMP3GainID3Tag(const char *filename, struct MP3GainTagInfo *info)
 
     if (ret == M3G_ERR_READ)
     {
-        passError(MP3GAIN_UNSPECIFED_ERROR, 3, "Error reading ", filename, "\n");
+        passError(2, "Error reading ", filename);
     }
 
     if (ret == 1)
@@ -1396,7 +1396,7 @@ int WriteMP3GainID3Tag(const char *filename,
     f = fopen(filename, "rb");
     if (f == NULL)
     {
-        passError(MP3GAIN_UNSPECIFED_ERROR, 3, "Could not open ", filename, "\n");
+        passError(2, "Could not open ", filename);
         return M3G_ERR_FILEOPEN;
     }
     ret = id3_search_tag(f, &tag);
@@ -1404,10 +1404,10 @@ int WriteMP3GainID3Tag(const char *filename,
     switch (ret)
     {
     case M3G_ERR_READ:
-        passError(MP3GAIN_UNSPECIFED_ERROR, 3, "Error reading ", filename, "\n");
+        passError(2, "Error reading ", filename);
         break;
     case M3G_ERR_TAGFORMAT:
-        passError(MP3GAIN_UNSPECIFED_ERROR, 3, "Unsupported ID3v2 tag in ", filename, "\n");
+        passError(2, "Unsupported ID3v2 tag in ", filename);
         break;
     }
 
@@ -1544,7 +1544,7 @@ int WriteMP3GainID3Tag(const char *filename,
     outf = fopen(tmpfilename, "wb");
     if (outf == NULL)
     {
-        passError(MP3GAIN_UNSPECIFED_ERROR, 3, "Can not create temporary file ", tmpfilename, "\n");
+        passError(2, "Cannot create temporary file ", tmpfilename);
         fclose(f);
         free(tmpfilename);
         id3_release_frames(tag.frames);
@@ -1581,10 +1581,10 @@ int WriteMP3GainID3Tag(const char *filename,
     switch (ret)
     {
     case M3G_ERR_READ:
-        passError(MP3GAIN_UNSPECIFED_ERROR, 3, "Error reading ", filename, "\n");
+        passError(2, "Error reading ", filename);
         break;
     case M3G_ERR_WRITE:
-        passError(MP3GAIN_UNSPECIFED_ERROR, 3, "Error writing ", tmpfilename, "\n");
+        passError(2, "Error writing ", tmpfilename);
         break;
     }
 
@@ -1601,7 +1601,7 @@ int WriteMP3GainID3Tag(const char *filename,
     if (rename(tmpfilename, filename))
     {
         remove(tmpfilename);
-        passError(MP3GAIN_UNSPECIFED_ERROR, 5, "Can not rename ", tmpfilename, " to ", filename, "\n");
+        passError(4, "Cannot rename ", tmpfilename, " to ", filename);
         ret = M3G_ERR_RENAME_TMP;
     }
     else

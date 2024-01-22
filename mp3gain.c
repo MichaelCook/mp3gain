@@ -47,7 +47,6 @@
 #include "mpglibDBL_interface.h"
 #include "gain_analysis.h"
 #include "mp3gain.h"
-#include "rg_error.h"
 
 #define HEADERSIZE 4
 
@@ -270,7 +269,7 @@ static bool skipID3v2()
     return ok;
 }
 
-void passError(int lerrnum, int numStrings, ...)
+void passError(int numStrings, ...)
 {
     va_list marker;
     va_start(marker, numStrings);
@@ -354,13 +353,13 @@ static bool frameSearch(int startup)
                 {
                 case 0x06:
                     gBadLayer = true;
-                    passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
-                              curfilename, " is an MPEG Layer I file, not a layer III file\n");
+                    passError(2, curfilename,
+                              " is an MPEG Layer I file, not a layer III file");
                     return 0;
                 case 0x04:
                     gBadLayer = true;
-                    passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
-                              curfilename, " is an MPEG Layer II file, not a layer III file\n");
+                    passError(2, curfilename,
+                              " is an MPEG Layer II file, not a layer III file");
                     return 0;
                 }
             }
@@ -703,8 +702,7 @@ static int changeGain(const char *filename,
             {
                 fclose(inf);
                 inf = NULL;
-                passError(MP3GAIN_UNSPECIFED_ERROR, 3,
-                          "\nCan't open ", outfilename, " for temp writing\n");
+                passError(3, "Can't open ", outfilename, " for writing");
                 gNowWriting = false;
                 free(outfilename);
                 return M3G_ERR_CANT_MAKE_TMP;
@@ -724,8 +722,7 @@ static int changeGain(const char *filename,
             fclose(outf);
             outf = NULL;
         }
-        passError(MP3GAIN_UNSPECIFED_ERROR, 3,
-                  "\nCan't open ", filename, " for modifying\n");
+        passError(3, "Can't open ", filename, " for modifying");
         gNowWriting = false;
         free(outfilename);
         return M3G_ERR_CANT_MODIFY_FILE;
@@ -749,8 +746,9 @@ static int changeGain(const char *filename,
             if (!ok)
             {
                 if (!gBadLayer)
-                    passError(MP3GAIN_UNSPECIFED_ERROR, 3,
-                              "Can't find any valid MP3 frames in file ", filename, "\n");
+                {
+                    passError(2, "Can't find any valid MP3 frames in file ", filename);
+                }
             }
             else
             {
@@ -782,8 +780,8 @@ static int changeGain(const char *filename,
                     bitridx = (curframe[2] >> 4) & 0x0F;
                     if (bitridx == 0)
                     {
-                        passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
-                                  filename, " is free format (not currently supported)\n");
+                        passError(2, filename,
+                                  " is free format (not currently supported)");
                         ok = false;
                     }
                     else
@@ -809,15 +807,14 @@ static int changeGain(const char *filename,
                     if ((curframe[3] >> 6) & 0x01)   /* if mode is NOT stereo
                                                         or dual channel */
                     {
-                        passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
-                                  filename, ": Can't adjust single channel for mono or joint stereo\n");
+                        passError(2, filename,
+                                  ": Can't adjust single channel for mono or joint stereo");
                         ok = false;
                     }
                 }
                 if (bitridx == 0)
                 {
-                    passError(MP3GAIN_FILEFORMAT_NOTSUPPORTED, 2,
-                              filename, " is free format (not currently supported)\n");
+                    passError(2, filename, " is free format (not currently supported)");
                     ok = false;
                 }
                 if (ok)
@@ -1003,8 +1000,7 @@ static int changeGain(const char *filename,
             if (outlength != inlength)
             {
                 deleteFile(outfilename);
-                passError(MP3GAIN_UNSPECIFED_ERROR, 3,
-                          "Not enough temp space on disk to modify ", filename,
+                passError(3, "Not enough temp space on disk to modify ", filename,
                           "\nEither free some space, or do not use \"temp file\" option\n");
                 gNowWriting = false;
                 return M3G_ERR_NOT_ENOUGH_TMP_SPACE;
@@ -1015,18 +1011,17 @@ static int changeGain(const char *filename,
                 if (deleteFile(filename))
                 {
                     deleteFile(outfilename); //try to delete tmp file
-                    passError(MP3GAIN_UNSPECIFED_ERROR, 3,
-                              "Can't open ", filename, " for modifying\n");
+                    passError(3, "Can't open ", filename, " for modifying");
                     gNowWriting = false;
                     return M3G_ERR_CANT_MODIFY_FILE;
                 }
                 if (moveFile(outfilename, filename))
                 {
-                    passError(MP3GAIN_UNSPECIFED_ERROR, 9,
-                              "Problem re-naming ", outfilename, " to ", filename,
-                              "\nThe mp3 was correctly modified, but you will need to re-name ",
+                    passError(9, "Problem re-naming ", outfilename, " to ", filename,
+                              "\nThe mp3 was correctly modified, but you will "
+                              "need to re-name ",
                               outfilename, " to ", filename,
-                              " yourself.\n");
+                              " yourself");
                     gNowWriting = false;
                     return M3G_ERR_RENAME_TMP;
                 };

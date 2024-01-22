@@ -29,7 +29,6 @@ HEADERS = \
  mpglibDBL_mpglib.h \
  mpglibDBL_tabinit.h \
  mpglibDBL_VbrTag.h \
- rg_error.h \
 
 CFLAGS = -O3 -s
 

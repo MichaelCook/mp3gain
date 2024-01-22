@@ -32,9 +32,7 @@
 #define M3G_ERR_WRITE      -7
 #define M3G_ERR_TAGFORMAT  -8
 
-#include "rg_error.h"
-
-void passError(int lerrnum, int numStrings, ...);
+void passError(int numStrings, ...);
 
 typedef enum
 {

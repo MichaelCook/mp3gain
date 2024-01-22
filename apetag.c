@@ -1,6 +1,5 @@
 #include "apetag.h"
 #include "mp3gain.h"
-#include "rg_error.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory.h>
@@ -430,8 +429,7 @@ int truncate_file(const char *filename, long truncLength)
     if (ftruncate(fd, truncLength))
     {
         close(fd);
-        passError(MP3GAIN_UNSPECIFED_ERROR, 3, "Could not truncate ",
-                  filename, "\n");
+        passError(2, "Could not truncate ", filename);
         return 0;
     }
     close(fd);
@@ -745,8 +743,7 @@ int WriteMP3GainAPETag(const char *filename,
     outputFile = fopen(filename, "r+b");
     if (outputFile == NULL)
     {
-        passError(MP3GAIN_UNSPECIFED_ERROR, 3,
-                  "\nCan't open ", filename, " for modifying\n");
+        passError(3, "Can't open ", filename, " for modifying");
         return 0;
     }
     fseek(outputFile, fileTags->tagOffset, SEEK_SET);
