@@ -2649,20 +2649,11 @@ int main(int argc, char **argv)
     {
         if (fileTags[argi].apeTag)
         {
-            if (fileTags[argi].apeTag->otherFields)
-            {
-                free(fileTags[argi].apeTag->otherFields);
-            }
+            free(fileTags[argi].apeTag->otherFields);
             free(fileTags[argi].apeTag);
         }
-        if (fileTags[argi].lyrics3tag)
-        {
-            free(fileTags[argi].lyrics3tag);
-        }
-        if (fileTags[argi].id31tag)
-        {
-            free(fileTags[argi].id31tag);
-        }
+        free(fileTags[argi].lyrics3tag);
+        free(fileTags[argi].id31tag);
     }
     free(fileTags);
 
